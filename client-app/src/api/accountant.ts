@@ -1,7 +1,8 @@
 // BF_CLIENT_ACCOUNTANT_PORTAL_v1 - accountant-scoped API access.
 import { ENV } from "@/env";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
-const API_BASE = ENV.API_BASE || "https://server.boreal.financial";
+const API_BASE = ENV.API_BASE || SERVER_URL;
 const TOKEN_KEY = "boreal_accountant_token";
 
 export type AccountantApplication = { id: string; business_name: string | null; created_at?: string };

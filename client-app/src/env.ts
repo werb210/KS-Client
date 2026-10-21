@@ -1,8 +1,9 @@
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 export const ENV = {
   API_BASE: import.meta.env.VITE_API_BASE ||
             import.meta.env.VITE_API_BASE_URL ||
             import.meta.env.VITE_API_URL ||
-            "https://server.boreal.financial",
+            SERVER_URL,
   API_VERSION: import.meta.env.VITE_API_VERSION || "v1",
 };
 

@@ -45,6 +45,7 @@ import { getAttribution } from "../lib/attribution";
 import { getClarityPlaybackUrl } from "../lib/clarityPlayback"; // BF_CLIENT_CLARITY_PLAYBACK_v170
 import { fetchReadinessPrefill } from "@/api/readiness";
 import { ENV } from "@/env"; // BF_CLIENT_REPORT_BLOCK_v154
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const MatchCategories = [
   "Line of Credit",
@@ -264,7 +265,7 @@ export function Step1_KYC(): JSX.Element {
       });
       // keepalive so it still goes if they close the tab on being turned away,
       // which is exactly what the people we are trying to count tend to do.
-      const base = (ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+      const base = (ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
       void fetch(`${base}/api/public/wizard-block`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -371,8 +372,14 @@ export function Step1_KYC(): JSX.Element {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- BF_STEP_RESET_NORACE_v37 (Block 37) — running on every currentStep change caused unmounting step to reset back, fighting next step’s mount effect
 
+  // BF_CLIENT_v840_STEP1_NO_LOOP - copy the readiness details in ONCE per readiness record. This ran on every app.kyc
+  // change, and its own update() made a new app.kyc, so once a returning client's prefill set readiness the page
+  // redrew forever: dropdowns would not open and the amount could not be typed (Mac Safari and Chrome, Oct 21).
+  const readinessAppliedRef = useRef<unknown>(null);
   useEffect(() => {
     if (!readiness) return;
+    if (readinessAppliedRef.current === readiness) return;
+    readinessAppliedRef.current = readiness;
     const data = readiness as Record<string, unknown>;
 
     // BF_CLIENT_BLOCK_v323_TEST2_FIX_PACK_v1 — token-based prefill now
@@ -431,12 +438,8 @@ export function Step1_KYC(): JSX.Element {
         phone: (data.phone as string) ?? app.applicant?.phone ?? "",
       },
     });
-  }, [
-    app.kyc,
-    app.readinessLeadId,
-    readiness,
-    update,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- BF_CLIENT_v840_STEP1_NO_LOOP: keyed on readiness only
+  }, [readiness, update]);
 
   useEffect(() => {
     trackEvent("application_started", { step: 1 });
@@ -809,7 +812,7 @@ export function Step1_KYC(): JSX.Element {
         // per Block 20 server diagnostics. Lifecycle logging from Block 21 is
         // preserved so we can see fetch outcomes in the console.
         const __apiBase =
-          ((import.meta as any).env?.VITE_API_URL) || 'https://server.boreal.financial';
+          ((import.meta as any).env?.VITE_API_URL) || SERVER_URL;
         const __startUrl = __apiBase + '/api/public/application/start';
         const __startTs = Date.now();
         const __startAbort = new AbortController();

@@ -8,6 +8,7 @@ import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
 import { enqueueFormResponse } from "@/lib/formResponseQueue";
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 type RequestOptions = Omit<RequestInit, "body" | "headers"> & {
   method?: string;
@@ -67,14 +68,14 @@ export function disableAccountantFormMode(): void {
 
 function buildFormResponsesUrl(applicationId: string, suffix = ""): string {
   if (accountantFormMode) {
-    const base = (ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+    const base = (ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
     return `${base}/api/accountant/applications/${encodeURIComponent(applicationId)}/form-responses${suffix}`;
   }
   return buildClientFormResponsesUrl(applicationId, suffix);
 }
 
 function buildClientFormResponsesUrl(applicationId: string, suffix = ""): string {
-  const base = (ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+  const base = (ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
   // BF_CLIENT_BLOCK_v_FORM_RESPONSES_CLIENT_ROUTE_v1 — use the client-authed route
   // (the portal route is staff-gated). applicationId in the query lets the client
   // router's ownership middleware authorize the request.

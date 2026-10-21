@@ -7,6 +7,7 @@
 // journey: email → website → apply wizard → mini-portal.
 import { memo } from "react";
 import logoUrl from "@/assets/logo-boreal-mountains-white.svg";
+import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const HEADER_HEIGHT = 56; // matches BF-Website mobile header height
 
@@ -61,7 +62,7 @@ function SlimHeader({ right }: SlimHeaderProps) {
     <header style={styles.outer} role="banner" data-bf-slim-header>
       <div style={styles.inner}>
         <a
-          href="https://www.boreal.financial/"
+          href={`${WEBSITE_URL}/`}
           style={styles.brandLink}
           aria-label="Boreal Financial home"
         >

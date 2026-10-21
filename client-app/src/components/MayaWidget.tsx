@@ -21,6 +21,7 @@ import { getToken } from "@/auth/token";
 import { useApplicationStore } from "@/state/useApplicationStore";
 import { useAuth } from "@/auth/useAuth";
 import { useIsPhoneWidth } from "@/components/CmpPhone"; // BF_CLIENT_v805_PHONE_FIXES
+import { SUPPORT_EMAIL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 import {
   clearConversation,
   conversationHeaders,
@@ -375,7 +376,7 @@ export default function MayaWidget() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { id: uid("s"), from: "system", message: "Couldn't reach the team — please email hello@boreal.financial." },
+        { id: uid("s"), from: "system", message: `Couldn't reach the team — please email ${SUPPORT_EMAIL}.` },
       ]);
     }
   }

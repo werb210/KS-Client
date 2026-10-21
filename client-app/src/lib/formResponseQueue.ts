@@ -6,6 +6,7 @@
 // boot, "online", and a 30s tick.
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const DB_NAME = "bf-form-response-queue";
 const STORE_NAME = "form_responses";
@@ -52,7 +53,7 @@ function reqAsPromise<T>(req: IDBRequest<T>): Promise<T> {
 }
 
 function buildUrl(applicationId: string, docType: string): string {
-  const base = (ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+  const base = (ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
   // BF_CLIENT_BLOCK_v_FORM_RESPONSES_CLIENT_ROUTE_v1 — client-authed route.
   return `${base}/api/client/applications/${encodeURIComponent(applicationId)}/form-responses/${encodeURIComponent(docType)}?applicationId=${encodeURIComponent(applicationId)}`;
 }

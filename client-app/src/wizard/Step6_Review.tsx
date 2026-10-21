@@ -100,6 +100,7 @@ const TC_CLAUSES: Array<{ title: string; blocks: Array<{ p?: string; ul?: string
   },
 ];
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 // BF_CLIENT_v808_MARKETING_OPTIN - same words as BF-Server MARKETING_SMS_OPTIN_TEXT (stored with the consent).
 export const MARKETING_SMS_OPTIN_TEXT =
@@ -488,7 +489,7 @@ export function Step6_Review(): JSX.Element {
         // Re-mint and retry once.
         console.warn("[submit] stale applicationToken; re-minting and retrying", { status, code });
         const apiBase = (import.meta as any).env?.VITE_API_BASE_URL
-          ?? (typeof window !== "undefined" ? "https://server.boreal.financial" : "");
+          ?? (typeof window !== "undefined" ? SERVER_URL : "");
         const mintRes = await fetch(`${apiBase}/api/public/application/start`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -887,67 +888,7 @@ export function Step6_Review(): JSX.Element {
           </Card>
         )}
 
-        {/* PGI question - Personal Guarantee Insurance */}
-        <div data-testid="step6-pgi-section">
-          <h2 style={components.form.sectionTitle}>Personal Guarantee Insurance (PGI)</h2>
-          <p style={{ ...components.form.helperText, marginTop: tokens.spacing.xs }}>
-            Most lenders require a personal guarantee - meaning you are personally responsible if the business cannot repay. Personal Guarantee Insurance protects you if that happens.
-          </p>
-          {/* BF_CLIENT_PGI_v176 - bordered rows, matching the consent rows
-            below. These were unstyled browser radios, which on white read as
-            barely there. */}
-          <div style={{ ...layout.stackTight, marginTop: tokens.spacing.sm }}>
-            {([
-              ["yes", "Yes, send me PGI details with my offers"],
-              ["no", "No, I will proceed without PGI"],
-            ] as const).map(([value, label]) => {
-              const selected = app.pgiOptIn === value;
-              return (
-                <label
-                  key={value}
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: tokens.spacing.sm,
-                    padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
-                    borderRadius: tokens.radii.md,
-                    border: `1px solid ${selected ? tokens.colors.accent : tokens.colors.border}`,
-                    background: selected ? tokens.colors.background : tokens.colors.surface,
-                    fontSize: tokens.typography.label.fontSize,
-                    color: tokens.colors.textPrimary,
-                    cursor: "pointer",
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="pgi-opt-in"
-                    value={value}
-                    checked={selected}
-                    onChange={() => update({ pgiOptIn: value })}
-                    style={{
-                      width: 18,
-                      height: 18,
-                      marginTop: 1,
-                      flexShrink: 0,
-                      // gold dot rather than the browser default blue, which is
-                      // the last stray colour on this step
-                      accentColor: tokens.colors.accent,
-                    }}
-                  />
-                  <span>{label}</span>
-                </label>
-              );
-            })}
-          </div>
-          <details style={{ marginTop: tokens.spacing.sm }}>
-            <summary style={{ cursor: "pointer", color: tokens.colors.textSecondary, fontSize: tokens.typography.body.fontSize }}>
-              Learn more about PGI
-            </summary>
-            <p style={{ ...components.form.helperText, marginTop: tokens.spacing.xs }}>
-              PGI is an optional insurance product that covers your personal guarantee obligation if your business defaults on the loan. Premiums vary by loan size, term, and credit profile, typically 1-3% of the loan amount. If you opt in, lenders will quote PGI alongside their loan offers; you can still decline at the offer stage. Coverage and pricing are determined by the insurer, not Boreal Financial.
-            </p>
-          </details>
-        </div>
+        {/* KS_CLIENT_v1_NO_BI - Keystone is lending only: no Personal Guarantee Insurance question. */}
 
         <div>
           <h2 style={components.form.sectionTitle}>Terms & Conditions</h2>

@@ -6,9 +6,10 @@
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { ENV } from "@/env";
+import { CLIENT_URL, SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const BUILT_AT: string | undefined = import.meta.env.VITE_APP_BUILT_AT;
-const API = ENV.API_BASE || "https://server.boreal.financial";
+const API = ENV.API_BASE || SERVER_URL;
 
 export function isOutdated(builtAt: string | undefined, minBuild: string | undefined): boolean {
   if (!builtAt || !minBuild) return false;
@@ -23,7 +24,7 @@ export default function AppUpdateBanner() {
     let alive = true;
     fetch(API + "/api/client/app-version", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => { if (alive && d && isOutdated(BUILT_AT, d.minBuild)) setWebUrl(String(d.webUrl || "https://client.boreal.financial")); })
+      .then((d) => { if (alive && d && isOutdated(BUILT_AT, d.minBuild)) setWebUrl(String(d.webUrl || CLIENT_URL)); })
       .catch(() => { /* offline: keep the app usable, no banner */ });
     return () => { alive = false; };
   }, []);

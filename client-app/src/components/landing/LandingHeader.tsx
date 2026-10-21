@@ -10,12 +10,13 @@ import { createPortal } from "react-dom"; // BF_CLIENT_MENU_PORTAL_v729
 import "@/styles/container.css"; // BF_CLIENT_CHROME_v170
 import logoUrl from "@/assets/logo-boreal-mountains-white.svg";
 import { isNativeApp } from "@/lib/platform";
+import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const NAV_ITEMS = [
-  { href: "https://www.boreal.financial/products", label: "Products" },
-  { href: "https://www.boreal.financial/industries", label: "Industries" },
-  { href: "https://www.boreal.financial/credit-readiness", label: "Credit Readiness" },
-  { href: "https://www.boreal.financial/contact", label: "Contact" },
+  { href: `${WEBSITE_URL}/products`, label: "Products" },
+  { href: `${WEBSITE_URL}/industries`, label: "Industries" },
+  { href: `${WEBSITE_URL}/credit-readiness`, label: "Credit Readiness" },
+  { href: `${WEBSITE_URL}/contact`, label: "Contact" },
 ];
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -79,7 +80,7 @@ export default function LandingHeader() {
     <header className="site-header w-full border-b border-white/10 bg-[#0B1320]/95 backdrop-blur">
       <div className="bf-container flex min-h-20 items-center justify-between gap-4 py-3">
         <a
-          href="https://www.boreal.financial"
+          href={WEBSITE_URL}
           className="flex items-center gap-3 sm:gap-4"
           onClick={() => setOpen(false)}
           data-testid="landing-logo"
@@ -106,14 +107,6 @@ export default function LandingHeader() {
               {item.label}
             </a>
           ))}
-          <a
-            href="https://www.boreal.insure/"
-            rel="noopener noreferrer"
-            className="ml-4 text-sm font-semibold text-white"
-            data-testid="landing-link-boreal-insurance"
-          >
-            Visit Boreal Risk Management
-          </a>
           <a
             href="#apply-otp"
             className="rounded-full bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-500"
@@ -176,15 +169,6 @@ export default function LandingHeader() {
                 onClick={() => setOpen(false)}
               >
                 Apply Now
-              </a>
-              <a
-                href="https://www.boreal.insure/"
-                rel="noopener noreferrer"
-                className="mt-2 inline-flex justify-center rounded-full border border-white px-5 py-3 font-medium text-white"
-                onClick={() => setOpen(false)}
-                data-testid="landing-mobile-link-boreal-insurance"
-              >
-                Visit Boreal Risk Management
               </a>
             </nav>
           </div>

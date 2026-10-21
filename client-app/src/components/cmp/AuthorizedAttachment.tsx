@@ -8,6 +8,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export type ChatAttachment = { name: string; contentType?: string | null; dataUrl?: string; url?: string };
 
@@ -36,7 +37,7 @@ export function attachmentKind(contentType: string | null | undefined): Kind {
 }
 
 function apiBase(): string {
-  return String(ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+  return String(ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
 }
 
 export function attachmentSrc(url: string): string {

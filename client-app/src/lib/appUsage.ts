@@ -4,6 +4,7 @@
 // id (no name, phone, email or application id). Sent to BF-Server's own /api/analytics; never to Google, Clarity or
 // ads, and it never blocks or slows the app (fire-and-forget, failures ignored).
 import { ENV } from "@/env";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export type UsageEvent =
   | "open" | "sign_in" | "application_started" | "application_submitted" | "document_uploaded" | "form_submitted";
@@ -64,7 +65,7 @@ export function appInfo(): Promise<Info> {
 }
 
 export function usageUrl(): string {
-  return String(ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "") + "/api/analytics";
+  return String(ENV.API_BASE || SERVER_URL).replace(/\/+$/, "") + "/api/analytics";
 }
 
 export async function sendUsage(event: UsageEvent, extra: Record<string, string> = {}): Promise<void> {

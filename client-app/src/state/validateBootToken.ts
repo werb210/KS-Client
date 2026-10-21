@@ -1,6 +1,7 @@
 import { ENV } from "@/env";
 import { clearApplicationToken, getApplicationToken } from "@/auth/applicationToken";
 import { getToken } from "@/auth/token"; // BF_CLIENT_v800_BOOT_CHECK_AUTH
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const APPLICATION_ID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -75,7 +76,7 @@ export async function validateBootToken(
   }
 
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
-  const apiBase = options.apiBase ?? ENV.API_BASE ?? "https://server.boreal.financial";
+  const apiBase = options.apiBase ?? ENV.API_BASE ?? SERVER_URL;
   const url = `${apiBase}/api/client/application/${encodeURIComponent(stored)}/status`;
 
   let res: Response;

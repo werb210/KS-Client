@@ -1,9 +1,10 @@
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 // BF_CLIENT_VISITOR_JOURNEY_v1 - continues the visitor journey inside the wizard.
 // Reuses the journey session id handed over from the website (?journeySession=...),
 // or mints one, so the CRM can show the full path: which ad -> pages -> wizard steps.
 // Beacons to BF-Server. Fails silently; tracking must never break the wizard.
 const SESSION_KEY = "boreal_journey_session";
-const ENDPOINT = "https://server.boreal.financial/api/track/journey";
+const ENDPOINT = `${SERVER_URL}/api/track/journey`; // KS_CLIENT_v1_LICENSEE
 
 export function getJourneySessionId(): string {
   try {

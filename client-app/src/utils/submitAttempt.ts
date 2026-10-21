@@ -9,6 +9,7 @@
 // user's GA session / ad click. Without these the server used a random client_id and the
 // conversion attributed nothing in Google Ads.
 import { getAttribution } from "../lib/attribution";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 function readGaClientId(): string | null {
   try {
@@ -60,7 +61,7 @@ export function sendSubmitAttempt(
 ): void {
   try {
     const base =
-      (import.meta as any).env?.VITE_API_BASE_URL ?? "https://server.boreal.financial";
+      (import.meta as any).env?.VITE_API_BASE_URL ?? SERVER_URL;
     void fetch(`${base}/api/client/submit-attempts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

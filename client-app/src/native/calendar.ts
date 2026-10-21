@@ -3,6 +3,7 @@
 //   Android       - the phone's calendar app, already filled in (CalendarEventPlugin.java)
 //   Browser       - an .ics file the calendar opens
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import { CLIENT_URL, hostOf } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export type CalendarEvent = { title: string; startMs: number; endMs: number; location?: string; notes?: string; url?: string };
 
@@ -43,7 +44,7 @@ export function icsFor(event: CalendarEvent, now = Date.now()): string {
     "VERSION:2.0",
     "PRODID:-//Boreal Financial//Client//EN",
     "BEGIN:VEVENT",
-    `UID:boreal-${event.startMs}@boreal.financial`,
+    `UID:keystone-${event.startMs}@${hostOf(CLIENT_URL)}`,
     `DTSTAMP:${icsDate(now)}`,
     `DTSTART:${icsDate(event.startMs)}`,
     `DTEND:${icsDate(event.endMs)}`,

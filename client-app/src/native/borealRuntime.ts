@@ -6,6 +6,7 @@
 
 import { Capacitor } from "@capacitor/core";
 import { getToken as getSessionToken } from "@/auth/token";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export type RuntimeStatus = {
   uploadQueue: boolean;
@@ -98,7 +99,7 @@ export function resolveBaseUrl(): string {
   for (const candidate of candidates) {
     if (typeof candidate === "string" && candidate.startsWith("http")) return candidate.replace(/\/+$/, "");
   }
-  return "https://server.boreal.financial";
+  return SERVER_URL;
 }
 
 /** Turns a stored fileRef into a Blob, including native filesystem paths. */
