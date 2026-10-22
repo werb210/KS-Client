@@ -4,7 +4,8 @@ export const ANDROID_PLAY_STORE_URL = "https://play.google.com/store/apps/detail
 
 // No numeric App Store id is published yet. Once the listing is live, set VITE_IOS_APP_STORE_URL
 // (e.g. https://apps.apple.com/app/id1234567890) in the Static Web App build; until then the App Store search.
-export const IOS_APP_STORE_FALLBACK_URL = "https://apps.apple.com/ca/search?term=Boreal%20Financial";
+// KS_CLIENT_v4_BRANDING - search the store for this copy's app name (set at build time), never Boreal's.
+export const IOS_APP_STORE_FALLBACK_URL = `https://apps.apple.com/ca/search?term=${encodeURIComponent(String(((import.meta as any).env ?? {}).VITE_COMPANY_NAME ?? "").trim() || "Keystone")}`;
 
 export function iosAppStoreUrl(env: Record<string, unknown> | undefined = readEnv()): string {
   const raw = typeof env?.VITE_IOS_APP_STORE_URL === "string" ? env.VITE_IOS_APP_STORE_URL.trim() : "";

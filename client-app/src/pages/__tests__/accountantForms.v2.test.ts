@@ -40,8 +40,8 @@ describe("BF_CLIENT_ACCOUNTANT_FORMS_v2", () => {
     expect(page).toContain("filter((f) => FORM_RENDERERS[f])");
   });
 
-  it("carries Boreal branding", () => {
-    expect(page).toContain("logo-boreal-mountains-white.svg");
-    expect(page).toContain("Boreal Financial");
+  it("carries the licensee's branding (KS_CLIENT_v4_BRANDING)", () => {
+    expect(page).toContain("<BrandLogo");
+    expect(page).toContain("{brandName()}");
   });
 });

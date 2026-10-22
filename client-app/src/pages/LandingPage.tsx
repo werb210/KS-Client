@@ -2,6 +2,7 @@ import PhoneOTPInline from "@/components/PhoneOTPInline";
 import { useLeaveIfSignedIn } from "@/native/useLeaveIfSignedIn"; // BF_CLIENT_LOCK_ORDER_v364
 import LandingHeader from "@/components/landing/LandingHeader";
 import LandingFooter from "@/components/landing/LandingFooter";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BRAND_v167 - copy and palette aligned with BF-Website. The previous
 // headline carried the boutique-advisory positioning the website rebuild
@@ -26,7 +27,7 @@ export default function LandingPage() {
             </p>
             <h1 className="mt-4 font-display text-4xl font-bold leading-[1.12] md:text-5xl">
               {/* BF_CLIENT_v806_TFV - Boreal acts for the applicant; no lead-matching wording (Twilio 30468). */}
-              Business financing, handled by your Boreal advisor.
+              Business financing, handled by your {brandName()} advisor.
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
               Tell us about your business once. Your advisor prepares your file and

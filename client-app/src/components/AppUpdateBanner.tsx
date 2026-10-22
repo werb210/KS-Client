@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { ENV } from "@/env";
 import { CLIENT_URL, SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 const BUILT_AT: string | undefined = import.meta.env.VITE_APP_BUILT_AT;
 const API = ENV.API_BASE || SERVER_URL;
@@ -31,7 +32,7 @@ export default function AppUpdateBanner() {
   if (!webUrl) return null;
   return (
     <div role="alert" data-testid="app-update-banner" style={{ background: "#0B1F3A", color: "#ffffff", padding: "12px 16px", borderRadius: 10, margin: "12px 0", fontSize: 15 }}>
-      <strong>This version of the Boreal app is out of date.</strong> Some buttons may not work. Update the app, or finish now in your browser.
+      <strong>This version of the {brandName()} app is out of date.</strong> Some buttons may not work. Update the app, or finish now in your browser.
       <div style={{ marginTop: 8 }}>
         <a href={webUrl} target="_blank" rel="noreferrer" style={{ display: "inline-block", background: "#ffffff", color: "#0B1F3A", padding: "8px 14px", borderRadius: 8, fontWeight: 600, textDecoration: "none" }}>Open in browser</a>
       </div>

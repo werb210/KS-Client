@@ -1,6 +1,7 @@
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useState } from "react";
 import { tokens } from "@/styles";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_INSTALL_v177 - the wizard has a sticky action bar at the bottom of
 // every step. This clears it rather than covering it: an install prompt must
@@ -14,7 +15,7 @@ export default function InstallPromptBanner() {
   return (
     <div
       role="region"
-      aria-label="Install Boreal app"
+      aria-label={`Install ${brandName()} app`}
       style={{
         position: "fixed",
         bottom: STICKY_FOOTER_CLEARANCE,
@@ -34,7 +35,7 @@ export default function InstallPromptBanner() {
       }}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600 }}>Install Boreal</div>
+        <div style={{ fontWeight: 600 }}>Install {brandName()}</div>
         <div style={{ fontSize: 13, opacity: 0.85 }}>Faster access and offline support</div>
       </div>
       <button

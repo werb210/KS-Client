@@ -1,6 +1,7 @@
 // BF_CLIENT_ACCOUNTANT_PORTAL_v1
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
-import logoUrl from "@/assets/logo-boreal-mountains-white.svg";
+import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
+import { brandName } from "@/config/brand";
 import { disableAccountantFormMode, enableAccountantFormMode } from "@/lib/api";
 import AdvisorsForm from "@/pages/mini-portal/forms/forms/AdvisorsForm";
 import CraAuthorizationForm from "@/pages/mini-portal/forms/forms/CraAuthorizationForm";
@@ -31,7 +32,7 @@ function getError(error: unknown): Error & { status?: number } {
 function signInMessage(error: unknown): string {
   const err = getError(error);
   if (err.message === "no_accountant_for_phone") return "We don't have this number on file as an accountant. Check with your client that they gave us this number.";
-  if (err.message === "ambiguous_accountant_phone") return "This number is recorded for more than one firm. Please contact Boreal so we can correct it.";
+  if (err.message === "ambiguous_accountant_phone") return `This number is recorded for more than one firm. Please contact ${brandName()} so we can correct it.`;
   if (err.status === 401) return "That code was wrong or has expired. Request a new one.";
   return "Something went wrong signing you in. Please try again.";
 }
@@ -143,7 +144,7 @@ export default function AccountantPage() {
   }
 
   const shell = (children: React.ReactNode) => <div style={page}>
-    <div style={bar}><img src={logoUrl} alt="" style={{ height: 24, width: "auto" }} /><span style={{ color: "#fff", fontWeight: 600, fontSize: 16 }}>Boreal Financial</span></div>
+    <div style={bar}><BrandLogo size={24} /><span style={{ color: "#fff", fontWeight: 600, fontSize: 16 }}>{brandName()}</span></div>
     {children}
   </div>;
 

@@ -4,6 +4,7 @@
 // CRM tagged under_10k_revenue_waitlist; the checkbox records express consent to contact.
 import { useState } from "react";
 import { joinWaitlist } from "../services/mayaService";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export default function Under10kWaitlist({ initial }: { initial?: { name?: string; email?: string; phone?: string } }) {
   const [name, setName] = useState(initial?.name ?? "");
@@ -23,7 +24,7 @@ export default function Under10kWaitlist({ initial }: { initial?: { name?: strin
       <input aria-label="Mobile phone" type="tel" placeholder="Mobile phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
       <label style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 13 }}>
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-        <span>Yes, Boreal Financial may contact me by email, text or phone about financing for my business. I can opt out at any time.</span>
+        <span>Yes, {brandName()} may contact me by email, text or phone about financing for my business. I can opt out at any time.</span>
       </label>
       <button type="button" disabled={!ready || state === "saving"} onClick={async () => {
         setState("saving");

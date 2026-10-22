@@ -4,6 +4,7 @@
 //   Browser       - an .ics file the calendar opens
 import { Capacitor, registerPlugin } from "@capacitor/core";
 import { CLIENT_URL, hostOf } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export type CalendarEvent = { title: string; startMs: number; endMs: number; location?: string; notes?: string; url?: string };
 
@@ -20,11 +21,11 @@ export function bookedCallEvent(input: { startsAt: string; kind: "phone" | "team
   const who = input.staffFirstName ? ` with ${input.staffFirstName}` : "";
   const teams = input.kind === "teams";
   const event: CalendarEvent = {
-    title: `Boreal Financial call${who}`,
+    title: `${brandName()} call${who}`,
     startMs,
     endMs: startMs + 30 * 60 * 1000,
     location: teams ? "Microsoft Teams" : "Phone call",
-    notes: teams ? "The Teams link is in the invitation Boreal emailed you." : "Your advisor will call you at the number you gave.",
+    notes: teams ? `The Teams link is in the invitation ${brandName()} emailed you.` : "Your advisor will call you at the number you gave.",
   };
   if (teams && input.joinUrl && /^https:\/\//i.test(input.joinUrl)) event.url = input.joinUrl;
   return event;
@@ -42,7 +43,7 @@ export function icsFor(event: CalendarEvent, now = Date.now()): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Boreal Financial//Client//EN",
+    `PRODID:-//${brandName().replace(/[\\/;,]/g, " ")}//Client//EN`,
     "BEGIN:VEVENT",
     `UID:keystone-${event.startMs}@${hostOf(CLIENT_URL)}`,
     `DTSTAMP:${icsDate(now)}`,
@@ -53,7 +54,7 @@ export function icsFor(event: CalendarEvent, now = Date.now()): string {
   if (event.location) lines.push(`LOCATION:${icsText(event.location)}`);
   if (event.notes) lines.push(`DESCRIPTION:${icsText(event.notes)}`);
   if (event.url) lines.push(`URL:${event.url}`);
-  lines.push("BEGIN:VALARM", "TRIGGER:-PT15M", "ACTION:DISPLAY", "DESCRIPTION:Boreal call", "END:VALARM", "END:VEVENT", "END:VCALENDAR");
+  lines.push("BEGIN:VALARM", "TRIGGER:-PT15M", "ACTION:DISPLAY", `DESCRIPTION:${brandName()} call`, "END:VALARM", "END:VEVENT", "END:VCALENDAR");
   return lines.join("\r\n");
 }
 

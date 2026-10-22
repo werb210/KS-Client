@@ -6,6 +6,7 @@ import { isStartupPathKyc } from "@/wizard/wizardSchema";
 import { useIsPhoneWidth } from "@/components/CmpPhone"; // BF_CLIENT_v802_WIZARD_PHONE
 import { Icon } from "@/components/cmp/icons"; // BF_CLIENT_v805_PHONE_FIXES
 import "@/components/cmp/cmp.css";
+import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BLOCK_v_WIZARD_DIRECTION_A_DESIGN_v1 — Direction A "Refined Cards":
 // dark header band with a blue progress fill, labeled 6-dot stepper, blue
@@ -36,7 +37,7 @@ export function StepHeader({ step, title, subtitle, totalSteps = 6 }: StepHeader
       <>
         <FieldTips />
         {/* BF_CLIENT_v805_PHONE_FIXES - Maya sits in the header next to the account button instead of floating over the form. */}
-        <button type="button" className="cmpx-acct-btn cmpx-maya-btn" aria-label="Ask Maya" data-testid="step-header-maya"
+        <button type="button" className="cmpx-acct-btn cmpx-maya-btn" aria-label={`Ask ${assistantName()}`} data-testid="step-header-maya"
           onClick={() => window.dispatchEvent(new CustomEvent("maya:open", { detail: { mode: "chat" } }))}>
           <Icon name="chat" size={20} />
         </button>
@@ -69,7 +70,7 @@ export function StepHeader({ step, title, subtitle, totalSteps = 6 }: StepHeader
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
             <span aria-hidden style={{ color: "#fff", fontSize: 16, lineHeight: 1 }}>&#9650;</span>
-            <span style={{ color: "#fff", fontSize: 14, fontWeight: 700, letterSpacing: 0.2 }}>Boreal</span>
+            <span style={{ color: "#fff", fontSize: 14, fontWeight: 700, letterSpacing: 0.2 }}>{brandName()}</span>
           </div>
           <div style={{ height: 4, borderRadius: 999, background: "rgba(255,255,255,0.14)", overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${pct}%`, background: tokens.colors.primary, transition: "width .3s ease" }} />

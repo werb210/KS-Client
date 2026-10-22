@@ -8,7 +8,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom"; // BF_CLIENT_MENU_PORTAL_v729
 import "@/styles/container.css"; // BF_CLIENT_CHROME_v170
-import logoUrl from "@/assets/logo-boreal-mountains-white.svg";
+import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
+import { brandName } from "@/config/brand";
 import { isNativeApp } from "@/lib/platform";
 import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
@@ -69,8 +70,8 @@ export default function LandingHeader() {
     return (
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a1120]/95 backdrop-blur">
         <div className="bf-container flex min-h-14 items-center gap-3">
-          <img src={logoUrl} alt="Boreal Financial" className="h-7 w-auto" />
-          <span className="text-sm font-semibold text-white">Boreal Financial</span>
+          <BrandLogo size={28} />
+          <span className="text-sm font-semibold text-white">{brandName()}</span>
         </div>
       </header>
     );
@@ -85,15 +86,9 @@ export default function LandingHeader() {
           onClick={() => setOpen(false)}
           data-testid="landing-logo"
         >
-          <img
-            src={logoUrl}
-            alt=""
-            className="h-10 w-auto object-contain"
-            loading="lazy"
-            decoding="async"
-          />
+          <BrandLogo size={40} />
           <span className="text-base font-semibold tracking-wide text-white sm:text-xl">
-            Boreal Financial
+            {brandName()}
           </span>
         </a>
 

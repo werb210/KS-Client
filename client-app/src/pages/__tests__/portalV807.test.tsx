@@ -48,7 +48,7 @@ describe("v807 chat says who you're writing to", () => {
     await renderPortal();
     fireEvent.click(screen.getByTestId("cmp-tab-chat"));
     fireEvent.click(screen.getByTestId("cmp-to-maya"));
-    expect(screen.getByTestId("cmp-chat-writing").textContent).toContain("Maya, our AI assistant");
+    expect(screen.getByTestId("cmp-chat-writing").textContent).toContain("Assistant, our AI assistant");
     fireEvent.click(screen.getByTestId("cmp-to-advisor"));
     expect(screen.getByTestId("cmp-to-advisor").getAttribute("aria-selected")).toBe("true");
     expect(screen.getByTestId("cmp-chat-writing").textContent).toContain("Andrew, your advisor");

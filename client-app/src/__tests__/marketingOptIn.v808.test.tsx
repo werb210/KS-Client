@@ -24,7 +24,7 @@ vi.mock("@/api/clientApp", () => ({
   ClientAppAPI: { status: vi.fn(async () => ({})), submit: vi.fn(async () => ({})) },
 }));
 
-import { MARKETING_SMS_OPTIN_TEXT, Step6_Review } from "@/wizard/Step6_Review";
+import { marketingSmsOptinText, Step6_Review } from "@/wizard/Step6_Review";
 
 let host: HTMLDivElement;
 let root: Root;
@@ -62,9 +62,9 @@ describe("v808 Text me offers", () => {
   it("is a separate, unticked, optional box with the carrier wording", async () => {
     await render(completeApplication({ currentStep: 6 }));
     expect(offersBox().checked).toBe(false);
-    expect(host.querySelector('[data-testid="marketing-sms-consent"]')?.textContent).toBe(MARKETING_SMS_OPTIN_TEXT);
-    expect(MARKETING_SMS_OPTIN_TEXT).toMatch(/Reply STOP to opt out/);
-    expect(MARKETING_SMS_OPTIN_TEXT).toMatch(/Not required to apply/);
+    expect(host.querySelector('[data-testid="marketing-sms-consent"]')?.textContent).toBe(marketingSmsOptinText());
+    expect(marketingSmsOptinText()).toMatch(/Reply STOP to opt out/);
+    expect(marketingSmsOptinText()).toMatch(/Not required to apply/);
   });
   it("toggles marketingSmsConsent and never gates submit", async () => {
     await render(completeApplication({ currentStep: 6 }));

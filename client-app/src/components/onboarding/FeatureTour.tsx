@@ -7,20 +7,21 @@ import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { biometryStatus, enrollDeviceWithReason, isEnrolled } from "@/native/deviceSignIn";
 import { trackEvent } from "@/utils/analytics";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 export const TOUR_KEY = "boreal_bf_feature_tour_v1";
 export type TourStep = { id: string; title: string; body: string; action?: "push" | "faceid" };
 
 export function tourSteps(platform: string, opts: { faceId: boolean }): TourStep[] {
   const ios = platform === "ios";
   const steps: TourStep[] = [
-    { id: "welcome", title: "Welcome to Boreal Financial", body: "A quick look at what the app can do. It takes about a minute, and you can skip any step." },
+    { id: "welcome", title: `Welcome to ${brandName()}`, body: "A quick look at what the app can do. It takes about a minute, and you can skip any step." },
     { id: "push", title: "Know the moment something changes", body: "We'll let you know when we need a document, when a lender responds, and when your file moves forward.", action: "push" },
   ];
   if (opts.faceId) steps.push({ id: "faceid", title: ios ? "Sign in with Face ID" : "Sign in with your fingerprint or face", body: "Skip the text code next time and open your file with a glance.", action: "faceid" });
   steps.push(
     { id: "scan", title: "Scan documents with your camera", body: "When we ask for a document, choose Scan to photograph it with your camera instead of hunting for a file." },
-    { id: "share", title: "Send files from other apps", body: ios ? "In Photos, Files or Mail, tap Share and choose Boreal Financial to send a document straight to your file." : "In Photos, Files or Gmail, tap Share and choose Boreal Financial to send a document straight to your file." },
-    { id: "widget", title: "Keep your progress on your home screen", body: ios ? "Touch and hold an empty spot on your home screen, tap Edit, then Add Widget, and choose Boreal Financial." : "Touch and hold an empty spot on your home screen, tap Widgets, and drag Boreal Financial onto your screen." },
+    { id: "share", title: "Send files from other apps", body: ios ? `In Photos, Files or Mail, tap Share and choose ${brandName()} to send a document straight to your file.` : `In Photos, Files or Gmail, tap Share and choose ${brandName()} to send a document straight to your file.` },
+    { id: "widget", title: "Keep your progress on your home screen", body: ios ? `Touch and hold an empty spot on your home screen, tap Edit, then Add Widget, and choose ${brandName()}.` : `Touch and hold an empty spot on your home screen, tap Widgets, and drag ${brandName()} onto your screen.` },
     { id: "call", title: "Call us from the app", body: "Tap Call us on your file to talk to your advisor right from the app, over Wi-Fi or data." },
   );
   return steps;
@@ -59,7 +60,7 @@ export default function FeatureTour({ forceOpen = false }: { forceOpen?: boolean
         let p = await PushNotifications.checkPermissions();
         if (p.receive === "prompt" || p.receive === "prompt-with-rationale") p = await PushNotifications.requestPermissions();
         if (p.receive === "granted") { await PushNotifications.register(); setNote("Notifications are on."); trackEvent("feature_tour_push_on", {}); }
-        else setNote("Notifications are off. You can turn them on any time in your phone's Settings under Boreal Financial.");
+        else setNote(`Notifications are off. You can turn them on any time in your phone's Settings under ${brandName()}.`);
       } else if (step.action === "faceid") {
         const r = await enrollDeviceWithReason();
         if (r.ok) { setNote("Done - next time you can sign in with a glance."); trackEvent("feature_tour_faceid_on", {}); }

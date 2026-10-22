@@ -146,10 +146,10 @@ describe("Advisors", () => {
     await waitFor(() => expect(api.getFormResponse).toHaveBeenCalled());
     const box = screen.getByRole("checkbox");
     expect(box.closest("label")?.textContent?.trim()).toBe(
-      "I authorize Boreal Financial to discuss this proposed credit facility with any of its lending partners.",
+      "I authorize Keystone to discuss this proposed credit facility with any of its lending partners.",
     );
     expect(container.textContent).not.toMatch(/Accord/);
-    expect(container.textContent).toContain("so Boreal Financial can coordinate with them");
+    expect(container.textContent).toContain("so Keystone can coordinate with them");
     expect(screen.getByLabelText("Do you have CRA My Business (Canada) or an IRS online business account (US) set up?")).toBeTruthy();
   });
 });

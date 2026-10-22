@@ -1,7 +1,7 @@
 {
-  "name": "Boreal Financial",
-  "short_name": "Boreal",
-  "description": "Boreal Financial loan application",
+  "name": "Keystone",
+  "short_name": "Keystone",
+  "description": "Business financing application",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

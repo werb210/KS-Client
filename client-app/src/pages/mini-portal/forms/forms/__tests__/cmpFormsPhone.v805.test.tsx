@@ -234,7 +234,7 @@ describe("CRA authorization", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Individual / Sole Prop / Partnership" }));
     expect(steps()).toHaveLength(INDIVIDUAL_STEPS.length);
-    expect(screen.getByText(/Boreal Financial is not alerted when you finish/)).toBeTruthy();
+    expect(screen.getByText(/Keystone is not alerted when you finish/)).toBeTruthy();
 
     const confirm = screen.getByRole("button", { name: "Confirm Authorization" }) as HTMLButtonElement;
     expect(confirm.disabled).toBe(true);

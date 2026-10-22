@@ -5,6 +5,8 @@ import { NetworkFirst, NetworkOnly, StaleWhileRevalidate, CacheFirst } from "wor
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { deleteAllCaches, isApiRequest, isPublicLenderProductsRequest } from "./pwa/swRoutes";
+// KS_CLIENT_v4_BRANDING - the service worker has no app state: the build's company name, never Boreal's.
+const SW_APP_NAME: string = String(((import.meta as any).env ?? {}).VITE_COMPANY_NAME ?? "").trim() || "Keystone";
 
 declare const self: ServiceWorkerGlobalScope;
 const wbManifestToken = "__WB_MANIFEST";
@@ -78,8 +80,8 @@ self.addEventListener("message", (event) => {
 self.addEventListener("push", (event) => {
   let payload: { title?: string; body?: string; url?: string; icon?: string; tag?: string } = {};
   try { payload = event.data ? event.data.json() : {}; }
-  catch { payload = { title: "Boreal", body: event.data ? event.data.text() : "" }; }
-  const title = payload.title || "Boreal";
+  catch { payload = { title: SW_APP_NAME, body: event.data ? event.data.text() : "" }; }
+  const title = payload.title || SW_APP_NAME;
   const options: NotificationOptions = {
     body: payload.body || "",
     icon: payload.icon || "/icons/icon-192x192.png",

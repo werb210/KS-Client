@@ -1,4 +1,5 @@
 // BF_CLIENT_v802_PHONE_UI - line icons for the phone client portal (no emoji).
+import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
 const P: Record<string, JSX.Element> = {
   phone: <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />,
   chat: <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />,
@@ -36,11 +37,7 @@ export function Icon({ name, size = 22, strokeWidth = 1.8 }: { name: keyof typeo
   );
 }
 
-/** The Boreal mountains, navy, for the white phone header. */
-export function BorealMark({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 100 72.13" aria-hidden="true">
-      <path d="M 99.82 70.67 L 75.05 14.75 L 73.04 13.84 L 62.11 20.77 L 55.56 2.19 L 52.64 0.0 L 36.07 31.15 L 28.78 24.59 L 0.0 71.22 Z M 50.82 17.3 L 67.58 64.48 L 34.97 64.48 L 17.67 56.83 L 30.24 35.88 L 35.34 42.62 L 36.98 42.44 Z" fill="#0B1F3A" fillRule="evenodd" />
-    </svg>
-  );
+/** KS_CLIENT_v4_BRANDING - the licensee's mark (was the Boreal mountains). */
+export function BrandMark({ className, size = 26 }: { className?: string; size?: number }) {
+  return <BrandLogo className={className} size={size} />;
 }

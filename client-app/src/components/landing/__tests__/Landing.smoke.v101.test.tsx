@@ -6,7 +6,7 @@ import LandingFooter from "../LandingFooter";
 describe("LandingHeader (v101)", () => {
   it("renders the wordmark and the desktop Apply CTA", () => {
     const { container, getAllByText } = render(<LandingHeader />);
-    expect(getAllByText("Boreal Financial").length).toBeGreaterThan(0);
+    expect(getAllByText("Keystone").length).toBeGreaterThan(0);
     expect(container.querySelectorAll('a[href="#apply-otp"]').length).toBeGreaterThan(0);
   });
 
@@ -15,7 +15,7 @@ describe("LandingHeader (v101)", () => {
 describe("LandingFooter (v101)", () => {
   it("renders the three-column structure with Apply anchor", () => {
     const { container, getByText, getAllByText } = render(<LandingFooter />);
-    expect(getByText("Boreal Financial")).toBeTruthy();
+    expect(getByText("Keystone")).toBeTruthy();
     expect(getByText("Explore")).toBeTruthy();
     expect(getAllByText("Contact Us").length).toBeGreaterThan(0);
     expect(container.querySelector('a[href="#apply-otp"]')).not.toBeNull();

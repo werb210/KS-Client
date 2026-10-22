@@ -1,8 +1,9 @@
 // BF_CLIENT_v802_PHONE_UI - the phone client portal's header and Home cards.
 import { useEffect, useState } from "react";
-import { Icon, BorealMark } from "./icons";
+import { Icon, BrandMark } from "./icons";
 import { type Advisor, advisorName, initials, shortStageLabel } from "./cmpData";
 import "./cmp.css";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_v828_FINISH_IMPORTED_FILE - readyToFinish: a file Boreal prepared for the client from documents they
 // gave a broker or lender. The client finishes it here; Continue opens the wizard pre-filled.
@@ -49,7 +50,7 @@ export function toSwitcherApp(a: any): SwitcherApp {
 export function CmpHeader({ business, stage, canSwitch, onSwitch }: { business: string; stage: string; canSwitch: boolean; onSwitch: () => void }) {
   return (
     <header className="cmpx-head" role="banner" data-testid="cmp-header">
-      <BorealMark className="cmpx-head__mark" />
+      <BrandMark className="cmpx-head__mark" size={24} />
       <button type="button" className={"cmpx-head__title" + (canSwitch ? " cmpx-head__title--switch" : "")} disabled={!canSwitch}
         onClick={canSwitch ? onSwitch : undefined} aria-haspopup={canSwitch ? "dialog" : undefined} aria-label={canSwitch ? business + ", switch application" : undefined}
         data-testid="cmp-header-title">
@@ -136,11 +137,11 @@ export function CmpHello({ firstName, advisor, onCall, onMessage, onBook }: { fi
             ? <img className="cmpx-avatar" src={advisor.photoUrl} alt="" onError={() => setPhotoFailed(true)} />
             : name
               ? <span className="cmpx-avatar" aria-hidden="true">{initials(name)}</span>
-              : <span className="cmpx-avatar cmpx-avatar--brand" aria-hidden="true"><BorealMark /></span>}
+              : <span className="cmpx-avatar cmpx-avatar--brand" aria-hidden="true"><BrandMark size={30} /></span>}
           <div style={{ minWidth: 0 }}>
             {/* BF_CLIENT_v805_PHONE_FIXES - no advisor assigned yet: the Boreal team, with the Boreal logo. */}
             <div className="cmpx-eyebrow">{name ? "Your advisor" : "Your team"}</div>
-            <div className="cmpx-advisor__name">{name || "Boreal Financial team"}</div>
+            <div className="cmpx-advisor__name">{name || `${brandName()} team`}</div>
           </div>
         </div>
         {/* BF_CLIENT_v808_WIDE_HOME - no Message button where Chat is already open beside Home (wide screens). */}
@@ -191,12 +192,12 @@ export function CmpOffersCard({ count, bestAmount, onOpen }: { count: number; be
 /** Item 27 - once funded, ask the client to refer another business owner. */
 export function CmpReferCard({ shareUrl }: { shareUrl: string }) {
   const [note, setNote] = useState<string | null>(null);
-  const text = "I used Boreal Financial to get business financing. Have a look:";
+  const text = `I used ${brandName()} to get business financing. Have a look:`;
   const share = async () => {
     setNote(null);
     try {
       const nav = navigator as Navigator & { share?: (d: { title?: string; text?: string; url?: string }) => Promise<void> };
-      if (typeof nav.share === "function") { await nav.share({ title: "Boreal Financial", text, url: shareUrl }); return; }
+      if (typeof nav.share === "function") { await nav.share({ title: brandName(), text, url: shareUrl }); return; }
     } catch (e) {
       if ((e as { name?: string } | null)?.name === "AbortError") return; // closed the share sheet
     }
@@ -206,9 +207,9 @@ export function CmpReferCard({ shareUrl }: { shareUrl: string }) {
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-refer">
       <div className="cmpx-eyebrow">Know a business owner?</div>
-      <h2 className="cmpx-refer__title">Refer them to Boreal</h2>
+      <h2 className="cmpx-refer__title">Refer them to {brandName()}</h2>
       <p className="cmpx-refer__sub">If someone you know needs financing, send them our way. Your advisor will take good care of them.</p>
-      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void share()}><Icon name="share" />Share Boreal</button>
+      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void share()}><Icon name="share" />Share {brandName()}</button>
       {note ? <div className="cmpx-note" role="status">{note}</div> : null}
     </section>
   );

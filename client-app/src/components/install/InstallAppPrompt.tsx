@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
 import { Capacitor } from "@capacitor/core"; // BF_CLIENT_INSTALL_CARD_NATIVE_v338
 import { ANDROID_PLAY_STORE_URL, iosAppStoreUrl } from "@/lib/appStoreLinks"; // BF_CLIENT_v817
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type Platform = "ios" | "android" | "desktop" | "unknown";
 
@@ -58,7 +59,7 @@ const styles = {
 
 type StepKey = "ios" | "android" | "desktop";
 
-const STEPS: Record<StepKey, { label: string; steps: string[] }> = {
+const getSteps = (): Record<StepKey, { label: string; steps: string[] }> => ({
   ios: { label: "On iPhone or iPad (Safari)", steps: [
     "Tap the Share button at the bottom of Safari",
     'Scroll down and tap "Add to Home Screen"',
@@ -71,10 +72,10 @@ const STEPS: Record<StepKey, { label: string; steps: string[] }> = {
   ] },
   desktop: { label: "On your computer (Chrome or Edge)", steps: [
     "Click the install icon in the address bar, or open the menu (three dots)",
-    'Choose "Install Boreal Financial"',
+    `Choose "Install ${brandName()}"`,
     'Click "Install"',
   ] },
-};
+});
 
 export default function InstallAppPrompt() {
   const [platform, setPlatform] = useState<Platform>("unknown");
@@ -115,11 +116,11 @@ export default function InstallAppPrompt() {
   };
 
   return (
-    <div style={styles.card} role="region" aria-label="Add Boreal to your home screen">
-      <div style={styles.title}>Add Boreal to your home screen</div>
-      <div style={styles.subtitle}>This is where Boreal Financial keeps in touch with you throughout your application — add it to your home screen for one-tap access.</div>
+    <div style={styles.card} role="region" aria-label={`Add ${brandName()} to your home screen`}>
+      <div style={styles.title}>Add {brandName()} to your home screen</div>
+      <div style={styles.subtitle}>This is where {brandName()} keeps in touch with you throughout your application — add it to your home screen for one-tap access.</div>
       <ul style={styles.benefits}>
-        <li>Call Boreal directly</li>
+        <li>Call {brandName()} directly</li>
         <li>Message your intake team</li>
         <li>Upload missing documents</li>
         <li>Complete additional forms</li>
@@ -134,9 +135,9 @@ export default function InstallAppPrompt() {
       </div>
       {openSteps && (
         <div style={styles.steps}>
-          <strong>{STEPS[openSteps].label}</strong>
+          <strong>{getSteps()[openSteps].label}</strong>
           <ol style={{ margin: "8px 0 0", paddingLeft: 20 }}>
-            {STEPS[openSteps].steps.map((s, i) => <li key={i}>{s}</li>)}
+            {getSteps()[openSteps].steps.map((s, i) => <li key={i}>{s}</li>)}
           </ol>
         </div>
       )}

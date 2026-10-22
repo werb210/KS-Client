@@ -52,6 +52,7 @@ import { STAGE_STEPS, FUNDED_STEP, isFundedState, loadAdvisor, type Advisor } fr
 import { phoneFromToken } from "@/native/deviceSignIn";
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
 import { SERVER_URL, WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BLOCK_v317_MINI_PORTAL_STAGES_v1 — order per design mockups
 // (Received → In Review → Documents Required → Additional Steps → Off to
@@ -274,7 +275,7 @@ export default function MiniPortalPage() {
           authorRole: role,
           // BF_CLIENT_BLOCK_v317_MINI_PORTAL_STAGES_v1 — prefer the staff_name
           // returned by v636 over the generic "Boreal" fallback.
-          authorName: item.authorName ?? item.staff_name ?? item.staffName ?? (role === "self" ? "You" : "Boreal"),
+          authorName: item.authorName ?? item.staff_name ?? item.staffName ?? (role === "self" ? "You" : brandName()),
           body: String(item.body ?? item.content ?? ""),
           createdAt: String(item.createdAt ?? item.created_at ?? new Date().toISOString()),
           ctaLabel: typeof item.cta_label === "string" ? item.cta_label : (typeof item.ctaLabel === "string" ? item.ctaLabel : null),
@@ -672,7 +673,7 @@ export default function MiniPortalPage() {
       setMessages((cur) => [...cur, {
         id: `signed-${offerId}-${Date.now()}`,
         authorRole: "other",
-        authorName: "Boreal",
+        authorName: brandName(),
         body: "Signed term sheet received. We'll review it and be in touch shortly.",
         createdAt: new Date().toISOString(),
       }]);
@@ -1146,7 +1147,7 @@ export default function MiniPortalPage() {
             sendToAdvisor={postToAdvisor} onCta={(a) => handleMessageCta(a)} inputRef={composerInputRef} bodyRef={threadBodyRef} />
         ) : (
         <section className="mp-thread-card" data-cmp-tab="chat">
-          <header className="mp-thread-card__header">Chat with Boreal Staff</header>
+          <header className="mp-thread-card__header">Chat with {brandName()} Staff</header>
           <div className="mp-thread-card__body" ref={threadBodyRef}>
             {/* BF_CLIENT_TODO_ACTIONS_v637 - "Sign your application documents" is now a to-do item. */}
             {/* BF_CLIENT_ALL_RECEIVED_NOTE_v1 — positive confirmation once nothing is outstanding. */}
@@ -1274,7 +1275,7 @@ export default function MiniPortalPage() {
               ))}
               {/* BF_CLIENT_ASK_MAYA_v745 - Maya knows this client's applications, documents and details. */}
               <button type="button" className="mp-chip mp-chip--action" data-testid="ask-maya" onClick={() => window.dispatchEvent(new CustomEvent("maya:open", { detail: { mode: "chat" } }))}>
-                Ask Maya
+                Ask {assistantName()}
               </button>
               {/* BF_CLIENT_BLOCK_v_HIDE_SIGNING_REASON_v1 — never surface the raw
                   signing-readiness status/reason (e.g. "lender_not_finalized") to the
@@ -1585,7 +1586,7 @@ export default function MiniPortalPage() {
             {deleteStep === 2 && (
               <>
                 <p style={{ margin: "0 0 16px", fontSize: 14, lineHeight: 1.5, color: "#374151" }}>
-                  Once deleted, Boreal Financial will not be allowed to communicate with you regarding lender communications, offers to finance, or to assist you with completing your funding.
+                  Once deleted, {brandName()} will not be allowed to communicate with you regarding lender communications, offers to finance, or to assist you with completing your funding.
                 </p>
                 {deleteErr && <p style={{ margin: "0 0 12px", fontSize: 13, color: "#dc2626" }}>{deleteErr}</p>}
                 <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>

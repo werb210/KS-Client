@@ -3,7 +3,8 @@
 // logo + tagline, Explore column, Apply column, and the bottom Privacy / Terms
 // / copyright row. Website pages live on boreal.financial (different origin) so
 // those links are absolute; Apply Now scrolls to this page's OTP form.
-import logoUrl from "@/assets/logo-boreal-mountains-white.svg";
+import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
+import { brandName } from "@/config/brand";
 import { isNativeApp } from "@/lib/platform";
 import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
@@ -19,8 +20,8 @@ export default function LandingFooter() {
         <div className="grid gap-8 mb-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <img src={logoUrl} alt="" className="h-8 w-auto" />
-              <span className="font-semibold text-white">Boreal Financial</span>
+              <BrandLogo size={32} />
+              <span className="font-semibold text-white">{brandName()}</span>
             </div>
             <p className="text-sm leading-relaxed text-white/65">
               Commercial financing advice for businesses in Canada and the United States. {/* BF_CLIENT_v806_TFV */}
@@ -49,7 +50,7 @@ export default function LandingFooter() {
             <a href={`${WEBSITE_URL}/privacy`} className="text-inherit no-underline hover:text-white">Privacy Policy</a>
             <a href={`${WEBSITE_URL}/terms`} className="text-inherit no-underline hover:text-white">Terms of Service</a>
           </div>
-          <div>© {new Date().getFullYear()} Boreal Financial</div>
+          <div>© {new Date().getFullYear()} {brandName()}</div>
         </div>
       </div>
     </footer>

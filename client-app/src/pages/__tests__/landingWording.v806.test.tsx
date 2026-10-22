@@ -17,7 +17,7 @@ describe("v806 sign-up page wording", () => {
   it("the landing page has no lead-matching wording", async () => {
     const { default: LandingPage } = await import("@/pages/LandingPage");
     const { container } = render(<MemoryRouter><LandingPage /></MemoryRouter>);
-    expect(container.textContent).toContain("Business financing, handled by your Boreal advisor.");
+    expect(container.textContent).toContain("Business financing, handled by your Keystone advisor.");
     expect(container.textContent).not.toMatch(/marketplace|every lender that fits|lenders who fund companies like yours/i);
   });
 });
