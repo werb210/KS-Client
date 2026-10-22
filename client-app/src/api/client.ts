@@ -1,5 +1,6 @@
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 type HttpResponse<T = unknown> = {
   data: T;
@@ -20,7 +21,7 @@ type RequestConfig = {
 
 type ApiClientError = Error & { status?: number; code?: string };
 
-const API_BASE = ENV.API_BASE || "https://server.boreal.financial";
+const API_BASE = ENV.API_BASE || SERVER_URL;
 
 function getAuthHeaders(headers?: HeadersInit): HeadersInit {
   const token = getToken();

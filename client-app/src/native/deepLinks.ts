@@ -1,6 +1,7 @@
+import { CLIENT_URL, hostOf } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 const FALLBACK_ROUTE = "/portal";
 // BF_CLIENT_v817 - hosts whose https links the app claims (apple-app-site-association / assetlinks.json).
-const APP_LINK_HOSTS = new Set(["client.boreal.financial"]);
+const APP_LINK_HOSTS = new Set([hostOf(CLIENT_URL).toLowerCase()]); // KS_CLIENT_v1_LICENSEE
 
 /** Converts every native URL source (custom links, app links and push data) to a safe in-app route. */
 export function parseNativeUrl(value: unknown): string {

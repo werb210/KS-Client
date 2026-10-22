@@ -54,11 +54,11 @@ describe("push token registration", () => {
 
 describe("client portal app links", () => {
   it("opens the same screen in the app", () => {
-    expect(parseNativeUrl("https://client.boreal.financial/application/0b6f4b1e-1111-4111-8111-111111111111"))
+    expect(parseNativeUrl("https://wonderful-island-0b68ae310.5.azurestaticapps.net/application/0b6f4b1e-1111-4111-8111-111111111111"))
       .toBe("/application/0b6f4b1e-1111-4111-8111-111111111111");
-    expect(parseNativeUrl("https://client.boreal.financial/portal?section=documents")).toBe("/portal?section=documents");
-    expect(parseNativeUrl("https://client.boreal.financial/")).toBe("/portal");
+    expect(parseNativeUrl("https://wonderful-island-0b68ae310.5.azurestaticapps.net/portal?section=documents")).toBe("/portal?section=documents");
+    expect(parseNativeUrl("https://wonderful-island-0b68ae310.5.azurestaticapps.net/")).toBe("/portal");
     expect(parseNativeUrl("https://evil.example/application/1")).toBe("/portal");
-    expect(parseNativeUrl("http://client.boreal.financial/application/1")).toBe("/portal");
+    expect(parseNativeUrl("http://wonderful-island-0b68ae310.5.azurestaticapps.net/application/1")).toBe("/portal");
   });
 });

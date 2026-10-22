@@ -51,6 +51,7 @@ import BookCallSheet from "../components/cmp/BookCallSheet";
 import { STAGE_STEPS, FUNDED_STEP, isFundedState, loadAdvisor, type Advisor } from "../components/cmp/cmpData";
 import { phoneFromToken } from "@/native/deviceSignIn";
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
+import { SERVER_URL, WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 // BF_CLIENT_BLOCK_v317_MINI_PORTAL_STAGES_v1 — order per design mockups
 // (Received → In Review → Documents Required → Additional Steps → Off to
@@ -115,7 +116,7 @@ export default function MiniPortalPage() {
   // blob was private: Chrome rendered the error page and showed "Failed to load PDF document".
   const openTermSheet = useCallback(async (o: Offer) => {
     try {
-      const base = ENV.API_BASE || "https://server.boreal.financial";
+      const base = ENV.API_BASE || SERVER_URL;
       const res = await fetch(`${base}/api/offers/${o.id}/term-sheet`, { headers: { Authorization: `Bearer ${getToken() ?? ""}` } });
       if (!res.ok) throw new Error(`term_sheet_${res.status}`);
       const blob = await res.blob();
@@ -540,7 +541,7 @@ export default function MiniPortalPage() {
       // BF_CLIENT_BLOCK_v308_CALLUS_TOKEN_URL_v1 — the token fetch was a relative
       // URL, which on the Static Web App host resolved to index.html (SPA fallback)
       // and made r.json() throw "Unexpected token '<'". Use the API base.
-      const voiceBase = (ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+      const voiceBase = (ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
       const tokenUrl = `${voiceBase}/api/client/voice/token?applicationId=${encodeURIComponent(applicationId)}`;
       // BF_CLIENT_CALLUS_AUTH_v169
       // The server's callerOwnsApplication guard returns false unless the
@@ -1113,7 +1114,7 @@ export default function MiniPortalPage() {
       {applicationId ? <ActionCenter applicationId={applicationId} onAction={onActionCenterItem} refreshKey={todoRefresh} onData={onTodoData} extraItems={todoExtras} grouped={isPhone} /> : null}
       </div>
       {isPhone ? <CmpOffersCard count={liveOffers.length} bestAmount={bestOfferAmount} onOpen={() => setOffersOpen(true)} /> : null}
-      {isPhone && funded ? <CmpReferCard shareUrl="https://www.boreal.financial/?utm_source=client_app&utm_medium=referral&utm_campaign=refer_a_business" /> : null}
+      {isPhone && funded ? <CmpReferCard shareUrl={`${WEBSITE_URL}/?utm_source=client_app&utm_medium=referral&utm_campaign=refer_a_business`} /> : null}
       {/* BF_CLIENT_BOOK_CALL_v723 - book a 30-minute phone or Teams call with an advisor. */}
       {/* BF_CLIENT_v802_BOOK_IN_APP - opens the booking sheet here instead of the website. Phones book from the advisor card. */}
       {!isPhone ? <div data-testid="book-call" data-cmp-tab="home" style={{ margin: "0 0 16px", padding: "12px 16px", border: "1px solid #e5e7eb", borderRadius: 12, background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>

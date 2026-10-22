@@ -2,6 +2,7 @@ import { getPersistedAttribution } from "./attribution";
 import { isDevMode } from "@/config/env";
 import { ENV } from "@/env";
 import { endpoints } from "@/lib/endpoints";
+import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export function track(event: string) {
   if (isDevMode()) {
@@ -139,7 +140,7 @@ export const trackEvent = (
 // it from capacitor:// and https://localhost). A failure is never shown to the
 // applicant and never retried; in development it is logged with console.warn.
 export function analyticsUrl(): string {
-  const base = String(ENV.API_BASE || "https://server.boreal.financial").replace(/\/+$/, "");
+  const base = String(ENV.API_BASE || SERVER_URL).replace(/\/+$/, "");
   return `${base}${endpoints.analytics}`;
 }
 

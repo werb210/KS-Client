@@ -7,14 +7,6 @@ import LandingFooter from "@/components/landing/LandingFooter";
 import SlimHeader from "@/components/SlimHeader";
 
 describe("BF_CLIENT_BLOCK_v166 — LandingHeader cross-links", () => {
-  it("desktop nav links to boreal.insure with the unified label", () => {
-    render(<LandingHeader />);
-    const link = screen.getByTestId(
-      "landing-link-boreal-insurance",
-    ) as HTMLAnchorElement;
-    expect(link.getAttribute("href")).toBe("https://www.boreal.insure/");
-    expect(link.textContent?.trim()).toBe("Visit Boreal Risk Management");
-  });
 
   it("Apply Now CTA is a hash link to #apply-otp", () => {
     render(<LandingHeader />);
@@ -22,37 +14,18 @@ describe("BF_CLIENT_BLOCK_v166 — LandingHeader cross-links", () => {
     expect(link.getAttribute("href")).toBe("#apply-otp");
   });
 
-  it("mobile drawer cross-link opens to boreal.insure", () => {
-    render(<LandingHeader />);
-    fireEvent.click(screen.getByTestId("landing-mobile-toggle"));
-    const link = screen.getByTestId(
-      "landing-mobile-link-boreal-insurance",
-    ) as HTMLAnchorElement;
-    expect(link.getAttribute("href")).toBe("https://www.boreal.insure/");
-    expect(link.textContent?.trim()).toBe("Visit Boreal Risk Management");
-  });
 
   it("clicking a mobile nav item closes the drawer", () => {
     render(<LandingHeader />);
     fireEvent.click(screen.getByTestId("landing-mobile-toggle"));
-    const link = screen.getByTestId("landing-mobile-link-boreal-insurance");
-    fireEvent.click(link);
+    const menu = screen.getByTestId("landing-mobile-menu");
+    fireEvent.click(menu.querySelector("nav a") as HTMLAnchorElement);
     // After click, the dialog should no longer be in the DOM.
-    expect(
-      screen.queryByTestId("landing-mobile-link-boreal-insurance"),
-    ).toBeNull();
+    expect(screen.queryByTestId("landing-mobile-menu")).toBeNull();
   });
 });
 
 describe("BF_CLIENT_BLOCK_v166 — LandingFooter cross-links", () => {
-  it("Explore column links to boreal.insure with the unified label", () => {
-    render(<LandingFooter />);
-    const link = screen.getByTestId(
-      "landing-footer-link-boreal-insurance",
-    ) as HTMLAnchorElement;
-    expect(link.getAttribute("href")).toBe("https://www.boreal.insure/");
-    expect(link.textContent?.trim()).toBe("Boreal Risk Management");
-  });
 
   it("Apply Now anchor stays as #apply-otp", () => {
     render(<LandingFooter />);
@@ -61,24 +34,18 @@ describe("BF_CLIENT_BLOCK_v166 — LandingFooter cross-links", () => {
   });
 });
 
-describe("BF_CLIENT_BLOCK_v_HEADER_FOOTER_WWW_v1 — financial links use www (not the bare apex)", () => {
-  it("LandingHeader points every boreal.financial link at www", () => {
-    const { container } = render(<LandingHeader />);
-    const links = Array.from(container.querySelectorAll('a[href*="boreal.financial"]')) as HTMLAnchorElement[];
+// KS_CLIENT_v1_LICENSEE - website links point at the licensee's website (VITE_WEBSITE_URL; the client app until set),
+// never at Boreal's.
+describe("website links use the licensee's website", () => {
+  const check = (container: HTMLElement) => {
+    const links = Array.from(container.querySelectorAll('a[href^="http"]')) as HTMLAnchorElement[];
     expect(links.length).toBeGreaterThan(0);
-    for (const a of links) expect(a.getAttribute("href")).toMatch(/^https:\/\/www\.boreal\.financial/);
-  });
-  it("LandingFooter points every boreal.financial link at www", () => {
-    const { container } = render(<LandingFooter />);
-    const links = Array.from(container.querySelectorAll('a[href*="boreal.financial"]')) as HTMLAnchorElement[];
-    expect(links.length).toBeGreaterThan(0);
-    for (const a of links) expect(a.getAttribute("href")).toMatch(/^https:\/\/www\.boreal\.financial/);
-  });
-
-  it("SlimHeader points every boreal.financial link at www", () => {
-    const { container } = render(<SlimHeader />);
-    const links = Array.from(container.querySelectorAll('a[href*="boreal.financial"]')) as HTMLAnchorElement[];
-    expect(links.length).toBeGreaterThan(0);
-    for (const a of links) expect(a.getAttribute("href")).toMatch(/^https:\/\/www\.boreal\.financial/);
-  });
+    for (const a of links) {
+      expect(a.getAttribute("href")).not.toMatch(/boreal\.(financial|insure)/);
+      expect(String(a.getAttribute("href")).startsWith("https://wonderful-island-0b68ae310.5.azurestaticapps.net")).toBe(true);
+    }
+  };
+  it("LandingHeader", () => check(render(<LandingHeader />).container));
+  it("LandingFooter", () => check(render(<LandingFooter />).container));
+  it("SlimHeader", () => check(render(<SlimHeader />).container));
 });

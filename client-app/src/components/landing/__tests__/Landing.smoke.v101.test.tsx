@@ -10,10 +10,6 @@ describe("LandingHeader (v101)", () => {
     expect(container.querySelectorAll('a[href="#apply-otp"]').length).toBeGreaterThan(0);
   });
 
-  it("links to the BI cross-site", () => {
-    const { container } = render(<LandingHeader />);
-    expect(container.querySelector('a[href="https://www.boreal.insure/"]')).not.toBeNull();
-  });
 });
 
 describe("LandingFooter (v101)", () => {

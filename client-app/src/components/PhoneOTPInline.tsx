@@ -18,9 +18,10 @@ import { getAttribution } from '@/lib/attribution';
 import { openExternal } from "@/native/openExternal"; // BF_CLIENT_v805_PHONE_FIXES - Terms and Privacy open in the in-app browser
 import { SMS_UPDATES_CONSENT_TEXT } from "@/lib/smsUpdatesConsent"; // BF_CLIENT_v809_SMS_UPDATES_CONSENT
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
+import { SERVER_URL, WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const API_BASE =
-  ((import.meta as any).env?.VITE_API_URL) || 'https://server.boreal.financial';
+  ((import.meta as any).env?.VITE_API_URL) || SERVER_URL;
 
 type Phase = 'phone' | 'code' | 'submitting';
 
@@ -427,8 +428,8 @@ export default function PhoneOTPInline() {
   const signInCodeNote = (
     <p data-testid="sms-disclosure" style={{ fontSize: 12, color: '#64748b', marginTop: 10, marginBottom: 0, textAlign: 'center', lineHeight: 1.5 }}>
       We&apos;ll text a one-time sign-in code to this number. Message and data rates may apply. See our{' '}
-      {legalLink('https://www.boreal.financial/terms', 'Terms')} and{' '}
-      {legalLink('https://www.boreal.financial/privacy', 'Privacy Policy')}.
+      {legalLink(`${WEBSITE_URL}/terms`, 'Terms')} and{' '}
+      {legalLink(`${WEBSITE_URL}/privacy`, 'Privacy Policy')}.
     </p>
   );
 

@@ -9,20 +9,9 @@ const __dirname = dirname(__filename);
 describe("BF_CLIENT_WIZARD_STEP6_PGI_v61 — Step 6 section order", () => {
   const src = readFileSync(join(__dirname, "../Step6_Review.tsx"), "utf8");
 
-  it("contains the PGI section", () => {
-    expect(src).toContain("Personal Guarantee Insurance (PGI)");
-    expect(src).toContain('data-testid="step6-pgi-section"');
-  });
 
-  it("captures pgiOptIn into the application store", () => {
-    // BF_CLIENT_PGI_v176 - both options are rendered from one map, so the
-    // value is a variable rather than a literal. Same behaviour.
-    expect(src).toContain("update({ pgiOptIn: value })");
-    expect(src).toContain('["yes", "Yes, send me PGI details with my offers"]');
-    expect(src).toContain('["no", "No, I will proceed without PGI"]');
-  });
 
-  it("renders sections in canonical order: PGI → T&C → checkboxes → signature → submit", () => {
+  it("renders sections in canonical order: T&C → checkboxes → signature → submit, with no PGI (KS_CLIENT_v1_NO_BI)", () => {
     // BF_CLIENT_BLOCK_v877_STEP6_ORDER_MARKERS_v1 — v721 rewrote T&C into
     // clause popups; the old checkbox-label markers no longer exist. Assert
     // the durable section order: PGI -> Terms heading -> signature -> submit.
@@ -30,11 +19,10 @@ describe("BF_CLIENT_WIZARD_STEP6_PGI_v61 — Step 6 section order", () => {
     const terms = src.indexOf("Terms & Conditions</h2>");
     const sig = src.indexOf("Typed signature");
     const submit = src.indexOf("Submit Application");
-    expect(pgi).toBeGreaterThan(-1);
+    expect(pgi).toBe(-1);
     expect(terms).toBeGreaterThan(-1);
     expect(sig).toBeGreaterThan(-1);
     expect(submit).toBeGreaterThan(-1);
-    expect(pgi).toBeLessThan(terms);
     expect(terms).toBeLessThan(sig);
     expect(sig).toBeLessThan(submit);
   });
