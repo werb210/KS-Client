@@ -50,7 +50,7 @@ jobs:
         run: npm run build
         env:
           # KS_CLIENT_v7_DEMO - the self-serve demo's server (repository variable; empty leaves the demo page off)
-          VITE_DEMO_SERVER_URL: ${{ vars.VITE_DEMO_SERVER_URL }}
+          VITE_DEMO_SERVER_URL: ${{ vars.VITE_DEMO_SERVER_URL || 'https://ks-demo-server.azurewebsites.net' }}
 
       - name: Verify SWA config in artifact (Block 16)
         working-directory: ./client-app
