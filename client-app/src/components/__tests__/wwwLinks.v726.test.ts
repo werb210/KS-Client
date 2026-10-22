@@ -9,6 +9,7 @@ describe("website links use www", () => {
       expect(s).not.toContain('href="https://boreal.financial/');
     }
     // BF_CLIENT_v802_BOOK_IN_APP - booking happens in the app; the Settings links still use www.
-    expect(readFileSync("src/components/cmp/CmpSettings.tsx", "utf8")).toContain("href={`${WEBSITE_URL}/privacy`}"); // KS_CLIENT_v1_LICENSEE
+    // KS_CLIENT_v5_LICENSEE_APPS - the legal links come from config/licensee (the licensee's own pages, else WEBSITE_URL).
+    expect(readFileSync("src/components/cmp/CmpSettings.tsx", "utf8")).toContain("href={PRIVACY_URL}");
   });
 });

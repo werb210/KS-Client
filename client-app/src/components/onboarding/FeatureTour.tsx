@@ -2,6 +2,7 @@
 // person reaches the client mini-portal in the installed app (never on the website). Each step
 // can be skipped; notifications and Face ID are switched on right from the step.
 // "Seen" is kept on the device, so it shows once per install.
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
@@ -14,7 +15,7 @@ export type TourStep = { id: string; title: string; body: string; action?: "push
 export function tourSteps(platform: string, opts: { faceId: boolean }): TourStep[] {
   const ios = platform === "ios";
   const steps: TourStep[] = [
-    { id: "welcome", title: `Welcome to ${brandName()}`, body: "A quick look at what the app can do. It takes about a minute, and you can skip any step." },
+    { id: "welcome", title: t("welcome.title"), body: "A quick look at what the app can do. It takes about a minute, and you can skip any step." },
     { id: "push", title: "Know the moment something changes", body: "We'll let you know when we need a document, when a lender responds, and when your file moves forward.", action: "push" },
   ];
   if (opts.faceId) steps.push({ id: "faceid", title: ios ? "Sign in with Face ID" : "Sign in with your fingerprint or face", body: "Skip the text code next time and open your file with a glance.", action: "faceid" });

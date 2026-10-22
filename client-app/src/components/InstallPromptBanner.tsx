@@ -1,3 +1,4 @@
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useState } from "react";
 import { tokens } from "@/styles";
@@ -35,7 +36,7 @@ export default function InstallPromptBanner() {
       }}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600 }}>Install {brandName()}</div>
+        <div style={{ fontWeight: 600 }}>{t("install.banner")}</div>
         <div style={{ fontSize: 13, opacity: 0.85 }}>Faster access and offline support</div>
       </div>
       <button

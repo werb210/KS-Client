@@ -1,5 +1,6 @@
 // BF_CLIENT_v802_SETTINGS - the phone Settings tab (item 23): sign-in and security, notifications, your
 // details, your file, help and legal, Sign out, the app version, and Delete account last, in plain text.
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FaceIdSignInToggle from "@/components/FaceIdSignInToggle";
@@ -12,7 +13,7 @@ import { SMS_UPDATES_CONSENT_TEXT } from "@/lib/smsUpdatesConsent";
 import { Icon } from "./icons";
 import { ANDROID_PLAY_STORE_URL, iosAppStoreUrl } from "@/lib/appStoreLinks"; // BF_CLIENT_v817
 import "./cmp.css";
-import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { PRIVACY_URL, TERMS_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE + v5
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type PushState = "checking" | "on" | "off" | "blocked" | "web";
@@ -271,8 +272,8 @@ export default function CmpSettings(p: {
         <div className="cmpx-list">
           {/* BF_CLIENT_v807_SETTINGS - "Documents" (on More) and "Ask a question" (on Home and in Chat) are not repeated here. */}
           <Action icon="flag" title="Report a problem" desc="Tell us what went wrong. A picture of your screen is included." onClick={p.onReportProblem} testId="cmp-settings-report" />
-          <Action icon="shield" title="Privacy policy" href={`${WEBSITE_URL}/privacy`} />
-          <Action icon="doc" title="Terms of service" href={`${WEBSITE_URL}/terms`} />
+          <Action icon="shield" title={t("legal.privacy_short")} href={PRIVACY_URL} />
+          <Action icon="doc" title={t("legal.terms_short")} href={TERMS_URL} />
         </div>
       </div>
 

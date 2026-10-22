@@ -1,4 +1,5 @@
 // BF_CLIENT_v802_PHONE_UI - the phone client portal's header and Home cards.
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useEffect, useState } from "react";
 import { Icon, BrandMark } from "./icons";
 import { type Advisor, advisorName, initials, shortStageLabel } from "./cmpData";
@@ -141,7 +142,7 @@ export function CmpHello({ firstName, advisor, onCall, onMessage, onBook }: { fi
           <div style={{ minWidth: 0 }}>
             {/* BF_CLIENT_v805_PHONE_FIXES - no advisor assigned yet: the Boreal team, with the Boreal logo. */}
             <div className="cmpx-eyebrow">{name ? "Your advisor" : "Your team"}</div>
-            <div className="cmpx-advisor__name">{name || `${brandName()} team`}</div>
+            <div className="cmpx-advisor__name">{name || t("advisor.team")}</div>
           </div>
         </div>
         {/* BF_CLIENT_v808_WIDE_HOME - no Message button where Chat is already open beside Home (wide screens). */}
@@ -207,9 +208,9 @@ export function CmpReferCard({ shareUrl }: { shareUrl: string }) {
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-refer">
       <div className="cmpx-eyebrow">Know a business owner?</div>
-      <h2 className="cmpx-refer__title">Refer them to {brandName()}</h2>
+      <h2 className="cmpx-refer__title">{t("refer.title")}</h2>
       <p className="cmpx-refer__sub">If someone you know needs financing, send them our way. Your advisor will take good care of them.</p>
-      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void share()}><Icon name="share" />Share {brandName()}</button>
+      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void share()}><Icon name="share" />{t("refer.share")}</button>
       {note ? <div className="cmpx-note" role="status">{note}</div> : null}
     </section>
   );

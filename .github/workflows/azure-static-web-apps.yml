@@ -42,6 +42,9 @@ jobs:
         run: npm run test:ci
       - name: Source-grep test budget
         run: node ../scripts/check-source-grep-tests.mjs
+      # KS_CLIENT_v5_LICENSEE_APPS - every licensees/<key> folder must be buildable (ids, contrast, icon sizes).
+      - name: Validate licensee apps
+        run: node ../scripts/licensee/validate.mjs
 
       - name: Build
         run: npm run build
