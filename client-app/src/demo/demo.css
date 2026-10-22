@@ -1,0 +1,30 @@
+/* KS_CLIENT_v7_DEMO - the borrower page of the self-serve demo (phone first). Colours: DemoBorrowerApp.tsx PALETTE. */
+.kdb { min-height: 100vh; background: var(--kdb-page); color: var(--kdb-text); font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.5; }
+.kdb *, .kdb *::before, .kdb *::after { box-sizing: border-box; }
+.kdb h1 { font-size: 22px; margin: 0 0 8px; color: var(--kdb-text); }
+.kdb h2 { font-size: 18px; margin: 0 0 8px; color: var(--kdb-text); }
+.kdb p { margin: 0 0 8px; }
+.kdb-header { background: var(--kdb-header); color: var(--kdb-on-header); display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); }
+.kdb-pill { font-size: 12px; font-weight: 700; border: 1px solid #334155; border-radius: 999px; padding: 2px 10px; color: var(--kdb-on-header); }
+.kdb-main { max-width: 560px; margin: 0 auto; padding: 14px 16px 40px; display: flex; flex-direction: column; gap: 14px; }
+.kdb-card { background: var(--kdb-surface); border: 1px solid var(--kdb-border); border-radius: 16px; padding: 16px; }
+.kdb-muted { color: var(--kdb-muted); }
+.kdb-small { font-size: 13px; }
+.kdb-row { display: flex; gap: 8px; align-items: center; }
+.kdb-list { list-style: none; padding: 0; margin: 0 0 8px; }
+.kdb-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--kdb-border); }
+.kdb-label { font-weight: 600; }
+.kdb-btn { min-height: 44px; border-radius: 12px; border: 1px solid var(--kdb-border); background: var(--kdb-surface); color: var(--kdb-text); font: inherit; font-weight: 700; padding: 8px 14px; cursor: pointer; }
+.kdb-btn:disabled { opacity: 0.55; }
+.kdb-btn:focus-visible, .kdb-input:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+.kdb-btn-primary { background: var(--kdb-primary); color: var(--kdb-on-primary); border-color: var(--kdb-primary); }
+.kdb-btn-success { background: var(--kdb-success); color: var(--kdb-on-success); border-color: var(--kdb-success); }
+.kdb-wide { width: 100%; margin-top: 8px; }
+.kdb-chip { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.kdb-done { background: var(--kdb-done-bg); color: var(--kdb-done-text); }
+.kdb-warn { background: var(--kdb-warn-bg); color: var(--kdb-warn-text); }
+.kdb-bubble { border-radius: 14px; padding: 8px 12px; margin: 6px 0; font-size: 15px; }
+.kdb-me { background: var(--kdb-primary); color: var(--kdb-on-primary); margin-left: 40px; }
+.kdb-ai { background: var(--kdb-ai-bg); color: var(--kdb-ai-text); margin-right: 40px; }
+.kdb-input { flex: 1; min-width: 0; min-height: 44px; border: 1px solid var(--kdb-border); border-radius: 12px; padding: 8px 12px; font: inherit; color: var(--kdb-text); background: var(--kdb-surface); }
+.kdb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
