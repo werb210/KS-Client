@@ -6,6 +6,25 @@ import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
 // KS_CLIENT_v5_LICENSEE_APPS - VITE_LICENSEE=<key> builds licensees/<key>'s branded client; unset = default Keystone.
 import { licenseePlugin } from './vite.licensee'
+// KS_CLIENT_v7_DEMO - the demo borrower page (/demo/<code>) talks to the demo server: allow it in the built CSP.
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
+import type { Plugin } from 'vite'
+import { httpsOrigin, patchSwaConfig } from './src/demo/demoCsp'
+
+function demoCspPlugin(): Plugin {
+  let outDir = 'dist'
+  return {
+    name: 'ks-demo-csp',
+    configResolved(cfg) { outDir = path.resolve(cfg.root, cfg.build.outDir) },
+    writeBundle() {
+      const origin = httpsOrigin(process.env.VITE_DEMO_SERVER_URL)
+      const file = path.join(outDir, 'staticwebapp.config.json')
+      if (!origin || !existsSync(file)) return
+      writeFileSync(file, patchSwaConfig(readFileSync(file, 'utf8'), origin))
+    },
+  }
+}
 
 function buildSha(): string {
   const env = process.env.GITHUB_SHA;
@@ -31,6 +50,7 @@ export default defineConfig(({ mode }) => {
   },
   plugins: [
     ...(licensee ? [licensee] : []),
+    demoCspPlugin(),
     react(),
     VitePWA({
       strategies: 'injectManifest',

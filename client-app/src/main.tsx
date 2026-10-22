@@ -35,9 +35,13 @@ try {
   console.error("ENV ERROR IGNORED:", err);
 }
 
+// KS_CLIENT_v7_DEMO - /demo/<code> (and /d/<code>) is the self-serve demo's borrower page: it boots on its own, with
+// no analytics, journey tracking, sign-in or service worker.
+const IS_DEMO_BORROWER = /^\/(?:demo|d)\//.test(window.location.pathname);
+
 // BF_CLIENT_v789_ANALYTICS_GATES - Consent Mode defaults, GTM and the Google Ads
 // tag, web only. Runs before anything can push to dataLayer.
-loadGoogleTags();
+if (!IS_DEMO_BORROWER) loadGoogleTags();
 
 // BF_CLIENT_JOURNEY_BOOT_v185 - ORDER MATTERS. startJourney mints and persists the
 // journey session id and creates the server-side visitor_sessions row. It must run
@@ -89,4 +93,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 registerClientSW();
 }
 
-void boot();
+if (IS_DEMO_BORROWER) void import("./demo/bootDemo").then((m) => m.bootDemo());
+else void boot();
