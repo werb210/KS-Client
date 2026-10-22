@@ -44,10 +44,10 @@ describe("staticwebapp.config.json globalHeaders", () => {
     expect(script).toContain("https://*.clarity.ms");
   });
 
-  it("allows the signing and bank-connection frames", () => {
+  it("allows the signing frames, and no bank-connection (Flinks) frame", () => {
     const frames = directive("frame-src");
     expect(frames).toContain("https://*.signnow.com");
-    expect(frames).toContain("https://*.flinksapp.io");
+    expect(frames).not.toContain("flinksapp.io"); // KS_CLIENT_NO_BANK_CONNECT
   });
 });
 

@@ -36,7 +36,7 @@ describe("MiniPortalPage", () => {
     expect(screen.getAllByText("Personal Statement of Affairs").length).toBeGreaterThan(0);
   });
 
-  it("lists the always-on forms, and not CRA or Connect Bank unless staff request them", () => {
+  it("lists the always-on forms, and not CRA unless staff request it", () => {
     render(<MemoryRouter initialEntries={["/portal/app-1"]}><MiniPortalPage /></MemoryRouter>);
     const more = screen.getByTestId("cmp-more");
     expect(more.textContent).toContain("Personal Net Worth Statement");

@@ -19,7 +19,7 @@ describe("v631 mini portal layout", () => {
     expect(page).not.toContain('<header className="mp-thread-card__header">Client</header>');
   });
 
-  it("shows CRA, Connect Bank and collateral forms only when staff requested them", () => {
+  it("shows CRA and collateral forms only when staff requested them", () => {
     expect(page).toContain("ALWAYS_CHIPS.has(c.id) || requestedForms.has(c.id)");
     expect(page).toContain("onData={onTodoData}");
   });

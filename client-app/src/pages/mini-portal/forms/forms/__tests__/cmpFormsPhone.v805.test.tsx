@@ -15,7 +15,6 @@ import RealEstateCollateralForm from "../RealEstateCollateralForm";
 import EquipmentCollateralForm from "../EquipmentCollateralForm";
 import AdvisorsForm from "../AdvisorsForm";
 import CraAuthorizationForm, { CORPORATE_STEPS, CRA_MY_BUSINESS_URL, INDIVIDUAL_STEPS } from "../CraAuthorizationForm";
-import FlinksConnectForm from "../FlinksConnectForm";
 import { draftKey, mergeDraft } from "../../cmpFormKit";
 
 const RE_KEYS = [
@@ -244,12 +243,3 @@ describe("CRA authorization", () => {
   });
 });
 
-describe("Flinks", () => {
-  it("does not talk about tabs", async () => {
-    const { container } = render(<FlinksConnectForm applicationId="app-fl" onComplete={vi.fn()} />);
-    await waitFor(() => expect(api.getFormResponse).toHaveBeenCalled());
-    expect(container.textContent).not.toMatch(/\btab\b/i);
-    expect(container.textContent).toContain("come back here and confirm below");
-    expect(container.querySelector(".cmpf-check input[type=checkbox]")).toBeTruthy();
-  });
-});

@@ -11,7 +11,6 @@ export const FORM_INFO: Record<string, { icon: string; desc: string }> = {
   debt: { icon: "doc", desc: "Loans and leases your business pays today." },
   advisors: { icon: "people", desc: "Your accountant, lawyer and other advisors." },
   cra: { icon: "shield", desc: "Lets lenders confirm your tax filings with the CRA." },
-  flinks: { icon: "bank", desc: "A view-only bank connection that shares your statements." },
   equipment: { icon: "truck", desc: "Equipment offered as security for the loan." },
   realestate: { icon: "home", desc: "Property offered as security for the loan." },
   sba_forms: { icon: "flag", desc: "SBA Form 1919, and Form 413 for each owner." },
