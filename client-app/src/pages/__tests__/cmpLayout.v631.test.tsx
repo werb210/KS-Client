@@ -15,7 +15,7 @@ describe("v631 mini portal layout", () => {
   });
 
   it("titles the chat for the client", () => {
-    expect(page).toContain('<header className="mp-thread-card__header">Chat with Boreal Staff</header>');
+    expect(page).toContain('<header className="mp-thread-card__header">Chat with {brandName()} Staff</header>');
     expect(page).not.toContain('<header className="mp-thread-card__header">Client</header>');
   });
 

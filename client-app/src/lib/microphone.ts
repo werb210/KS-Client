@@ -1,4 +1,5 @@
 // BF_CLIENT_v789_MIC_PERMISSION
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 // The in-app Call Us! call (Twilio Voice) opened the microphone only when the
 // call connected. Android had no RECORD_AUDIO permission in the manifest, so the
 // call connected silent, and a refusal anywhere surfaced as a raw Twilio error.
@@ -13,8 +14,8 @@ export type MicrophoneCheck = {
   message: string | null;
 };
 
-export const MIC_DENIED_MESSAGE =
-  "Boreal needs your microphone for this call. Allow microphone access for Boreal in your phone or browser settings, then tap Call Us again - or send us a message below.";
+export const micDeniedMessage = (): string =>
+  `${brandName()} needs your microphone for this call. Allow microphone access for ${brandName()} in your phone or browser settings, then tap Call Us again - or send us a message below.`;
 export const MIC_UNAVAILABLE_MESSAGE =
   "We couldn't find a microphone on this device. Please send us a message below and an advisor will call you back.";
 
@@ -32,7 +33,7 @@ export async function ensureMicrophonePermission(): Promise<MicrophoneCheck> {
     return { ok: true, reason: "granted", message: null };
   } catch (err) {
     const name = String((err as { name?: unknown } | null)?.name ?? "");
-    if (DENIED.has(name)) return { ok: false, reason: "denied", message: MIC_DENIED_MESSAGE };
+    if (DENIED.has(name)) return { ok: false, reason: "denied", message: micDeniedMessage() };
     return { ok: false, reason: "unavailable", message: MIC_UNAVAILABLE_MESSAGE };
   }
 }

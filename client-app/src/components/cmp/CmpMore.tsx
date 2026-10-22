@@ -2,6 +2,7 @@
 // description and whether it is needed or done. Plus the branded call button (item 21).
 import { Icon } from "./icons";
 import "./cmp.css";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export type CallState = "idle" | "connecting" | "ringing" | "connected" | "ended" | "failed";
 
@@ -21,7 +22,7 @@ export type MoreForm = { id: string; label: string; status: "needed" | "done" | 
 const PILL: Record<MoreForm["status"], string> = { needed: "Needed", done: "Done", optional: "Optional" };
 
 /** Item 21 - navy, a drawn phone icon; no emoji and no green. Hang up stays red. */
-export function CallControl({ state, error, onStart, onEnd, onReset, label = "Call Boreal" }: { state: CallState; error: string | null; onStart: () => void; onEnd: () => void; onReset: () => void; label?: string }) {
+export function CallControl({ state, error, onStart, onEnd, onReset, label = `Call ${brandName()}` }: { state: CallState; error: string | null; onStart: () => void; onEnd: () => void; onReset: () => void; label?: string }) {
   if (state === "connecting" || state === "ringing") {
     return (
       <div className="cmpx-callstate" role="status">

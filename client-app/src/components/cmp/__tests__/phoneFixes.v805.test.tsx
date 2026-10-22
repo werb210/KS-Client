@@ -76,12 +76,12 @@ describe("application switcher", () => {
 });
 
 describe("no advisor yet", () => {
-  it("shows the Boreal team with the Boreal logo", () => {
+  it("shows the company team with the company mark (KS_CLIENT_v4_BRANDING)", () => {
     render(<CmpHello firstName="Todd" advisor={null} onCall={vi.fn()} onMessage={vi.fn()} onBook={vi.fn()} />);
     const card = screen.getByTestId("cmp-advisor");
     expect(card.textContent).toContain("Your team");
-    expect(card.textContent).toContain("Boreal Financial team");
-    expect(card.querySelector(".cmpx-avatar--brand svg")).not.toBeNull();
+    expect(card.textContent).toContain("Keystone team");
+    expect(card.querySelector(".cmpx-avatar--brand [data-testid=\"brand-logo\"]")).not.toBeNull();
   });
 });
 
@@ -104,7 +104,7 @@ describe("Maya in the application on a phone", () => {
     const opened = vi.fn();
     window.addEventListener("maya:open", opened);
     render(<MemoryRouter><StepHeader step={2} title="Product" /></MemoryRouter>);
-    fireEvent.click(screen.getByRole("button", { name: "Ask Maya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask Assistant" }));
     expect((opened.mock.calls[0]?.[0] as CustomEvent).detail).toEqual({ mode: "chat" });
     window.removeEventListener("maya:open", opened);
   });

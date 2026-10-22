@@ -1,6 +1,6 @@
 // BF_CLIENT_v789_MIC_PERMISSION
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ensureMicrophonePermission, MIC_DENIED_MESSAGE, MIC_UNAVAILABLE_MESSAGE } from "../microphone";
+import { ensureMicrophonePermission, micDeniedMessage, MIC_UNAVAILABLE_MESSAGE } from "../microphone";
 
 function setMediaDevices(value: unknown) {
   Object.defineProperty(navigator, "mediaDevices", { value, configurable: true });
@@ -23,7 +23,7 @@ describe("ensureMicrophonePermission", () => {
     const result = await ensureMicrophonePermission();
     expect(result.ok).toBe(false);
     expect(result.reason).toBe("denied");
-    expect(result.message).toBe(MIC_DENIED_MESSAGE);
+    expect(result.message).toBe(micDeniedMessage());
     expect(result.message).toMatch(/settings/);
   });
 

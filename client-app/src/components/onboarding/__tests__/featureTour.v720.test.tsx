@@ -24,7 +24,7 @@ beforeEach(() => { localStorage.clear(); native.value = true; native.platform = 
 describe("feature tour", () => {
   it("shows once in the app and turns notifications on from the step", async () => {
     render(<FeatureTour />);
-    expect(await screen.findByText("Welcome to Boreal Financial")).toBeTruthy();
+    expect(await screen.findByText("Welcome to Keystone")).toBeTruthy();
     fireEvent.click(screen.getByText("Next"));
     fireEvent.click(screen.getByText("Turn on notifications"));
     await waitFor(() => expect(push.registered).toBe(true));
@@ -32,7 +32,7 @@ describe("feature tour", () => {
   });
   it("can switch Face ID on, and skipping marks it seen so it never shows again", async () => {
     const { unmount } = render(<FeatureTour />);
-    await screen.findByText("Welcome to Boreal Financial");
+    await screen.findByText("Welcome to Keystone");
     fireEvent.click(screen.getByText("Next"));
     fireEvent.click(screen.getByText("Not now"));
     fireEvent.click(await screen.findByText("Turn on"));

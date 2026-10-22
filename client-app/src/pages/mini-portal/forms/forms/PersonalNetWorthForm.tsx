@@ -18,6 +18,7 @@ import {
   AddressBlock, MoneyInput, addressEntries, addressFromPrefill, hasAddressParts, isBlank,
   mergeDraft, readAddress, readDraft, useFormDraft, type AddressValue,
 } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS / BF_CLIENT_v807_FORMS
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 const FORM_KEY = "net_worth_statement";
 
@@ -71,8 +72,8 @@ const INCOME_ROWS: Array<{ key: string; label: string }> = [
   { key: "other_2", label: "Other (additional)" },
 ];
 
-const DISCLOSURES: string[] = [
-  "Previous dealings with Boreal Financial (any division or subsidiary)?",
+const disclosures = (): string[] => [
+  `Previous dealings with ${brandName()} (any division or subsidiary)?`,
   "Ever filed for bankruptcy, consumer proposal, or any form of insolvency?",
   "Ever convicted of a criminal offence not pardoned?",
   "Income taxes for previous year(s) fully satisfied?",
@@ -406,7 +407,7 @@ export default function PersonalNetWorthForm({
           </tr>
         </thead>
         <tbody>
-          {DISCLOSURES.map((q, i) => (
+          {disclosures().map((q, i) => (
             <tr key={i}>
               <td data-label="" style={{ whiteSpace: "normal", verticalAlign: "middle" }}>{q}</td>
               <td data-label="Primary" style={{ minWidth: 120 }}>{yesNoCell(`disc_${i}_primary`, `${q} - primary`)}</td>

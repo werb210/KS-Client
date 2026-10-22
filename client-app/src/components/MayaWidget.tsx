@@ -31,6 +31,7 @@ import {
   saveConversation,
   type MayaConversation,
 } from "./mayaConversation";
+import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_MAYA_SCREEN_CONTEXT_v1 — tell Maya which page/step the signed-in
 // client is on, so it stops being page-blind. Pairs with the agent foundation
@@ -94,7 +95,7 @@ export function getOrCreateMayaSessionId(): string {
   }
 }
 
-const GREETING = "Hi — I'm Maya. How can I help?";
+const greeting = (): string => `Hi — I'm ${assistantName()}. How can I help?`;
 // BF_CLIENT_v802_MAYA_LIGHT
 const MAYA_SUGGESTIONS = [
   "What happens next with my application?",
@@ -181,7 +182,7 @@ export default function MayaWidget() {
 
   useEffect(() => {
     if (!open || messages.length > 0) return;
-    setMessages([{ id: uid("m"), from: "system", message: GREETING }]);
+    setMessages([{ id: uid("m"), from: "system", message: greeting() }]);
   }, [open, messages.length]);
 
   // BF_CLIENT_STEP1_TALK_TO_HUMAN_v169 - let any surface open Maya to a specific
@@ -346,7 +347,7 @@ export default function MayaWidget() {
       const summary = messages
         .slice(-6)
         .concat([{ id: "", from: "user", message: "(requested human)" }])
-        .map((m) => `${m.from === "user" ? "Client" : "Maya"}: ${m.message}`)
+        .map((m) => `${m.from === "user" ? "Client" : assistantName()}: ${m.message}`)
         .join("\n");
       const r = (await apiRequest("/api/maya/escalate", {
         method: "POST",
@@ -370,7 +371,7 @@ export default function MayaWidget() {
           id: uid("s"),
           from: "system",
           message:
-            "✓ A Boreal advisor has been notified. They'll reach out via SMS — usually within a few minutes during business hours.",
+            `✓ A ${brandName()} advisor has been notified. They'll reach out via SMS — usually within a few minutes during business hours.`,
         },
       ]);
     } catch {
@@ -468,8 +469,8 @@ export default function MayaWidget() {
         <div className="chat-panel fixed inset-0 z-[70] flex h-[100dvh] max-w-[100vw] flex-col overflow-hidden border border-slate-200 bg-white text-[#0B1F3A] shadow-2xl pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] md:inset-auto md:bottom-20 md:right-4 md:h-[min(75vh,620px)] md:w-[min(90vw,420px)] md:rounded-2xl md:p-0">
           <div className="chat-header flex items-center justify-between border-b border-slate-200 px-4 py-3">
             <div>
-              <p className="text-sm font-semibold">Maya</p>
-              <p className="text-xs text-slate-600">AI assistant &middot; Boreal Financial</p>
+              <p className="text-sm font-semibold">{assistantName()}</p>
+              <p className="text-xs text-slate-600">AI assistant &middot; {brandName()}</p>
             </div>
             <button
               aria-label="Close chat"
@@ -490,7 +491,7 @@ export default function MayaWidget() {
                 {item.from === "user" ? item.message : <MayaMessage message={item.message} />}
               </div>
             ))}
-            {sending ? <p className="text-xs text-slate-600">Maya is typing…</p> : null}
+            {sending ? <p className="text-xs text-slate-600">{assistantName()} is typing…</p> : null}
           </div>
           {/* BF_CLIENT_v802_MAYA_LIGHT - three or four questions to start with, until the client has asked one. */}
           {mode === "chat" && !messages.some((m) => m.from === "user") ? (
@@ -539,7 +540,7 @@ export default function MayaWidget() {
             </div>
           ) : mode === "lead" ? (
             <div className="flex flex-col gap-2 border-t border-slate-200 px-3 py-2 md:px-4">
-              <div className="text-xs text-slate-600">A Boreal advisor will text you back. A mobile number is best:</div>
+              <div className="text-xs text-slate-600">A {brandName()} advisor will text you back. A mobile number is best:</div>
               <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Your name" value={leadDraft.name} onChange={(e) => setLeadDraft({ ...leadDraft, name: e.target.value })} />
               <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Mobile number" type="tel" value={leadDraft.phone} onChange={(e) => setLeadDraft({ ...leadDraft, phone: e.target.value })} autoFocus />
               <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Email (optional if you gave a number)" type="email" value={leadDraft.email} onChange={(e) => setLeadDraft({ ...leadDraft, email: e.target.value })} />

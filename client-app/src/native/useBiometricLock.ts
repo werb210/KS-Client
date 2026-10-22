@@ -4,6 +4,7 @@ import { BiometricAuth } from "@aparajita/capacitor-biometric-auth";
 import { clearToken, getToken, hydrateToken } from "@/auth/token"; // BF_CLIENT_FACE_ID_SIGN_IN_v297
 import { ENV } from "@/env";
 import { isEnrolled, renewSessionSilently } from "@/native/deviceSignIn";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BIOMETRIC_LOCK_v1 - require Face ID / Touch ID to re-enter an
 // already-authenticated session on native. Never locks out devices without
@@ -100,7 +101,7 @@ export function useBiometricLock() {
   const unlock = useCallback(async () => {
     try {
       await BiometricAuth.authenticate({
-        reason: "Unlock Boreal Financial",
+        reason: `Unlock ${brandName()}`,
         cancelTitle: "Cancel",
         allowDeviceCredential: true,
         iosFallbackTitle: "Use passcode",

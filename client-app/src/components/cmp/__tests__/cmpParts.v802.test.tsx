@@ -60,7 +60,7 @@ describe("branded call button", () => {
     const onStart = vi.fn();
     render(<CallControl state="idle" error={null} onStart={onStart} onEnd={vi.fn()} onReset={vi.fn()} />);
     const b = screen.getByTestId("cmp-call");
-    expect(b.textContent).toBe("Call Boreal");
+    expect(b.textContent).toBe("Call Keystone");
     expect(b.querySelector("svg")).not.toBeNull();
     fireEvent.click(b);
     expect(onStart).toHaveBeenCalled();

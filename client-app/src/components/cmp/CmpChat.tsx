@@ -14,6 +14,7 @@ import { Icon } from "./icons";
 import AuthorizedAttachment from "./AuthorizedAttachment"; // BF_CLIENT_v819_CLIENT_MMS - texted pictures in the chat
 import { type Advisor, type MayaEntry, advisorName, defaultRecipient, initials, loadMayaThread, saveMayaThread, SUGGESTED_QUESTIONS } from "./cmpData";
 import "./cmp.css";
+import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type Attachment = { name: string; contentType: string; dataUrl: string };
 
@@ -54,7 +55,7 @@ export default function CmpChat(p: Props) {
   // BF_CLIENT_v807_CHAT - who you are writing to is always spelled out: two clear choices at the top and a
   // line above the message box ("You're writing to Maya, our AI assistant").
   const advisorWho = p.advisor?.firstName ? p.advisor.firstName + ", your advisor" : "your advisor";
-  const writingTo = to === "maya" ? "Maya, our AI assistant" : advisorWho;
+  const writingTo = to === "maya" ? `${assistantName()}, our AI assistant` : advisorWho;
   const writingNote = to === "maya" ? "She answers right away." : "A person on our team replies during business hours.";
 
   const timeline = useMemo(() => {
@@ -143,7 +144,7 @@ export default function CmpChat(p: Props) {
       <div className="cmpx-chatto" role="tablist" aria-label="Who are you writing to?" data-testid="cmp-chat-to">
         <button type="button" role="tab" aria-selected={to === "maya"} className="cmpx-chatto__opt" onClick={() => p.setRecipient("maya")} data-testid="cmp-to-maya">
           <span className="cmpx-avatar cmpx-avatar--maya" aria-hidden="true"><Icon name="sparkle" size={18} /></span>
-          <span className="cmpx-chatto__text"><span className="cmpx-chatto__name">Maya</span><span className="cmpx-chatto__sub">AI assistant &middot; answers right away</span></span>
+          <span className="cmpx-chatto__text"><span className="cmpx-chatto__name">{assistantName()}</span><span className="cmpx-chatto__sub">AI assistant &middot; answers right away</span></span>
         </button>
         <button type="button" role="tab" aria-selected={to === "advisor"} className="cmpx-chatto__opt" onClick={() => p.setRecipient("advisor")} data-testid="cmp-to-advisor">
           {p.advisor?.photoUrl ? <img className="cmpx-avatar" src={p.advisor.photoUrl} alt="" /> : <span className="cmpx-avatar" aria-hidden="true">{aName ? initials(aName) : "B"}</span>}
@@ -153,7 +154,7 @@ export default function CmpChat(p: Props) {
       <div className="cmpx-chat__body" ref={p.bodyRef}>
         {timeline.length === 0 ? (
           <div className="cmpx-chat__empty" data-testid="cmp-chat-empty">{to === "maya"
-            ? "Ask Maya anything about your application. She answers right away, and any answer can be sent on to your advisor."
+            ? `Ask ${assistantName()} anything about your application. Answers come right away, and any answer can be sent on to your advisor.`
             : "Write to " + advisorWho + ". They'll reply here, and you'll get a notification."}</div>
         ) : timeline.map((t) => {
           if (t.kind === "maya") {
@@ -161,7 +162,7 @@ export default function CmpChat(p: Props) {
             if (e.from === "client") {
               return (
                 <div key={e.id} className="cmpx-msg cmpx-msg--me">
-                  <div className="cmpx-msg__who">To Maya</div>
+                  <div className="cmpx-msg__who">To {assistantName()}</div>
                   <div className="cmpx-msg__bubble">{e.body}</div>
                   <div className="cmpx-msg__time">{formatMessageTime(e.createdAt)}</div>
                 </div>
@@ -169,7 +170,7 @@ export default function CmpChat(p: Props) {
             }
             return (
               <div key={e.id} className="cmpx-msg cmpx-msg--maya" data-testid="cmp-maya-reply">
-                <div className="cmpx-msg__who">Maya &middot; AI assistant</div>
+                <div className="cmpx-msg__who">{assistantName()} &middot; AI assistant</div>
                 <div className="cmpx-msg__bubble"><MayaMessage message={e.body} /></div>
                 {e.question ? (e.forwarded
                   ? <div className="cmpx-msg__fwded">Sent to {advisorLabel === "My advisor" ? "your advisor" : advisorLabel}</div>
@@ -181,7 +182,7 @@ export default function CmpChat(p: Props) {
           const mine = m.authorRole === "self";
           return (
             <div key={m.id} className={"cmpx-msg " + (mine ? "cmpx-msg--me" : "cmpx-msg--them")}>
-              <div className="cmpx-msg__who">{mine ? "To " + (p.advisor?.firstName || "your advisor") : (m.authorName || "Boreal")}</div>
+              <div className="cmpx-msg__who">{mine ? "To " + (p.advisor?.firstName || "your advisor") : (m.authorName || brandName())}</div>
               <div className="cmpx-msg__bubble">
                 {m.body ? <div>{m.body}</div> : null}
                 {/* BF_CLIENT_v819_CLIENT_MMS - texted pictures (url) load with the client's token; dataUrl ones as before */}
@@ -198,7 +199,7 @@ export default function CmpChat(p: Props) {
             </div>
           );
         })}
-        {mayaBusy ? <div className="cmpx-chat__typing">Maya is typing...</div> : null}
+        {mayaBusy ? <div className="cmpx-chat__typing">{assistantName()} is typing...</div> : null}
         {p.staffTyping ? <div className="cmpx-chat__typing">{p.advisor?.firstName || "Your advisor"} is typing...</div> : null}
       </div>
       {showSuggestions ? (
@@ -222,7 +223,7 @@ export default function CmpChat(p: Props) {
             <input type="file" style={{ display: "none" }} onChange={(e) => { for (const f of Array.from(e.target.files ?? [])) p.onAttach(f); e.target.value = ""; if (to === "maya") p.setRecipient("advisor"); }} />
           </label>
           <input ref={p.inputRef} className="cmpx-composer__input" data-testid="cmp-chat-input" value={p.text} onChange={(e) => p.setText(e.target.value)} onFocus={scrollToEnd}
-            placeholder={to === "maya" ? "Ask Maya a question" : "Message " + (p.advisor?.firstName || "your advisor")}
+            placeholder={to === "maya" ? `Ask ${assistantName()} a question` : "Message " + (p.advisor?.firstName || "your advisor")}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void send(); } }} enterKeyHint="send" />
           <button type="button" className="cmpx-send" aria-label="Send" data-testid="cmp-chat-send" disabled={sending || mayaBusy || (!p.text.trim() && p.attachments.length === 0)} onClick={() => void send()}>
             <Icon name="send" size={20} strokeWidth={2.2} />

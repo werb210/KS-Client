@@ -1,6 +1,7 @@
 // BF_CLIENT_v802_PHONE_UI - shared data for the phone client portal: what each stage means for the
 // client, the advisor, and Maya's side of the one chat thread.
 import { apiCall } from "@/api/client";
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export const STAGE_STEPS = [
   { key: "received", label: "Received", next: "We have your application. Your advisor looks at it next." },
@@ -21,7 +22,12 @@ export function shortStageLabel(raw: unknown): string {
   return hit ? hit.label : s.replace(/_/g, " ");
 }
 
-export const FUNDED_STEP = { key: "funded", label: "Funded", next: "Your funding is complete. Thank you for choosing Boreal." };
+/** KS_CLIENT_v4_BRANDING - automatic messages carry no staff name: the company's name (or "Boreal" from older copies). */
+export function isCompanyAuthor(name: unknown): boolean {
+  const n = String(name ?? "").trim();
+  return !n || n === "Boreal" || n === brandName();
+}
+export const FUNDED_STEP = { key: "funded", label: "Funded", get next(): string { return `Your funding is complete. Thank you for choosing ${brandName()}.`; } };
 
 /** "Accepted" and "Funded" are the server's funded states (BF-Server FUNDED_STATES). */
 export function isFundedState(raw: unknown): boolean {
@@ -79,7 +85,7 @@ export const SUGGESTED_QUESTIONS = [
 /** Who a new message goes to: the advisor if a person on staff wrote in the last 24 hours, otherwise Maya.
  *  Automatic messages carry no staff name and show as "Boreal"; they do not count. */
 export function defaultRecipient(messages: Array<{ authorRole: string; authorName?: string; createdAt: string }>, now = Date.now()): "maya" | "advisor" {
-  const lastStaff = [...messages].reverse().find((m) => m.authorRole === "other" && String(m.authorName ?? "Boreal").trim() !== "Boreal");
+  const lastStaff = [...messages].reverse().find((m) => m.authorRole === "other" && !isCompanyAuthor(m.authorName));
   const t = lastStaff ? Date.parse(lastStaff.createdAt) : NaN;
   return Number.isFinite(t) && now - t < 24 * 3_600_000 ? "advisor" : "maya";
 }

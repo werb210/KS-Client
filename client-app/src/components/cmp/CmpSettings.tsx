@@ -13,6 +13,7 @@ import { Icon } from "./icons";
 import { ANDROID_PLAY_STORE_URL, iosAppStoreUrl } from "@/lib/appStoreLinks"; // BF_CLIENT_v817
 import "./cmp.css";
 import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type PushState = "checking" | "on" | "off" | "blocked" | "web";
 
@@ -42,7 +43,7 @@ export function usePushStatus(): { state: PushState; turnOn: () => Promise<void>
         if (Capacitor.getPlatform() === "ios") {
           try { const { AppLauncher } = await import("@capacitor/app-launcher"); await AppLauncher.openUrl({ url: "app-settings:" }); return; } catch { /* fall through to the note */ }
         }
-        setNote("Notifications are off for Boreal in your phone's Settings. Open Settings, find Boreal Financial, and turn on Notifications.");
+        setNote(`Notifications are off for ${brandName()} in your phone's Settings. Open Settings, find ${brandName()}, and turn on Notifications.`);
         return;
       }
       if (p.receive !== "granted") p = await PushNotifications.requestPermissions();
@@ -70,8 +71,8 @@ export function GetTheAppGroup() {
     <div className="cmpx-group" data-testid="cmp-settings-get-app">
       <h2 className="cmpx-group__title">Get the app</h2>
       <div className="cmpx-list">
-        <Action icon="phone" title="Download for iPhone and iPad" desc="Boreal Financial on the App Store" href={iosAppStoreUrl()} testId="cmp-get-app-ios" />
-        <Action icon="phone" title="Download for Android" desc="Boreal Financial on Google Play" href={ANDROID_PLAY_STORE_URL} testId="cmp-get-app-android" />
+        <Action icon="phone" title="Download for iPhone and iPad" desc={`${brandName()} on the App Store`} href={iosAppStoreUrl()} testId="cmp-get-app-ios" />
+        <Action icon="phone" title="Download for Android" desc={`${brandName()} on Google Play`} href={ANDROID_PLAY_STORE_URL} testId="cmp-get-app-android" />
       </div>
     </div>
   );
@@ -241,7 +242,7 @@ export default function CmpSettings(p: {
             <span className="cmpx-row__icon"><Icon name="bell" /></span>
             <span className="cmpx-row__text">
               <span className="cmpx-row__title">{push.state === "on" ? "Notifications are on" : push.state === "web" ? "Notifications" : push.state === "checking" ? "Checking..." : "Notifications are off"}</span>
-              <span className="cmpx-row__desc">{push.state === "web" ? "Get the Boreal app to be told about offers, document requests and messages." : "Offers, document requests and messages from your advisor."}</span>
+              <span className="cmpx-row__desc">{push.state === "web" ? `Get the ${brandName()} app to be told about offers, document requests and messages.` : "Offers, document requests and messages from your advisor."}</span>
             </span>
             {push.state === "off" || push.state === "blocked" ? <button type="button" className="cmpx-btn" style={{ minHeight: 40, fontSize: 14 }} onClick={() => void push.turnOn()}>Turn on</button> : null}
           </div>

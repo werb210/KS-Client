@@ -19,7 +19,7 @@ afterEach(() => { cleanup(); native.on = false; try { window.localStorage.clear(
 describe("app store links", () => {
   it("uses the App Store id or URL from VITE_IOS_APP_STORE_URL, else the App Store search", () => {
     expect(iosAppStoreUrl({})).toBe(IOS_APP_STORE_FALLBACK_URL);
-    expect(IOS_APP_STORE_FALLBACK_URL).toBe("https://apps.apple.com/ca/search?term=Boreal%20Financial");
+    expect(IOS_APP_STORE_FALLBACK_URL).toBe("https://apps.apple.com/ca/search?term=Keystone");
     expect(iosAppStoreUrl({ VITE_IOS_APP_STORE_URL: "6745123456" })).toBe("https://apps.apple.com/app/id6745123456");
     expect(iosAppStoreUrl({ VITE_IOS_APP_STORE_URL: "https://apps.apple.com/ca/app/boreal/id6745123456" }))
       .toBe("https://apps.apple.com/ca/app/boreal/id6745123456");

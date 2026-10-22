@@ -8,6 +8,7 @@ import { getFormResponse, submitFormResponse, saveFormResponse } from "@/lib/api
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { mergeDraft, readDraft, useFormDraft } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
 import { openExternal } from "@/native/openExternal"; // BF_CLIENT_v805_PHONE_FIXES
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 const FORM_KEY = "cra_view_only_authorization";
 const ACCORD_BN = "840554489";
@@ -141,7 +142,7 @@ export default function CraAuthorizationForm({
       </ol>
 
       <p className="cmpf-note">
-        Important: Boreal Financial is not alerted when you finish. After submitting, please let your Boreal Financial representative know.
+        Important: {brandName()} is not alerted when you finish. After submitting, please let your {brandName()} representative know.
       </p>
 
       {error && <p className="cmpf-error">{error}</p>}

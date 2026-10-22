@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/api";
 import { getToken, setToken } from "@/auth/token";
 import { namedCredentialStore } from "@/auth/credentialStore";
 import { ClientProfileStore } from "@/state/clientProfiles"; // BF_CLIENT_FACE_ID_SUBMISSION_v367
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export const DEVICE_KEY = "device-sign-in";
 export const PROMPTED_KEY = "bf_face_id_prompted";
@@ -39,7 +40,7 @@ export type BiometryStatus = { native: boolean; available: boolean; reason: stri
 
 export async function biometryStatus(): Promise<BiometryStatus> {
   if (!Capacitor.isNativePlatform()) {
-    return { native: false, available: false, reason: "Face ID needs the Boreal app on your phone or tablet." };
+    return { native: false, available: false, reason: `Face ID needs the ${brandName()} app on your phone or tablet.` };
   }
   try {
     const info: any = await BiometricAuth.checkBiometry();
@@ -88,7 +89,7 @@ export async function enrollDeviceWithReason(): Promise<EnrollResult> {
     const r = await apiRequest<Stored>("/api/client/device-sign-in/enroll", { method: "POST", body: { deviceLabel: Capacitor.getPlatform() } });
     if (!r?.credentialId || !r?.secret) {
       console.error("face_id_enroll_bad_response", { got: r ? Object.keys(r) : null });
-      return { ok: false, stage: "server", message: "Boreal did not return a Face ID credential. Try again." };
+      return { ok: false, stage: "server", message: `${brandName()} did not return a Face ID credential. Try again.` };
     }
     await namedCredentialStore.set(DEVICE_KEY, JSON.stringify({ credentialId: r.credentialId, secret: r.secret }));
     return { ok: true };
@@ -101,7 +102,7 @@ export async function enrollDeviceWithReason(): Promise<EnrollResult> {
       const detail = role ? ` This sign-in is a "${role}" session, not a client one.` : "";
       return { ok: false, stage: "server", message: `Face ID could not be turned on.${detail} Sign out, then sign in again with a text code.` };
     }
-    return { ok: false, stage: "server", message: `Boreal could not turn Face ID on: ${raw}` };
+    return { ok: false, stage: "server", message: `${brandName()} could not turn Face ID on: ${raw}` };
   }
 }
 
@@ -110,7 +111,7 @@ export async function enrollThisDevice(): Promise<boolean> {
 }
 
 export async function signInWithFaceId(): Promise<DeviceSignInData> {
-  await BiometricAuth.authenticate({ reason: "Sign in to Boreal Financial", cancelTitle: "Use a text code", allowDeviceCredential: false });
+  await BiometricAuth.authenticate({ reason: `Sign in to ${brandName()}`, cancelTitle: "Use a text code", allowDeviceCredential: false });
   const stored = parseStored(await namedCredentialStore.get(DEVICE_KEY));
   if (!stored) throw Object.assign(new Error("Face ID sign-in is not set up on this phone."), { code: "not_enrolled" });
   try {

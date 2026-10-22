@@ -27,6 +27,7 @@ import { startFormResponseQueueWatcher } from "./state/formResponseQueueWatcher"
 import { validateBootToken } from "./state/validateBootToken";
 import { hydrateToken } from "./auth/token";
 import { startBorealRuntime } from "./native/borealRuntime";
+import { hasCachedBrand, loadBrand } from "./config/brand"; // KS_CLIENT_v4_BRANDING
 
 try {
   validateEnv();
@@ -70,6 +71,10 @@ void startBorealRuntime({
 });
 
 void validateBootToken();
+
+// KS_CLIENT_v4_BRANDING - the licensee's name before the first screen. First visit: wait for it (2.5s at most);
+// later visits use the name saved on the device and refresh it in the background.
+if (hasCachedBrand()) void loadBrand(); else await loadBrand();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

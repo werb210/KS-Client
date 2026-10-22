@@ -15,9 +15,10 @@ import { getFormResponse, submitFormResponse, saveFormResponse } from "@/lib/api
 import { formatPhoneNumber } from "@/utils/location"; // v_ADVISOR_PHONE_FMT_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { MoneyInput, isBlank, mergeDraft, readDraft, useFormDraft } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
+import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 const FORM_KEY = "professional_advisors";
-const FINANCIAL_ADVISOR_FIRM = "Boreal Financial";
+const financialAdvisorFirm = (): string => brandName(); // KS_CLIENT_v4_BRANDING
 
 type AdvisorRow = { firm: string; contact: string; phone: string; email: string };
 type AdvisorKey = "cpa" | "attorney" | "insurance" | "ar_credit_insurance";
@@ -97,7 +98,7 @@ export default function AdvisorsForm({
 
   const buildPayload = (auth: boolean) => ({
     advisors,
-    financial_advisor: { firm: FINANCIAL_ADVISOR_FIRM, authorized: auth },
+    financial_advisor: { firm: financialAdvisorFirm(), authorized: auth },
     monitoring,
   });
 
@@ -113,7 +114,7 @@ export default function AdvisorsForm({
 
   const handleSubmit = async (skipReminder = false) => {
     if (!authorized) {
-      setError("Please authorize Boreal Financial to discuss the application before continuing.");
+      setError(`Please authorize ${brandName()} to discuss the application before continuing.`);
       return;
     }
     // BF_CLIENT_v808_ADVISORS_REMINDER - CPA, lawyer or insurance agent left empty: remind before submitting.
@@ -170,7 +171,7 @@ export default function AdvisorsForm({
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Professional Advisors</h2>
       <p className="cmpf-intro">
         {/* BF_CLIENT_v808_ADVISORS_REMINDER */}
-        Add your accountant, lawyer and insurance agent so Boreal Financial can coordinate with them. If you don't have one, you can still submit.
+        Add your accountant, lawyer and insurance agent so {brandName()} can coordinate with them. If you don't have one, you can still submit.
         {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
       </p>
 
@@ -216,12 +217,12 @@ export default function AdvisorsForm({
       <h3 style={{ fontSize: 17, fontWeight: 700, margin: "24px 0 6px" }}>Financial Advisor / Consultant</h3>
       <div className="cmpf-card" style={{ background: "#F5F8FC" }}>
         <div style={{ fontSize: 15, color: "#0B1F3A" }}>
-          Your financial advisor on this transaction is <strong>{FINANCIAL_ADVISOR_FIRM}</strong>.
+          Your financial advisor on this transaction is <strong>{financialAdvisorFirm()}</strong>.
         </div>
         <label className="cmpf-check">
           <input type="checkbox" checked={authorized} onChange={(e) => { setAuthorized(e.target.checked); void saveFormResponse(applicationId, FORM_KEY, buildPayload(e.target.checked)).catch(() => {}); }} />
           {/* BF_CLIENT_v807_FORMS */}
-          <span>I authorize Boreal Financial to discuss this proposed credit facility with any of its lending partners.</span>
+          <span>I authorize {brandName()} to discuss this proposed credit facility with any of its lending partners.</span>
         </label>
       </div>
 

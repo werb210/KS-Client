@@ -19,7 +19,7 @@ describe("v823 lock-screen status", () => {
 describe("v823 Add to calendar", () => {
   it("makes a 30-minute event for the booked call", () => {
     const event = bookedCallEvent({ startsAt: "2026-10-20T16:00:00.000Z", kind: "teams", staffFirstName: "Andrew", joinUrl: "https://teams.microsoft.com/l/x" });
-    expect(event).toMatchObject({ title: "Boreal Financial call with Andrew", location: "Microsoft Teams", url: "https://teams.microsoft.com/l/x" });
+    expect(event).toMatchObject({ title: "Keystone call with Andrew", location: "Microsoft Teams", url: "https://teams.microsoft.com/l/x" });
     expect(event!.endMs - event!.startMs).toBe(30 * 60 * 1000);
     expect(bookedCallEvent({ startsAt: "not a date", kind: "phone" })).toBeNull();
     expect(bookedCallEvent({ startsAt: "2026-10-20T16:00:00Z", kind: "phone", joinUrl: "javascript:alert(1)" })?.url).toBeUndefined();
