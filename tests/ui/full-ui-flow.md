@@ -10,6 +10,7 @@ UI validation for the staff portal flows across silos without altering logic.
 - **Sales pipeline column tests**: Verify pipeline columns load correct stages, sorting, and filtering.
 - **Application card tab tests**:
   - Application Data
+  - Banking / Flinks
   - Financial Data
   - Documents
   - Notes conversation

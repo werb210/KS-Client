@@ -143,6 +143,7 @@ function formStub(name: string) {
 vi.mock("@/pages/mini-portal/forms/forms/PersonalNetWorthForm", formStub("networth"));
 vi.mock("@/pages/mini-portal/forms/forms/DebtStackForm", formStub("debt"));
 vi.mock("@/pages/mini-portal/forms/forms/CraAuthorizationForm", formStub("cra"));
+vi.mock("@/pages/mini-portal/forms/forms/FlinksConnectForm", formStub("flinks"));
 vi.mock("@/pages/mini-portal/forms/forms/RealEstateCollateralForm", formStub("realestate"));
 vi.mock("@/pages/mini-portal/forms/forms/EquipmentCollateralForm", formStub("equipment"));
 vi.mock("@/pages/mini-portal/forms/forms/AdvisorsForm", formStub("advisors"));

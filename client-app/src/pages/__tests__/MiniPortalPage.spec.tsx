@@ -36,7 +36,7 @@ describe("MiniPortalPage", () => {
     expect(screen.getAllByText("Personal Statement of Affairs").length).toBeGreaterThan(0);
   });
 
-  it("lists the always-on forms, and not CRA unless staff request it", () => {
+  it("lists the always-on forms, and not CRA or Connect Bank unless staff request them", () => {
     render(<MemoryRouter initialEntries={["/portal/app-1"]}><MiniPortalPage /></MemoryRouter>);
     const more = screen.getByTestId("cmp-more");
     expect(more.textContent).toContain("Personal Net Worth Statement");
@@ -45,6 +45,19 @@ describe("MiniPortalPage", () => {
     expect(more.textContent).toContain("Start a new application");
     expect(more.textContent).not.toContain("CRA Authorization");
     expect(more.textContent).not.toContain("Connect Bank");
+  });
+
+  // KS_CLIENT_BANK_CONNECT_ADDON - Connect Bank shows only when the server lists it as a requested form, which it does
+  // only for a licensee with the bank_connect add-on switched on (KS-server gates the to-do list).
+  it("shows Connect Bank (View-Only) only when the to-do list asks for it", async () => {
+    (apiCall as any).mockImplementation(async (url: string) => {
+      if (typeof url === "string" && url.includes("/documents-needed/action-center")) {
+        return { outstanding: [{ key: "form:flinks", kind: "form", label: "Connect Bank (View-Only)", urgent: false }], completed: [] as any[], outstandingCount: 1 };
+      }
+      return { items: [] as any[] };
+    });
+    render(<MemoryRouter initialEntries={["/portal/app-1"]}><MiniPortalPage /></MemoryRouter>);
+    await waitFor(() => expect(screen.getByTestId("cmp-more").textContent).toContain("Connect Bank (View-Only)"));
   });
 
   it("offers Upload documents on More, marked needed when documents are outstanding", async () => {

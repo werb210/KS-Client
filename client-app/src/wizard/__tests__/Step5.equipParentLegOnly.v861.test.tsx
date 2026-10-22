@@ -2,7 +2,7 @@
 // BF_CLIENT_BLOCK_v861_EQUIP_PARENT_LEG_ONLY - the parent equipment
 // application's Step 5 asks the server for its OWN equipment leg only. It used
 // to add a phantom closing-cost companion leg (TERM / LOC by amount) whose
-// lender-product forms (CRA / Professional advisors) leaked onto the
+// lender-product forms (Flinks / CRA / Professional advisors) leaked onto the
 // equipment application's required documents.
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
@@ -51,7 +51,7 @@ import { Step5_Documents } from "../Step5_Documents";
 
 const DOCS_BY_CATEGORY: Record<string, Array<{ id: string; document_type: string; required: boolean; stage: number }>> = {
   EQUIPMENT: [{ id: "eq-quote", document_type: "Equipment quote or invoice", required: true, stage: 1 }],
-  TERM: [{ id: "term-doc", document_type: "Term loan companion schedule", required: true, stage: 1 }],
+  TERM: [{ id: "flinks", document_type: "Flinks banking connection", required: true, stage: 1 }],
   LOC: [{ id: "cra", document_type: "CRA authorization", required: true, stage: 1 }],
   "Working Capital": [{ id: "bank", document_type: "6 months business banking statements", required: true, stage: 1 }],
 };
@@ -115,7 +115,7 @@ describe("Step 5 equipment parent aggregates its own leg only", () => {
 
     const text = container.textContent || "";
     expect(text).toMatch(/Equipment quote or invoice/i);
-    expect(text).not.toMatch(/Term loan companion schedule/i);
+    expect(text).not.toMatch(/Flinks/i);
     expect(text).not.toMatch(/CRA authorization/i);
   });
 

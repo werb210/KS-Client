@@ -17,6 +17,8 @@ import PersonalNetWorthForm from "@/pages/mini-portal/forms/forms/PersonalNetWor
 import DebtStackForm from "@/pages/mini-portal/forms/forms/DebtStackForm";
 // BF_CLIENT_BLOCK_v301_ACCORD_CMP_FORMS_v1
 import CraAuthorizationForm from "@/pages/mini-portal/forms/forms/CraAuthorizationForm";
+// BF_CLIENT_BLOCK_v302_FLINKS_CONNECT_v1
+import FlinksConnectForm from "@/pages/mini-portal/forms/forms/FlinksConnectForm";
 // BF_CLIENT_BLOCK_v304_ACCORD_FORMS_REBUILD_v1
 import RealEstateCollateralForm from "@/pages/mini-portal/forms/forms/RealEstateCollateralForm";
 // BF_CLIENT_BLOCK_v307_DEBT_EQUIP_PREFILL_v1
@@ -90,6 +92,7 @@ const ACTION_CHIPS = [
   { id: "new",        label: "New Application" },
   { id: "networth",   label: "Personal Net Worth Statement" },
   { id: "cra",        label: "CRA Authorization" },
+  { id: "flinks",     label: "Connect Bank (View-Only)" },
   { id: "equipment",  label: "Equipment Collateral Form" },
   { id: "realestate", label: "Real Estate Collateral Form" },
   { id: "debt",       label: "Debt Stack" },
@@ -366,7 +369,7 @@ export default function MiniPortalPage() {
     if (kind === "form" && rest) {
       // BF_CLIENT_BLOCK_v324 — open the form modal (the /forms/* route doesn't
       // exist; the pills use setOpenForm, so CTAs must too).
-      if (rest === "networth" || rest === "debt" || rest === "equipment" || rest === "realestate" || rest === "cra" || rest === "advisors") {
+      if (rest === "networth" || rest === "debt" || rest === "equipment" || rest === "realestate" || rest === "cra" || rest === "flinks" || rest === "advisors") {
         setOpenForm(rest);
       }
       return;
@@ -385,7 +388,7 @@ export default function MiniPortalPage() {
   const [uploadNotice, setUploadNotice] = useState<{ tone: "busy" | "ok" | "info" | "error"; text: string } | null>(null);
   const directUploadRef = useRef<(type: string, label: string, files: File[]) => Promise<void>>(async () => undefined);
   // BF_CLIENT_BLOCK_v315_MINI_PORTAL_FORM_MODALS_v1
-  const [openForm, setOpenForm] = useState<null | "networth" | "debt" | "equipment" | "realestate" | "cra" | "advisors" | "lender_qa" | "product_questions">(null);
+  const [openForm, setOpenForm] = useState<null | "networth" | "debt" | "equipment" | "realestate" | "cra" | "flinks" | "advisors" | "lender_qa" | "product_questions">(null);
   // BF_CLIENT_NATIVE_WIRING_v236 - Action Center buttons. Document keys are
   // "upload:<category>" and form keys "form:<name>" (BF-Server applicantActions).
   // BF_CLIENT_TODO_ACTIONS_v637 - items that carry an action (PGI link, SBA forms, signing) run it
@@ -419,7 +422,7 @@ export default function MiniPortalPage() {
       return;
     }
     if (item.kind === "form" && prefix === "form" && rest) {
-      const forms = ["networth", "debt", "equipment", "realestate", "cra", "advisors"] as const;
+      const forms = ["networth", "debt", "equipment", "realestate", "cra", "flinks", "advisors"] as const;
       if ((forms as readonly string[]).includes(rest)) setOpenForm(rest as (typeof forms)[number]);
     }
   }, [applicationId, navigate]);
@@ -518,7 +521,7 @@ export default function MiniPortalPage() {
   const onChip = (id: string) => {
     if (id === "new") { startNewApplication(); navigate("/apply/step-1"); return; }
     if (id === "upload") { setShowDocPicker(true); return; }
-    if (id === "networth" || id === "debt" || id === "equipment" || id === "realestate" || id === "cra" || id === "advisors") {
+    if (id === "networth" || id === "debt" || id === "equipment" || id === "realestate" || id === "cra" || id === "flinks" || id === "advisors") {
       setOpenForm(id);
       return;
     }
@@ -776,12 +779,12 @@ export default function MiniPortalPage() {
     return k === "upload_docs" || k === "upload" || k.startsWith("upload:");
   };
   // BF_CLIENT_BLOCK_v_STALE_TASK_PROMPT_GATE_v1 — identify step/task prompts (CRA,
-  // Net Worth, etc.) so they can be hidden once the app has advanced
+  // Connect Bank, Net Worth, etc.) so they can be hidden once the app has advanced
   // past the additional-steps stage (see pastAdditionalSteps below).
   const isTaskPrompt = (cta?: string | null) => {
     let k = String(cta ?? "");
     if (k.startsWith("form:")) k = k.slice(5);
-    return ["cra", "networth", "equipment", "realestate", "debt", "advisors"].includes(k);
+    return ["cra", "flinks", "networth", "equipment", "realestate", "debt", "advisors"].includes(k);
   };
   // Once staff move the app to Off to Lender / Offer, the "few quick steps" prompt and
   // its task buttons are stale and contradict the green all-clear banner (gated on the
@@ -804,9 +807,9 @@ export default function MiniPortalPage() {
       return;
     }
     // BF_CLIENT_BLOCK_v721 — Stage-2 buttons carry cta_action = chip id
-    // ("cra","networth",...); also accept legacy "form:<id>". Open the modal.
+    // ("cra","flinks","networth",...); also accept legacy "form:<id>". Open the modal.
     const formId = ctaAction.startsWith("form:") ? ctaAction.slice(5) : ctaAction;
-    if (["upload", "new", "networth", "cra", "equipment", "realestate", "debt", "advisors"].includes(formId)) {
+    if (["upload", "new", "networth", "cra", "flinks", "equipment", "realestate", "debt", "advisors"].includes(formId)) {
       onChip(formId);
       return;
     }
@@ -1150,7 +1153,7 @@ export default function MiniPortalPage() {
             {/* BF_CLIENT_ALL_RECEIVED_NOTE_v1 — positive confirmation once nothing is outstanding. */}
             {docsChecked && !hasOutstandingDocs && signSession?.status !== "ready"
               // BF_CLIENT_BLOCK_v_CMP_REQUIRED_BANNER_v1 — hasOutstandingDocs covers
-              // DOCS only, not the required form steps (CRA/Advisors).
+              // DOCS only, not the required form steps (CRA/Connect Bank/Advisors).
               // During the documents/additional-steps stages those forms may still be
               // pending, so the "nothing outstanding" reassurance is misleading there.
               // Only show it once staff have advanced the app past those stages.
@@ -1262,7 +1265,7 @@ export default function MiniPortalPage() {
             <div className="mp-actions__chips">
               {ACTION_CHIPS
                 // BF_CLIENT_CMP_LAYOUT_v631 - always: Upload Documents, New Application, Personal Net
-                // Worth, Debt Stack, Professional Advisors. CRA and the collateral forms
+                // Worth, Debt Stack, Professional Advisors. CRA, Connect Bank and the collateral forms
                 // (LOC / Accord-specific) appear only once staff request them in the portal.
                 .filter((c) => ALWAYS_CHIPS.has(c.id) || requestedForms.has(c.id) || (c.id === "sba_forms" && isSbaApplication))
                 .map((c) => (
@@ -1451,6 +1454,12 @@ export default function MiniPortalPage() {
               )}
               {openForm === "cra" && (
                 <CraAuthorizationForm
+                  applicationId={applicationId}
+                  onComplete={() => setOpenForm(null)}
+                />
+              )}
+              {openForm === "flinks" && (
+                <FlinksConnectForm
                   applicationId={applicationId}
                   onComplete={() => setOpenForm(null)}
                 />

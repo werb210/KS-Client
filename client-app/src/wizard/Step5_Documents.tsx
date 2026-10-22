@@ -444,7 +444,7 @@ function Step5DocumentsBody() {
         // createLinkedApplication with product_category EQUIPMENT_FINANCE) and
         // collects its own documents on its own card. Previously this branch
         // pushed a phantom companion leg (TERM/LOC by amount) whose lender
-        // products dragged the Accord CMP forms (CRA / Professional
+        // products dragged the Accord CMP forms (Flinks / CRA / Professional
         // advisors) onto the EQUIPMENT app's required-document set.
         legs.push({ category: "EQUIPMENT", amount: equipmentAmount });
       } else if (isCapitalAndEquipment) {
