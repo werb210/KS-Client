@@ -2,6 +2,7 @@
 // portal to the home screen (this is where Boreal communicates with the client),
 // plus iOS/Android app download links (BF_CLIENT_v817 - were "Coming Soon"
 // placeholders). Dismiss is permanent ("Don't show again").
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useEffect, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
 import { Capacitor } from "@capacitor/core"; // BF_CLIENT_INSTALL_CARD_NATIVE_v338
@@ -116,9 +117,9 @@ export default function InstallAppPrompt() {
   };
 
   return (
-    <div style={styles.card} role="region" aria-label={`Add ${brandName()} to your home screen`}>
-      <div style={styles.title}>Add {brandName()} to your home screen</div>
-      <div style={styles.subtitle}>This is where {brandName()} keeps in touch with you throughout your application — add it to your home screen for one-tap access.</div>
+    <div style={styles.card} role="region" aria-label={t("install.title")}>
+      <div style={styles.title}>{t("install.title")}</div>
+      <div style={styles.subtitle}>{t("install.subtitle")}</div>
       <ul style={styles.benefits}>
         <li>Call {brandName()} directly</li>
         <li>Message your intake team</li>

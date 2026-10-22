@@ -12,6 +12,7 @@
 //   • Talk to a Human posts kind: 'talk_to_human' with contact info so the
 //     BF-Server CRM contact is built/linked immediately. SMS notify of
 //     staff is server-side and unchanged.
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { MayaMessage } from "./mayaMarkdown";
 import { createPortal } from "react-dom";
@@ -21,7 +22,6 @@ import { getToken } from "@/auth/token";
 import { useApplicationStore } from "@/state/useApplicationStore";
 import { useAuth } from "@/auth/useAuth";
 import { useIsPhoneWidth } from "@/components/CmpPhone"; // BF_CLIENT_v805_PHONE_FIXES
-import { SUPPORT_EMAIL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 import {
   clearConversation,
   conversationHeaders,
@@ -377,7 +377,7 @@ export default function MayaWidget() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { id: uid("s"), from: "system", message: `Couldn't reach the team — please email ${SUPPORT_EMAIL}.` },
+        { id: uid("s"), from: "system", message: t("support.unreachable") },
       ]);
     }
   }
@@ -470,7 +470,7 @@ export default function MayaWidget() {
           <div className="chat-header flex items-center justify-between border-b border-slate-200 px-4 py-3">
             <div>
               <p className="text-sm font-semibold">{assistantName()}</p>
-              <p className="text-xs text-slate-600">AI assistant &middot; {brandName()}</p>
+              <p className="text-xs text-slate-600">{t("assistant.subtitle")}</p>
             </div>
             <button
               aria-label="Close chat"

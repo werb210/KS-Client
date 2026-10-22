@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
+// KS_CLIENT_v5_LICENSEE_APPS - VITE_LICENSEE=<key> builds licensees/<key>'s branded client; unset = default Keystone.
+import { licenseePlugin } from './vite.licensee'
 
 function buildSha(): string {
   const env = process.env.GITHUB_SHA;
@@ -17,7 +19,9 @@ function buildSha(): string {
 // console.warn and console.error stay so real failures are still reported.
 export const PRODUCTION_DROPPED_CONSOLE = ['console.log', 'console.debug', 'console.info']
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => {
+  const licensee = licenseePlugin(mode, fileURLToPath(new URL('.', import.meta.url)))
+  return {
   esbuild: mode === 'production' ? { pure: PRODUCTION_DROPPED_CONSOLE, drop: ['debugger'] } : {},
   // BF_CLIENT_APP_UPDATE_v723 - stamp each build so an installed phone app can tell it is out of date.
   define: {
@@ -26,6 +30,7 @@ export default defineConfig(({ mode }) => ({
     'import.meta.env.VITE_APP_BUILD_SHA': JSON.stringify(buildSha()),
   },
   plugins: [
+    ...(licensee ? [licensee] : []),
     react(),
     VitePWA({
       strategies: 'injectManifest',
@@ -72,4 +77,5 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
-}))
+  }
+})

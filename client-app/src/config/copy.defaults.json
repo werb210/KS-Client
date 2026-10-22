@@ -1,0 +1,17 @@
+{
+  "welcome.title": "Welcome to {name}",
+  "install.title": "Add {name} to your home screen",
+  "install.subtitle": "This is where {name} keeps in touch with you throughout your application — add it to your home screen for one-tap access.",
+  "install.banner": "Install {name}",
+  "landing.tagline": "Commercial financing advice for businesses in Canada and the United States.",
+  "footer.copyright": "© {year} {name}",
+  "advisor.team": "{name} team",
+  "assistant.subtitle": "AI assistant · {name}",
+  "refer.title": "Refer them to {name}",
+  "refer.share": "Share {name}",
+  "support.unreachable": "Couldn't reach the team — please email {support_email}.",
+  "legal.privacy": "Privacy Policy",
+  "legal.terms": "Terms of Service",
+  "legal.privacy_short": "Privacy policy",
+  "legal.terms_short": "Terms of service"
+}

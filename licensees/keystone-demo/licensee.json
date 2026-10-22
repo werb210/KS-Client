@@ -1,0 +1,31 @@
+{
+  "$schema": "../licensee.schema.json",
+  "key": "keystone-demo",
+  "app_name": "Keystone Demo",
+  "company_name": "Keystone Demo Brokerage",
+  "ios": { "bundle_id": "financial.boreal.keystone.demo", "team_id": "" },
+  "android": { "application_id": "financial.boreal.keystone.demo" },
+  "server_url": "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net",
+  "client_web_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net",
+  "colors": {
+    "primary": "#1E3A5F",
+    "secondary": "#F2B544",
+    "background": "#FFFFFF",
+    "text": "#1F2937",
+    "on_primary": "#FFFFFF"
+  },
+  "fonts": {
+    "body": { "family": "Inter", "google": true, "weights": [400, 500, 600, 700] },
+    "heading": { "family": "Merriweather", "google": true, "weights": [400, 700] }
+  },
+  "wording": {
+    "welcome.title": "Welcome to {name} - let's get your business funded",
+    "landing.tagline": "Business financing, arranged by the Keystone Demo team."
+  },
+  "support": { "email": "keystone@boreal.financial", "phone": "" },
+  "legal": {
+    "privacy_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/privacy",
+    "terms_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/terms"
+  },
+  "assets": { "icon": "icon.png", "splash": "splash.png" }
+}

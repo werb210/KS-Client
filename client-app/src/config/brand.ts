@@ -4,6 +4,7 @@
 // value it saw (kept on the device) or the build's VITE_COMPANY_NAME, never Boreal's.
 import { useSyncExternalStore } from "react";
 import { SERVER_URL } from "./licensee";
+import { LICENSEE_BUILD } from "./licenseeBuild";
 
 export type Brand = {
   company_name: string;
@@ -19,7 +20,7 @@ export type Brand = {
 const CACHE_KEY = "ks_brand_v1";
 const env = ((import.meta as any).env ?? {}) as Record<string, string | undefined>;
 
-export const DEFAULT_BRAND: Brand = {
+const KEYSTONE_BRAND: Brand = {
   company_name: String(env.VITE_COMPANY_NAME ?? "").trim() || "Keystone",
   legal_name: "",
   assistant_name: "Assistant",
@@ -29,6 +30,32 @@ export const DEFAULT_BRAND: Brand = {
   primary_color: "#0B1F3A",
   accent_color: "#2563EB",
 };
+
+// KS_CLIENT_v5_LICENSEE_APPS - a licensee's branded build (VITE_LICENSEE) starts from licensee.json, and keeps those
+// values even when the server says otherwise: the app's name, colours and support contact were checked (contrast,
+// store listing) for that build, and its web and phone versions must match. The server still fills what the build
+// leaves empty (legal name, assistant name, logo).
+export function brandFromBuild(build: typeof LICENSEE_BUILD, base: Brand = KEYSTONE_BRAND): { brand: Brand; pinned: Array<keyof Brand> } {
+  if (!build) return { brand: { ...base }, pinned: [] };
+  const fromBuild: Partial<Brand> = {
+    company_name: build.company_name,
+    support_email: build.support?.email,
+    support_phone: build.support?.phone,
+    primary_color: build.colors?.primary,
+    accent_color: build.colors?.secondary,
+  };
+  const out = { ...base };
+  const pinned: Array<keyof Brand> = [];
+  for (const [k, v] of Object.entries(fromBuild) as Array<[keyof Brand, string | undefined]>) {
+    const val = String(v ?? "").trim();
+    if (val) { out[k] = val; pinned.push(k); }
+  }
+  return { brand: out, pinned };
+}
+
+const BUILD = brandFromBuild(LICENSEE_BUILD);
+export const DEFAULT_BRAND: Brand = BUILD.brand;
+const PINNED = new Set<keyof Brand>(BUILD.pinned);
 
 function clean(raw: unknown): Brand {
   const src = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
@@ -40,6 +67,7 @@ function clean(raw: unknown): Brand {
   if (!/^https:\/\//i.test(out.logo_url)) out.logo_url = "";
   if (!/^#[0-9a-f]{6}$/i.test(out.primary_color)) out.primary_color = DEFAULT_BRAND.primary_color;
   if (!/^#[0-9a-f]{6}$/i.test(out.accent_color)) out.accent_color = DEFAULT_BRAND.accent_color;
+  for (const k of PINNED) out[k] = DEFAULT_BRAND[k];
   return out;
 }
 

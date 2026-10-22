@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keystone/licensee.schema.json",
+  "title": "Keystone licensee client app",
+  "description": "KS_CLIENT_v5_LICENSEE_APPS - one branded client app per licensee. Checked by scripts/licensee/validate.mjs (structure from this schema, plus colour contrast, image sizes and wording keys).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["key", "app_name", "company_name", "ios", "android", "server_url", "client_web_url", "colors", "fonts", "wording", "support", "legal", "assets"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "key": {
+      "description": "Same as the folder name and the licensee's company code: 3-32 characters, a-z, 0-9 and dashes.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$"
+    },
+    "app_name": {
+      "description": "Name under the icon on the phone and in the stores. Letters, digits, spaces and . , ( ) - only (no & or apostrophes). Keep it short: iPhone shows about 12 characters.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 .,()-]{0,28}[A-Za-z0-9.)]$"
+    },
+    "company_name": {
+      "description": "The brokerage's name as shown inside the app (headings, legal text).",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 80,
+      "pattern": "^[^<>{}\"\\\\]+$"
+    },
+    "ios": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_id"],
+      "properties": {
+        "bundle_id": {
+          "description": "Reverse-domain bundle id registered in the licensee's Apple Developer account, e.g. com.acmecapital.client. The share extension and widget use <bundle_id>.share and <bundle_id>.widget, and the app group group.<bundle_id>.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*){2,}$",
+          "maxLength": 100
+        },
+        "team_id": {
+          "description": "Apple Developer Team ID (10 characters). Optional here: the APPLE_TEAM_ID secret wins when set.",
+          "type": "string",
+          "pattern": "^([A-Z0-9]{10})?$"
+        }
+      }
+    },
+    "android": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["application_id"],
+      "properties": {
+        "application_id": {
+          "description": "Google Play package name, e.g. com.acmecapital.client. Cannot change after the first upload.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*){2,}$",
+          "maxLength": 100
+        }
+      }
+    },
+    "server_url": {
+      "description": "The licensee's KS-server address (https, no trailing slash).",
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9.-]+(:[0-9]+)?$"
+    },
+    "client_web_url": {
+      "description": "Where the web version of this licensee's client app is served (https, no trailing slash).",
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9.-]+(:[0-9]+)?$"
+    },
+    "website_url": {
+      "description": "The licensee's public website. Optional; defaults to client_web_url.",
+      "type": "string",
+      "pattern": "^https://[A-Za-z0-9.-]+(:[0-9]+)?(/[^\\s]*)?$"
+    },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary", "background", "text"],
+      "properties": {
+        "primary": { "$ref": "#/definitions/hex", "description": "Buttons, headings and links (replaces Keystone navy)." },
+        "secondary": { "$ref": "#/definitions/hex", "description": "Accent fills - badges, avatars, highlights (replaces Keystone gold). Text drawn on it uses the primary colour." },
+        "background": { "$ref": "#/definitions/hex", "description": "Page background and splash background." },
+        "text": { "$ref": "#/definitions/hex", "description": "Body text." },
+        "on_primary": { "$ref": "#/definitions/hex", "description": "Text on primary-coloured buttons. Default #FFFFFF." }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["body"],
+      "properties": {
+        "body": { "$ref": "#/definitions/font" },
+        "heading": { "$ref": "#/definitions/font" }
+      }
+    },
+    "wording": {
+      "description": "Overrides for app text, keyed by client-app/src/config/copy.defaults.json. {name}, {year}, {support_email} and {support_phone} are filled in.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 400 }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["email"],
+      "properties": {
+        "email": { "type": "string", "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", "maxLength": 120 },
+        "phone": { "type": "string", "pattern": "^(\\+?[0-9 ().-]{7,20})?$" }
+      }
+    },
+    "legal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["privacy_url", "terms_url"],
+      "properties": {
+        "privacy_url": { "type": "string", "pattern": "^https://[^\\s]+$" },
+        "terms_url": { "type": "string", "pattern": "^https://[^\\s]+$" }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["icon", "splash"],
+      "properties": {
+        "icon": { "description": "1024x1024 PNG, no transparency needed, no rounded corners (the stores round it).", "type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.png$" },
+        "splash": { "description": "2732x2732 PNG, logo centred on the background colour.", "type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.png$" },
+        "splash_dark": { "description": "Optional dark-mode splash, 2732x2732 PNG.", "type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.png$" }
+      }
+    }
+  },
+  "definitions": {
+    "hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "font": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family"],
+      "properties": {
+        "family": { "description": "Font family name, e.g. Inter.", "type": "string", "pattern": "^[A-Za-z0-9 ]{2,40}$" },
+        "google": { "description": "true to load this family from Google Fonts.", "type": "boolean" },
+        "weights": {
+          "description": "Google Fonts weights to load (each must exist for the family). Default [400, 700].",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 100, "maximum": 900 }
+        },
+        "files": {
+          "description": "Font files in this licensee's folder (woff2, woff, ttf or otf). Use either google or files.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["file", "weight"],
+            "properties": {
+              "file": { "type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.(woff2|woff|ttf|otf)$" },
+              "weight": { "type": "integer", "minimum": 100, "maximum": 900 },
+              "style": { "type": "string", "enum": ["normal", "italic"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

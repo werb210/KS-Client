@@ -2,7 +2,12 @@
 """Text-only release guardrails for the canonical Capacitor iOS project."""
 
 from pathlib import Path
+import os
 import re
+
+# KS_CLIENT_v5_LICENSEE_APPS - a licensee build (scripts/brand-native.mjs) uses that licensee's ids.
+BUNDLE_ID = os.environ.get("IOS_BUNDLE_ID", "com.borealfinancial.client")
+CAP_APP_ID = os.environ.get("CAP_APP_ID", "com.boreal.client")
 
 
 project_path = Path("client-app/ios/App/App.xcodeproj/project.pbxproj")
@@ -48,7 +53,7 @@ for name in ("Debug", "Release"):
         raise SystemExit(f"App target is missing its {name} configuration")
     settings = object_body(config_id, f"App target {name} settings")
     required_settings = {
-        "bundle ID": r"PRODUCT_BUNDLE_IDENTIFIER\s*=\s*com\.borealfinancial\.client\s*;",
+        "bundle ID": rf"PRODUCT_BUNDLE_IDENTIFIER\s*=\s*{re.escape(BUNDLE_ID)}\s*;",
         "iPhone and iPad device family (1,2)": r'TARGETED_DEVICE_FAMILY\s*=\s*"1\s*,\s*2"\s*;',
         "iPhone OS SDK": r"SDKROOT\s*=\s*iphoneos\s*;",
         "Designed for iPhone/iPad on Mac enabled": r"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD\s*=\s*YES\s*;",
@@ -199,8 +204,8 @@ for config_path in config_paths:
     source = config_path.read_text(encoding="utf-8")
     source = re.sub(r"/\*.*?\*/", "", source, flags=re.DOTALL)
     source = re.sub(r"//[^\n]*", "", source)
-    if not re.search(r"appId\s*:\s*['\"]com\.boreal\.client['\"]", source):
-        raise SystemExit(f"Capacitor appId must be com.boreal.client in {config_path}")
+    if not re.search(rf"appId\s*:\s*['\"]{re.escape(CAP_APP_ID)}['\"]", source):
+        raise SystemExit(f"Capacitor appId must be {CAP_APP_ID} in {config_path}")
     if re.search(r"allowMixedContent\s*:\s*true\b", source):
         raise SystemExit(f"Insecure allowMixedContent=true in {config_path}")
 

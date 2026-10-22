@@ -6,7 +6,8 @@
 import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
 import { brandName } from "@/config/brand";
 import { isNativeApp } from "@/lib/platform";
-import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { PRIVACY_URL, TERMS_URL, WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 
 export default function LandingFooter() {
   // BF_CLIENT_CHROME_v168 - no marketing footer inside the app. Privacy and
@@ -24,7 +25,7 @@ export default function LandingFooter() {
               <span className="font-semibold text-white">{brandName()}</span>
             </div>
             <p className="text-sm leading-relaxed text-white/65">
-              Commercial financing advice for businesses in Canada and the United States. {/* BF_CLIENT_v806_TFV */}
+              {t("landing.tagline")} {/* BF_CLIENT_v806_TFV */}
             </p>
           </div>
           <div>
@@ -47,10 +48,10 @@ export default function LandingFooter() {
         </div>
         <div className="border-t border-[#1c2538] pt-4 flex justify-between text-xs text-white/55">
           <div className="flex gap-4">
-            <a href={`${WEBSITE_URL}/privacy`} className="text-inherit no-underline hover:text-white">Privacy Policy</a>
-            <a href={`${WEBSITE_URL}/terms`} className="text-inherit no-underline hover:text-white">Terms of Service</a>
+            <a href={PRIVACY_URL} className="text-inherit no-underline hover:text-white">{t("legal.privacy")}</a>
+            <a href={TERMS_URL} className="text-inherit no-underline hover:text-white">{t("legal.terms")}</a>
           </div>
-          <div>© {new Date().getFullYear()} {brandName()}</div>
+          <div>{t("footer.copyright")}</div>
         </div>
       </div>
     </footer>
