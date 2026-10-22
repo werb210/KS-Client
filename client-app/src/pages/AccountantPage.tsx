@@ -7,6 +7,7 @@ import AdvisorsForm from "@/pages/mini-portal/forms/forms/AdvisorsForm";
 import CraAuthorizationForm from "@/pages/mini-portal/forms/forms/CraAuthorizationForm";
 import DebtStackForm from "@/pages/mini-portal/forms/forms/DebtStackForm";
 import EquipmentCollateralForm from "@/pages/mini-portal/forms/forms/EquipmentCollateralForm";
+import FlinksConnectForm from "@/pages/mini-portal/forms/forms/FlinksConnectForm";
 import RealEstateCollateralForm from "@/pages/mini-portal/forms/forms/RealEstateCollateralForm";
 import {
   clearAccountantToken, fetchAccountantApplication, fetchAccountantMe, getAccountantToken,
@@ -44,6 +45,7 @@ const FORM_RENDERERS: Record<string, React.ComponentType<{ applicationId: string
   real_estate_collateral_disclosure: RealEstateCollateralForm,
   professional_advisors: AdvisorsForm,
   cra_view_only_authorization: CraAuthorizationForm,
+  flinks_banking: FlinksConnectForm,
 };
 
 const FORM_LABELS: Record<string, string> = {
@@ -52,6 +54,7 @@ const FORM_LABELS: Record<string, string> = {
   real_estate_collateral_disclosure: "Real estate collateral",
   professional_advisors: "Professional advisors",
   cra_view_only_authorization: "CRA view-only access",
+  flinks_banking: "Banking connection (view-only)",
 };
 
 const page: CSSProperties = { minHeight: "100dvh", background: "rgb(248 250 252)", fontFamily: "'Inter', system-ui, -apple-system, sans-serif" };
