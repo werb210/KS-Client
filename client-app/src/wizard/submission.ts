@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { filterRequirementsByAmount, type LenderProductRequirement } from "./requirements";
-import type { ApplicationData } from "../types/application";
+import type { ApplicationData, PgiDetails } from "../types/application";
+import { cleanPgiDetails } from "./pgi"; // KS_CLIENT_v8_PGI
 import { ClientProfileStore } from "../state/clientProfiles";
 
 export type SubmissionDocument = {
@@ -48,6 +49,7 @@ export type SubmissionPayload = {
   // explicitly declined; omitted if they didn't choose either way.
   // BF-Server reads this on /submit to fire the BI handoff.
   pgi_opt_in?: "yes" | "no";
+  pgi_details?: PgiDetails; // KS_CLIENT_v8_PGI - only when PGI is ticked; KS-server refers it to the insurance partner
   ad_measurement_consent?: boolean; // BF_CLIENT_AD_MEASUREMENT_CONSENT_v402
   audience_match_consent?: boolean; // BF_CLIENT_SMS_DISCLOSURE_v690 - same optional box
   marketing_sms_consent?: boolean; // BF_CLIENT_v808_MARKETING_OPTIN
@@ -135,6 +137,7 @@ export function buildSubmissionPayload(app: ApplicationData): SubmissionPayload 
     lender_product_id: app.selectedProductId,
     // BF_CLIENT_BLOCK_v163_PGI_OPT_IN_PAYLOAD_v1 — propagate Step 6 choice.
     pgi_opt_in: app.pgiOptIn,
+    pgi_details: app.pgiOptIn === "yes" ? cleanPgiDetails(app.pgiDetails) : undefined, // KS_CLIENT_v8_PGI
     ad_measurement_consent: app.adMeasurementConsent === true, // BF_CLIENT_AD_MEASUREMENT_CONSENT_v402
     audience_match_consent: app.adMeasurementConsent === true, // BF_CLIENT_SMS_DISCLOSURE_v690
     marketing_sms_consent: app.marketingSmsConsent === true, // BF_CLIENT_v808_MARKETING_OPTIN

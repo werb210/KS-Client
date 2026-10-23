@@ -128,6 +128,15 @@ export interface ApplicantData extends OwnerData {
   additionalShareholders?: OwnerData[];
 }
 
+// KS_CLIENT_v8_PGI - optional details for the insurer when the client asks for Personal Guarantee Insurance.
+export type PgiDetails = {
+  loan_type?: string;
+  naics_code?: string;
+  formation_date?: string;
+  guarantor_dob?: string;
+  residential_address?: string;
+};
+
 export interface ApplicationData {
   applicationDraft?: {
     borrower: Record<string, unknown>;
@@ -196,6 +205,7 @@ export interface ApplicationData {
   // Insurance). The value lives in app state already; this declares
   // it on the type so buildSubmissionPayload can include it.
   pgiOptIn?: "yes" | "no";
+  pgiDetails?: PgiDetails; // KS_CLIENT_v8_PGI
   // BF_CLIENT_AD_MEASUREMENT_CONSENT_v402 - optional; lets BF-Server send hashed
   // email/phone with Google Ads conversions (enhanced conversions for leads).
   adMeasurementConsent?: boolean;
