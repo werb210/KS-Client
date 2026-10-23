@@ -13,17 +13,18 @@ import TourOverlay from "./TourOverlay";
 export type LiveDemoAppProps = {
   parentOrigin: string | null;
   embedded: boolean;
+  sidePanel?: boolean;
   initialPath?: string;
   openTop?: (url: string) => void;
 };
 
-export default function LiveDemoApp({ parentOrigin, embedded, initialPath = "/apply/step-1", openTop }: LiveDemoAppProps) {
+export default function LiveDemoApp({ parentOrigin, embedded, sidePanel = false, initialPath = "/apply/step-1", openTop }: LiveDemoAppProps) {
   return (
     <MemoryRouter initialEntries={[initialPath]}>
       <ErrorBoundary fallback={<FatalErrorScreen />}>
         <AppRoutes />
       </ErrorBoundary>
-      <TourOverlay parentOrigin={parentOrigin} embedded={embedded} openTop={openTop} />
+      <TourOverlay parentOrigin={parentOrigin} embedded={embedded} sidePanel={sidePanel} openTop={openTop} />
     </MemoryRouter>
   );
 }

@@ -10,8 +10,10 @@ import {
   brokerSideUrl,
   isEmbedded,
   isLiveDemoPath,
+  commandFrom,
   parentOriginFrom,
   postToParent,
+  usesSidePanel,
 } from "../mode";
 import { TOUR_STEPS, resolveStep } from "../tour";
 
@@ -106,6 +108,18 @@ describe("live demo mode and the parent page", () => {
     expect(parentOriginFrom(`?parent=${enc("https://portal.licensee.example")}`, ["https://portal.licensee.example"])).toBe("https://portal.licensee.example");
   });
 
+  it("side panel only when embedded with ?panel=1; commands only from the parent origin", () => {
+    expect(usesSidePanel("?embed=1&panel=1", true)).toBe(true);
+    expect(usesSidePanel("?embed=1&panel=1", false)).toBe(false);
+    expect(usesSidePanel("?embed=1", true)).toBe(false);
+    const ok = { type: "ks-live-demo", command: "next" };
+    expect(commandFrom({ origin: DEFAULT_PORTAL_ORIGIN, data: ok }, DEFAULT_PORTAL_ORIGIN)).toBe("next");
+    expect(commandFrom({ origin: "https://evil.example", data: ok }, DEFAULT_PORTAL_ORIGIN)).toBeNull();
+    expect(commandFrom({ origin: DEFAULT_PORTAL_ORIGIN, data: ok }, null)).toBeNull();
+    expect(commandFrom({ origin: DEFAULT_PORTAL_ORIGIN, data: { type: "ks-live-demo", command: "rm -rf" } }, DEFAULT_PORTAL_ORIGIN)).toBeNull();
+    expect(commandFrom({ origin: DEFAULT_PORTAL_ORIGIN, data: "next" }, DEFAULT_PORTAL_ORIGIN)).toBeNull();
+  });
+
   it("posts only to the given parent origin, and only when embedded", () => {
     const postMessage = vi.fn();
     const parent = { postMessage } as unknown as Window;
@@ -151,6 +165,28 @@ describe("the tour over the real client app", () => {
     globalThis.fetch = realFetch;
     window.scrollTo = realScrollTo;
   });
+
+  it("side panel (?panel=1): no card on the phone; Next and Back come from the portal's origin only", async () => {
+    const { prepareLiveDemo } = await import("../bootLiveDemo");
+    const { default: LiveDemoApp } = await import("../LiveDemoApp");
+    prepareLiveDemo();
+    const postMessage = vi.spyOn(window.parent, "postMessage").mockImplementation(() => undefined);
+    render(<LiveDemoApp parentOrigin={DEFAULT_PORTAL_ORIGIN} embedded sidePanel initialPath="/apply/step-3" />);
+    const currentStep = () => screen.getByTestId("live-demo-tour").getAttribute("data-step");
+    await waitFor(() => expect(currentStep()).toBe("step3"));
+    expect(screen.queryByTestId("live-demo-card")).toBeNull();
+    // The panel is told what to show, including the button state.
+    await waitFor(() => expect(postMessage).toHaveBeenCalledWith(expect.objectContaining({ event: "step", step: "step3", canBack: true, final: false }), DEFAULT_PORTAL_ORIGIN));
+    // A command from another origin is ignored.
+    act(() => { window.dispatchEvent(new MessageEvent("message", { origin: "https://evil.example", data: { type: "ks-live-demo", command: "next" } })); });
+    await new Promise((r) => setTimeout(r, 300));
+    expect(currentStep()).toBe("step3");
+    act(() => { window.dispatchEvent(new MessageEvent("message", { origin: DEFAULT_PORTAL_ORIGIN, data: { type: "ks-live-demo", command: "back" } })); });
+    await waitFor(() => expect(currentStep()).toBe("step2"));
+    act(() => { window.dispatchEvent(new MessageEvent("message", { origin: DEFAULT_PORTAL_ORIGIN, data: { type: "ks-live-demo", command: "next" } })); });
+    await waitFor(() => expect(currentStep()).not.toBe("step2"), { timeout: 15000 });
+    postMessage.mockRestore();
+  }, 30000);
 
   it("Back returns to the previous screen and its pop-up", async () => {
     const { prepareLiveDemo } = await import("../bootLiveDemo");

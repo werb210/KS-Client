@@ -4,13 +4,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TOUR_STEPS, resolveStep, stepFits, waitUntil, type TourStep } from "./tour";
-import { LIVE_DEMO_TAG, brokerSideUrl, postToParent } from "./mode";
+import { LIVE_DEMO_TAG, brokerSideUrl, commandFrom, postToParent } from "./mode";
 
 export type TourOverlayProps = {
   /** The portal's origin (validated), or null. */
   parentOrigin: string | null;
   /** Shown inside the portal's phone frame. */
   embedded: boolean;
+  /** KS_CLIENT_v11_LIVE_DEMO: the portal's side panel shows the text and buttons (?panel=1). */
+  sidePanel?: boolean;
   steps?: TourStep[];
   /** How "Show me the broker side" leaves when the demo is open on its own (tests replace it). */
   openTop?: (url: string) => void;
@@ -46,7 +48,7 @@ function defaultOpenTop(url: string): void {
   }
 }
 
-export default function TourOverlay({ parentOrigin, embedded, steps = TOUR_STEPS, openTop = defaultOpenTop }: TourOverlayProps) {
+export default function TourOverlay({ parentOrigin, embedded, sidePanel = false, steps = TOUR_STEPS, openTop = defaultOpenTop }: TourOverlayProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const pathRef = useRef(location.pathname);
@@ -115,13 +117,24 @@ export default function TourOverlay({ parentOrigin, embedded, steps = TOUR_STEPS
     return () => window.clearTimeout(timer);
   }, [step, hasTarget]);
 
-  // Tell the portal around the demo which pop-up is showing (its side panel mirrors it).
+  // Tell the portal around the demo which pop-up is showing (its side panel mirrors it, and in side-panel mode draws
+  // the buttons).
   const postedFor = useRef<string | null>(null);
+  const stepNumber = active + 1;
+  const stepTotal = steps.length;
+  const stepFinal = Boolean(step?.final);
+  const stepCanBack = Boolean(step?.back) && active > 0;
   useEffect(() => {
-    if (!step || postedFor.current === step.key) return;
-    postedFor.current = step.key;
-    postToParent({ type: LIVE_DEMO_TAG, event: "step", step: step.key, title: step.title, text: step.text }, { origin: parentOrigin, embedded });
-  }, [step, parentOrigin, embedded]);
+    if (!step) return;
+    const key = `${step.key}|${busy ? 1 : 0}`;
+    if (postedFor.current === key) return;
+    postedFor.current = key;
+    postToParent(
+      { type: LIVE_DEMO_TAG, event: "step", step: step.key, title: step.title, text: step.text,
+        number: stepNumber, total: stepTotal - 1, canBack: stepCanBack, final: stepFinal, busy },
+      { origin: parentOrigin, embedded },
+    );
+  }, [step, busy, stepNumber, stepTotal, stepCanBack, stepFinal, parentOrigin, embedded]);
 
   const next = useCallback(async () => {
     if (!step || busy || active < 0) return;
@@ -158,6 +171,21 @@ export default function TourOverlay({ parentOrigin, embedded, steps = TOUR_STEPS
     const sent = postToParent({ type: LIVE_DEMO_TAG, event: "client-done" }, { origin: parentOrigin, embedded });
     if (!sent) openTop(brokerSideUrl(parentOrigin));
   }, [parentOrigin, embedded, openTop]);
+
+  // KS_CLIENT_v11_LIVE_DEMO - the side panel's buttons, sent in from the portal.
+  const commands = useRef({ next, back, handOver });
+  commands.current = { next, back, handOver };
+  useEffect(() => {
+    if (!sidePanel) return undefined;
+    const onMessage = (ev: MessageEvent) => {
+      const cmd = commandFrom(ev, parentOrigin);
+      if (cmd === "next") void commands.current.next();
+      else if (cmd === "back") commands.current.back();
+      else if (cmd === "broker") commands.current.handOver();
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [sidePanel, parentOrigin]);
 
   if (!step) return null;
 
@@ -208,6 +236,15 @@ export default function TourOverlay({ parentOrigin, embedded, steps = TOUR_STEPS
     cursor: "pointer",
     fontFamily: "inherit",
   };
+
+  if (sidePanel) {
+    // The portal's side panel carries the text and the buttons; the phone shows the app and the spotlight only.
+    return (
+      <div data-testid="live-demo-tour" data-step={step.key} data-side-panel="1" style={{ position: "fixed", inset: 0, zIndex: 2147483000, pointerEvents: "none" }}>
+        {spot ? <div data-testid="live-demo-spotlight" style={spot} /> : null}
+      </div>
+    );
+  }
 
   return (
     <div data-testid="live-demo-tour" data-step={step.key} style={{ position: "fixed", inset: 0, zIndex: 2147483000, pointerEvents: "none" }}>
