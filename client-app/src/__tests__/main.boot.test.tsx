@@ -37,7 +37,8 @@ vi.mock("../demo/bootDemo", () => ({ bootDemo: mocks.bootDemo }));
 async function loadApplication(): Promise<void> {
   vi.resetModules();
   await import("../main");
-  await vi.waitFor(() => expect(mocks.render).toHaveBeenCalledOnce());
+  // The first import of main transforms the whole app; slow CI runners need more than the 1 s default.
+  await vi.waitFor(() => expect(mocks.render).toHaveBeenCalledOnce(), { timeout: 9_000 });
 }
 
 describe("application boot", () => {
@@ -81,7 +82,7 @@ describe("application boot", () => {
     try {
       vi.resetModules();
       await import("../main");
-      await vi.waitFor(() => expect(mocks.bootLiveDemo).toHaveBeenCalledOnce());
+      await vi.waitFor(() => expect(mocks.bootLiveDemo).toHaveBeenCalledOnce(), { timeout: 9_000 });
       expect(mocks.hydrateToken).not.toHaveBeenCalled();
       expect(mocks.startJourney).not.toHaveBeenCalled();
       expect(mocks.registerClientSW).not.toHaveBeenCalled();
