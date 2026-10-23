@@ -11,6 +11,8 @@ const mocks = vi.hoisted(() => ({
   startFormResponseQueueWatcher: vi.fn(),
   validateBootToken: vi.fn(),
   registerClientSW: vi.fn(),
+  bootLiveDemo: vi.fn(),
+  bootDemo: vi.fn(),
 }));
 
 vi.mock("react-dom/client", () => ({
@@ -29,6 +31,8 @@ vi.mock("../state/uploadQueueWatcher", () => ({ startUploadQueueWatcher: mocks.s
 vi.mock("../state/formResponseQueueWatcher", () => ({ startFormResponseQueueWatcher: mocks.startFormResponseQueueWatcher }));
 vi.mock("../state/validateBootToken", () => ({ validateBootToken: mocks.validateBootToken }));
 vi.mock("../pwa/registerSW", () => ({ registerClientSW: mocks.registerClientSW }));
+vi.mock("../liveDemo/bootLiveDemo", () => ({ bootLiveDemo: mocks.bootLiveDemo }));
+vi.mock("../demo/bootDemo", () => ({ bootDemo: mocks.bootDemo }));
 
 async function loadApplication(): Promise<void> {
   vi.resetModules();
@@ -67,5 +71,27 @@ describe("application boot", () => {
     );
     expect(JSON.stringify(consoleError.mock.calls)).not.toContain(credentialValue);
     consoleError.mockRestore();
+  });
+
+  // KS_CLIENT_v11_LIVE_DEMO - /tour starts the live demo instead: none of the normal boot runs, and fetch is the
+  // in-browser sample server from the first module on.
+  it("starts the live demo on /tour without the normal boot", async () => {
+    const realFetch = window.fetch;
+    window.history.pushState({}, "", "/tour?embed=1");
+    try {
+      vi.resetModules();
+      await import("../main");
+      await vi.waitFor(() => expect(mocks.bootLiveDemo).toHaveBeenCalledOnce());
+      expect(mocks.hydrateToken).not.toHaveBeenCalled();
+      expect(mocks.startJourney).not.toHaveBeenCalled();
+      expect(mocks.registerClientSW).not.toHaveBeenCalled();
+      expect(mocks.bootDemo).not.toHaveBeenCalled();
+      expect(window.fetch).not.toBe(realFetch);
+      const res = await window.fetch("https://ks-server.example/api/client/advisor?applicationId=x");
+      expect(((await res.json()) as { data: { advisor: { firstName: string } } }).data.advisor.firstName).toBe("Alex");
+    } finally {
+      window.fetch = realFetch;
+      window.history.pushState({}, "", "/");
+    }
   });
 });

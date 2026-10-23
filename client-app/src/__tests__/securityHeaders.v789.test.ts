@@ -8,13 +8,15 @@ import { describe, expect, it } from "vitest";
 const root = process.cwd();
 const config = JSON.parse(readFileSync(join(root, "public", "staticwebapp.config.json"), "utf8")) as {
   globalHeaders?: Record<string, string>;
+  routes?: Array<{ route: string; rewrite?: string; headers?: Record<string, string> }>;
 };
 const headers = config.globalHeaders ?? {};
 const csp = headers["Content-Security-Policy"] ?? "";
-const directive = (name: string): string[] => {
-  const part = csp.split(";").map((p) => p.trim()).find((p) => p.startsWith(name + " "));
+const directiveOf = (policy: string, name: string): string[] => {
+  const part = policy.split(";").map((p) => p.trim()).find((p) => p.startsWith(name + " "));
   return part ? part.split(/\s+/).slice(1) : [];
 };
+const directive = (name: string): string[] => directiveOf(csp, name);
 
 describe("staticwebapp.config.json globalHeaders", () => {
   it("sends the hardening headers", () => {
@@ -48,6 +50,39 @@ describe("staticwebapp.config.json globalHeaders", () => {
     const frames = directive("frame-src");
     expect(frames).toContain("https://*.signnow.com");
     expect(frames).toContain("https://*.flinksapp.io");
+  });
+});
+
+// KS_CLIENT_v11_LIVE_DEMO - the live demo (/tour) is shown inside the Keystone portal's phone frame, so that path
+// alone may be framed, and only by the portal. Every other path keeps frame-ancestors 'none' and X-Frame-Options DENY.
+describe("the live demo path can be framed by the Keystone portal only", () => {
+  const PORTAL = "https://thankful-wave-04964490f.2.azurestaticapps.net";
+  const routes = config.routes ?? [];
+  const tourRoutes = routes.filter((r) => r.route === "/tour" || r.route === "/tour/*");
+
+  it("has a rule for /tour and /tour/* that serves the app", () => {
+    expect(tourRoutes.map((r) => r.route).sort()).toEqual(["/tour", "/tour/*"]);
+    for (const r of tourRoutes) expect(r.rewrite).toBe("/index.html");
+  });
+
+  it("lets only the portal (and the app itself) frame /tour", () => {
+    for (const r of tourRoutes) {
+      const policy = r.headers?.["Content-Security-Policy"] ?? "";
+      expect(directiveOf(policy, "frame-ancestors")).toEqual(["'self'", PORTAL]);
+      // Same policy as every other page apart from who may frame it.
+      expect(policy.replace(/frame-ancestors [^;]+/, "")).toBe(csp.replace(/frame-ancestors [^;]+/, ""));
+      expect(policy).not.toContain("unsafe-eval");
+      expect(directiveOf(policy, "script-src")).not.toContain("'unsafe-inline'");
+    }
+  });
+
+  it("keeps framing refused everywhere else", () => {
+    expect(headers["X-Frame-Options"]).toBe("DENY");
+    expect(directive("frame-ancestors")).toEqual(["'none'"]);
+    for (const r of routes.filter((x) => !tourRoutes.includes(x))) {
+      expect(r.headers?.["Content-Security-Policy"]).toBeUndefined();
+      expect(r.headers?.["X-Frame-Options"]).toBeUndefined();
+    }
   });
 });
 
