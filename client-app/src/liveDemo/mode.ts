@@ -79,8 +79,36 @@ export function isEmbedded(search: string, win: Window = window): boolean {
 }
 
 export type LiveDemoMessage =
-  | { type: typeof LIVE_DEMO_TAG; event: "step"; step: string; title: string; text: string }
+  | {
+      type: typeof LIVE_DEMO_TAG; event: "step"; step: string; title: string; text: string;
+      // KS_CLIENT_v11_LIVE_DEMO side panel: what the portal's panel needs to draw the buttons itself.
+      number?: number; total?: number; canBack?: boolean; final?: boolean; busy?: boolean;
+    }
   | { type: typeof LIVE_DEMO_TAG; event: "client-done" };
+
+/** Commands the portal's side panel sends into the frame (only from the parent origin). */
+export type LiveDemoCommand = { type: typeof LIVE_DEMO_TAG; command: "next" | "back" | "broker" };
+
+/**
+ * KS_CLIENT_v11_LIVE_DEMO - ?panel=1: the portal shows the pop-up text and the Next/Back buttons in its side panel, so
+ * the phone screen shows only the app (with the spotlight) and nothing covers the questions. Only when embedded.
+ */
+export function usesSidePanel(search: string, embedded: boolean): boolean {
+  if (!embedded) return false;
+  try {
+    return new URLSearchParams(search).get("panel") === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** A command from the parent, or null (wrong origin, wrong shape). */
+export function commandFrom(ev: { origin: string; data: unknown }, parentOrigin: string | null): LiveDemoCommand["command"] | null {
+  if (!parentOrigin || ev.origin !== parentOrigin) return null;
+  const d = ev.data as Partial<LiveDemoCommand> | null;
+  if (!d || typeof d !== "object" || d.type !== LIVE_DEMO_TAG) return null;
+  return d.command === "next" || d.command === "back" || d.command === "broker" ? d.command : null;
+}
 
 /** Sends a message to the portal around the demo. Does nothing unless embedded with a valid parent origin. */
 export function postToParent(message: LiveDemoMessage, ctx: { origin: string | null; embedded: boolean; win?: Window }): boolean {
