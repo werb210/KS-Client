@@ -19,7 +19,7 @@ type RequestConfig = {
   signal?: AbortSignal;
 };
 
-type ApiClientError = Error & { status?: number; code?: string };
+type ApiClientError = Error & { status?: number; code?: string; body?: unknown }; // BF_CLIENT_v848_DUPLICATE_UX - body
 
 const API_BASE = ENV.API_BASE || SERVER_URL;
 
@@ -100,6 +100,7 @@ async function send<T = unknown>(
         `HTTP ${response.status}`
     ) as ApiClientError;
     error.status = response.status;
+    error.body = json; // BF_CLIENT_v848_DUPLICATE_UX - e.g. which document a 409 duplicate already is
     if (details && typeof details === "object" && "code" in details) {
       error.code = String((details as { code?: unknown }).code ?? "");
     }

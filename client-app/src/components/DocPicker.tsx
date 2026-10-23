@@ -9,6 +9,7 @@ import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
 import { enqueueUploadFromFile, isRetryableUploadFailure } from "@/lib/uploadQueue"; // BF_CLIENT_UPLOAD_QUEUE_v278
 import { queuedMessage, reportUploadFailure } from "@/lib/docUpload"; // BF_CLIENT_DIRECT_UPLOAD_v730
+import { duplicateSummary, readDuplicate, type DuplicateUpload } from "@/lib/duplicateUpload"; // BF_CLIENT_v848_DUPLICATE_UX
 import { Capacitor } from "@capacitor/core"; // BF_CLIENT_DOCPICKER_SCAN_v634
 import { scanDocumentAsPdfWithQuality } from "@/native/documentScanner"; // BF_CLIENT_DOCPICKER_SCAN_v634
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
@@ -95,6 +96,8 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
       let lastResp: Response | undefined;
       let failed = false;
       let queued = 0; // BF_CLIENT_UPLOAD_QUEUE_v278
+      let uploaded = 0; // BF_CLIENT_v848_DUPLICATE_UX
+      const duplicates: DuplicateUpload[] = [];
       setNotice(null);
       for (const file of files) {
         if (queued > 0) {
@@ -115,8 +118,14 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
             headers: { Authorization: `Bearer ${getToken() ?? ""}` },
             body: form,
           });
-          if (!lastResp.ok) throw new Error(String(lastResp.status));
+          if (!lastResp.ok) {
+            // BF_CLIENT_v848_DUPLICATE_UX - "already uploaded" is not a failure: no failure report, no red message.
+            const duplicate = await readDuplicate(lastResp, documentType);
+            if (duplicate) { duplicates.push(duplicate); continue; }
+            throw new Error(String(lastResp.status));
+          }
           trackUsage("document_uploaded"); // BF_CLIENT_v811_APP_USAGE
+          uploaded += 1;
         } catch (err) {
           const status = lastResp && !lastResp.ok ? lastResp.status : undefined;
           // BF_CLIENT_DIRECT_UPLOAD_v730 - send the browser's own error to the server log.
@@ -147,6 +156,23 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
       }
       if (queued > 0) {
         setNotice(queuedMessage(queued)); // BF_CLIENT_DIRECT_UPLOAD_v730 - only says "No connection" when offline
+        setUploading(null);
+        return;
+      }
+      // BF_CLIENT_v848_DUPLICATE_UX - say the file is already there. The item is done when the file already sits
+      // under it (or something new was uploaded with it); otherwise it stays so the right file can be chosen.
+      if (duplicates.length > 0) {
+        const satisfied = uploaded > 0 || duplicates.every((d) => d.sameItem);
+        setNotice(duplicateSummary(duplicates, uploaded));
+        if (satisfied) {
+          onUploaded?.();
+          if (!aimedAt && documentType !== OTHER_DOC_TYPE) {
+            setData((cur) => ({
+              stillNeeded: cur.stillNeeded.filter((d) => d.document_type !== documentType),
+              rejected: cur.rejected.filter((d) => d.document_type !== documentType),
+            }));
+          }
+        }
         setUploading(null);
         return;
       }
