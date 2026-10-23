@@ -27,6 +27,7 @@ import { filterRequirementsByAmount, type LenderProductRequirement } from "./req
 import { getFundingIntentLabel } from "../constants/wizard";
 import { bucketFor, CATEGORY_BUCKETS } from "./categoryAliases";
 import { components, layout, tokens } from "@/styles";
+import { PgiSection } from "./PgiSection"; // KS_CLIENT_v8_PGI
 import { resolveStepGuard } from "./stepGuard";
 import { describeIncompleteStep, incompleteStepsForSubmit } from "./stepValidation";
 import { clearDraft } from "../client/autosave";
@@ -894,7 +895,8 @@ export function Step6_Review(): JSX.Element {
           </Card>
         )}
 
-        {/* KS_CLIENT_v1_NO_BI - Keystone is lending only: no Personal Guarantee Insurance question. */}
+        {/* KS_CLIENT_v8_PGI - PGI is back: the brokerage refers it to its insurance partner. Optional, never blocks submit. */}
+        <PgiSection app={app} update={update} />
 
         <div>
           <h2 style={components.form.sectionTitle}>Terms & Conditions</h2>

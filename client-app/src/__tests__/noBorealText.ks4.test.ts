@@ -13,7 +13,9 @@ function files(dir: string): string[] {
 }
 
 // Lines whose "Boreal" is not shown text.
-const ALLOWED = [/BorealRuntime|borealRuntime|BorealMessagingService/, /n === "Boreal"/, /["'`]boreal_[a-z0-9_]+["'`]/];
+const ALLOWED = [/BorealRuntime|borealRuntime|BorealMessagingService/, /n === "Boreal"/, /["'`]boreal_[a-z0-9_]+["'`]/,
+  // KS_CLIENT_v8_PGI - the insurance partner licensees refer PGI to, named on purpose in one constant.
+  /^export const PGI_PARTNER_NAME = "Boreal Insurance";$/];
 
 function stripComments(src: string): string {
   return src.replace(/\/\*[\s\S]*?\*\//g, "").split("\n").map((l) => l.replace(/(^|[^:"'`])\/\/.*$/, "$1")).join("\n");

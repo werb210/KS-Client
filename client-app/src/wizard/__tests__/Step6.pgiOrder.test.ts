@@ -11,15 +11,16 @@ describe("BF_CLIENT_WIZARD_STEP6_PGI_v61 — Step 6 section order", () => {
 
 
 
-  it("renders sections in canonical order: T&C → checkboxes → signature → submit, with no PGI (KS_CLIENT_v1_NO_BI)", () => {
+  it("renders sections in canonical order: PGI → T&C → checkboxes → signature → submit (KS_CLIENT_v8_PGI)", () => {
     // BF_CLIENT_BLOCK_v877_STEP6_ORDER_MARKERS_v1 — v721 rewrote T&C into
     // clause popups; the old checkbox-label markers no longer exist. Assert
     // the durable section order: PGI -> Terms heading -> signature -> submit.
-    const pgi = src.indexOf("Personal Guarantee Insurance (PGI)");
+    const pgi = src.indexOf("<PgiSection app={app} update={update} />");
     const terms = src.indexOf("Terms & Conditions</h2>");
     const sig = src.indexOf("Typed signature");
     const submit = src.indexOf("Submit Application");
-    expect(pgi).toBe(-1);
+    expect(pgi).toBeGreaterThan(-1);
+    expect(pgi).toBeLessThan(terms);
     expect(terms).toBeGreaterThan(-1);
     expect(sig).toBeGreaterThan(-1);
     expect(submit).toBeGreaterThan(-1);
