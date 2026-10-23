@@ -17,6 +17,49 @@ const DEV_SERVER = "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azur
 const DEFAULT_FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap";
 
+// KS_LICENSEE_DEPLOY_v1 - the server a deploy passes in from the shell (a licensee's GitHub environment sets
+// VITE_API_BASE_URL), or "" when none is set. Without one the build keeps client-app/.env.production (the development
+// server) or, for a VITE_LICENSEE build, licensees/<key>/licensee.json's server_url.
+const SERVER_KEYS = ["VITE_API_BASE", "VITE_API_BASE_URL", "VITE_API_URL"] as const;
+
+export function shellServerUrl(env: Record<string, string | undefined> = process.env): string {
+  for (const key of SERVER_KEYS) {
+    const value = String(env[key] ?? "").trim();
+    if (/^https:\/\/[^\s/]+/i.test(value)) return value.replace(/\/+$/, "");
+  }
+  return "";
+}
+
+/** staticwebapp.config.json with the development server's host (the /api rewrite and the CSP) swapped for `host`. */
+export function swapServerHost(text: string, host: string): string {
+  return text.split(new URL(DEV_SERVER).host).join(host);
+}
+
+/**
+ * A build without VITE_LICENSEE whose server comes from the shell: use it for every server variable and point the
+ * Static Web Apps rewrite and CSP at it.
+ * null (nothing changes) when no server is passed in or it is the development server.
+ */
+export function serverPlugin(env: Record<string, string | undefined> = process.env): Plugin | null {
+  const url = shellServerUrl(env);
+  if (!url) return null;
+  const host = new URL(url).host;
+  if (host === new URL(DEV_SERVER).host) return null;
+  // Every server variable the app reads (some code reads VITE_API_URL first), so none keeps .env.production's value.
+  for (const key of SERVER_KEYS) env[key] = url;
+  let outDir = "dist";
+  return {
+    name: "ks-server",
+    configResolved(cfg) {
+      outDir = path.resolve(cfg.root, cfg.build.outDir);
+    },
+    writeBundle() {
+      const swaPath = path.join(outDir, "staticwebapp.config.json");
+      if (existsSync(swaPath)) writeFileSync(swaPath, swapServerHost(readFileSync(swaPath, "utf8"), host));
+    },
+  };
+}
+
 /** The licensee key for this build, or "" for the default client. */
 export function licenseeKeyFor(mode: string, dir: string): string {
   const fromShell = String(process.env.VITE_LICENSEE ?? "").trim();
@@ -32,13 +75,16 @@ export function licenseePlugin(mode: string, dir: string): Plugin | null {
   if (errors.length) throw new Error(`licensees/${key} is not ready:\n  - ${errors.join("\n  - ")}`);
 
   // Vite reads VITE_* from process.env after this config runs, and those win over the .env files.
+  // KS_LICENSEE_DEPLOY_v1 - a server passed in from the shell wins over licensee.json's server_url.
+  const shellServer = shellServerUrl();
   Object.assign(process.env, buildEnv(c));
+  if (shellServer) for (const key of SERVER_KEYS) process.env[key] = shellServer;
 
   const fontFiles: string[] = [c.fonts.body, c.fonts.heading]
     .flatMap((f: any) => (f && f.files ? f.files.map((x: any) => path.join(folder, x.file)) : []));
   const fontsHref: string = googleFontsHref(c);
   const faceCss: string = fontFaceCss(c);
-  const serverHost = new URL(c.server_url).host;
+  const serverHost = new URL(shellServer || c.server_url).host;
   let outDir = path.join(dir, "dist");
 
   return {
@@ -99,8 +145,7 @@ export function licenseePlugin(mode: string, dir: string): Plugin | null {
       // Static Web Apps: /api rewrite and Content-Security-Policy point at the licensee's server.
       const swaPath = path.join(outDir, "staticwebapp.config.json");
       if (existsSync(swaPath)) {
-        const text = readFileSync(swaPath, "utf8").split(new URL(DEV_SERVER).host).join(serverHost);
-        writeFileSync(swaPath, text);
+        writeFileSync(swaPath, swapServerHost(readFileSync(swaPath, "utf8"), serverHost));
       }
     },
   };

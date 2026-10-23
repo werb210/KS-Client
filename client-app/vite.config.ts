@@ -5,7 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
 // KS_CLIENT_v5_LICENSEE_APPS - VITE_LICENSEE=<key> builds licensees/<key>'s branded client; unset = default Keystone.
-import { licenseePlugin } from './vite.licensee'
+import { licenseePlugin, serverPlugin } from './vite.licensee'
 // KS_CLIENT_v7_DEMO - the demo borrower page (/demo/<code>) talks to the demo server: allow it in the built CSP.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -40,6 +40,8 @@ export const PRODUCTION_DROPPED_CONSOLE = ['console.log', 'console.debug', 'cons
 
 export default defineConfig(({ mode }) => {
   const licensee = licenseePlugin(mode, fileURLToPath(new URL('.', import.meta.url)))
+  // KS_LICENSEE_DEPLOY_v1 - no licensee folder, but a server from the shell (a licensee's web deploy).
+  const server = licensee ? null : serverPlugin()
   return {
   esbuild: mode === 'production' ? { pure: PRODUCTION_DROPPED_CONSOLE, drop: ['debugger'] } : {},
   // BF_CLIENT_APP_UPDATE_v723 - stamp each build so an installed phone app can tell it is out of date.
@@ -50,6 +52,7 @@ export default defineConfig(({ mode }) => {
   },
   plugins: [
     ...(licensee ? [licensee] : []),
+    ...(server ? [server] : []),
     demoCspPlugin(),
     react(),
     VitePWA({
