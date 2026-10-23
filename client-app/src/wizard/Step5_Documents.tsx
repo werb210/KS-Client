@@ -53,6 +53,7 @@ import AccountantReferralModal, {
 import { Capacitor } from "@capacitor/core";
 import { scanDocumentAsPdfWithQuality } from "../native/documentScanner";
 import { duplicateMessage, findUploadedDuplicate, fingerprintFile, isServerDuplicate, SERVER_DUPLICATE_MESSAGE } from "../lib/documentFingerprint"; // BF_CLIENT_DOCUMENT_DUPLICATE_CHECK_v258
+import { duplicateFromBody } from "../lib/duplicateUpload"; // BF_CLIENT_v848_DUPLICATE_UX
 
 // BF_CLIENT_BLOCK_v96_LIVE_TEST_FIXES_v1
 // The hardcoded "every applicant must upload contracts/invoices/tax_returns"
@@ -676,7 +677,8 @@ function Step5DocumentsBody() {
     const fileHash = await fingerprintFile(file);
     const alreadyUploaded = findUploadedDuplicate(app.documents as any, fileHash);
     if (alreadyUploaded) {
-      setDocErrors((prev) => ({ ...prev, [docType]: duplicateMessage(docType, alreadyUploaded, formatDocumentLabel) }));
+      // BF_CLIENT_v848_DUPLICATE_UX - a note, not a red error that blocks Continue: the file is already uploaded.
+      setDocNotices((prev) => ({ ...prev, [docType]: duplicateMessage(docType, alreadyUploaded, formatDocumentLabel) }));
       return;
     }
 
@@ -758,7 +760,25 @@ function Step5DocumentsBody() {
         const st = (err as { status?: number })?.status;
         // BF_CLIENT_DOCUMENT_DUPLICATE_CHECK_v258 - the server found this file already on the application.
         if (isServerDuplicate(err)) {
-          setDocErrors((prev) => ({ ...prev, [docType]: SERVER_DUPLICATE_MESSAGE }));
+          // BF_CLIENT_v848_DUPLICATE_UX - not an error. When the file already sits under this item, the item is done.
+          const dup = duplicateFromBody((err as { body?: unknown } | null)?.body, docType);
+          const existingId = dup?.existing.id ? String(dup.existing.id) : null;
+          const prevFiles = ((((app.documents[docType] as any)?.files) ?? []) as Array<{ id?: string | null }>);
+          if (dup?.sameItem && existingId && !prevFiles.some((f) => f?.id === existingId)) {
+            const name = dup.existing.filename || file.name;
+            const at = new Date().toISOString();
+            update({
+              documents: {
+                ...app.documents,
+                [docType]: {
+                  ...((app.documents[docType] as any) ?? {}),
+                  id: existingId, name, status: dup.existing.status || "uploaded", uploadedAt: at,
+                  files: [...prevFiles, { id: existingId, name, uploadedAt: at, hash: fileHash }],
+                } as any,
+              },
+            });
+          }
+          setDocNotices((prev) => ({ ...prev, [docType]: dup?.message ?? SERVER_DUPLICATE_MESSAGE }));
           break;
         }
         if (typeof st === "number" && st >= 400 && st < 500 && st !== 408 && st !== 429) {

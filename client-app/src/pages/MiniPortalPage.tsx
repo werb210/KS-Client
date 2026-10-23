@@ -401,6 +401,7 @@ export default function MiniPortalPage() {
     const r = await uploadDocumentFiles(String(applicationId), type, files);
     if (r.status === "ok") setUploadNotice({ tone: "ok", text: label + " uploaded. Thank you." });
     else if (r.status === "queued") setUploadNotice({ tone: "info", text: r.message });
+    else if (r.status === "duplicate") setUploadNotice({ tone: r.satisfied ? "ok" : "info", text: r.message }); // BF_CLIENT_v848_DUPLICATE_UX
     else setUploadNotice({ tone: "error", text: r.message });
     void loadAll();
     setTodoRefresh((n) => n + 1);
