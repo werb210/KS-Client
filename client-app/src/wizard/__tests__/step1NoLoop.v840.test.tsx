@@ -18,6 +18,8 @@ import { Step1_KYC } from "../Step1_KYC";
 
 describe("Step 1 after a returning client signs in", () => {
   it("does not keep re-rendering after a returning client's prefill", async () => {
+    // Keep the test off the network: on CI the real dev server answers and its lender list re-renders Step 1.
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ products: [] }), { status: 200, headers: { "Content-Type": "application/json" } })));
     sessionStorage.setItem("verified_phone", "+15875550100");
     let commits = 0;
     const el = document.createElement("div"); document.body.appendChild(el);
@@ -27,5 +29,6 @@ describe("Step 1 after a returning client signs in", () => {
     const a = commits;
     await act(async () => { await new Promise((r) => setTimeout(r, 300)); });
     expect(commits - a).toBeLessThan(5);
+    vi.unstubAllGlobals();
   }, 20_000);
 });
