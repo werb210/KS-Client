@@ -45,6 +45,7 @@ import { CmpHeader, AppSwitcherSheet, CmpHello, CmpStatusCard, CmpOffersCard, Cm
 import CmpChat from "../components/cmp/CmpChat";
 import AuthorizedAttachment from "../components/cmp/AuthorizedAttachment"; // BF_CLIENT_v819_CLIENT_MMS - texted pictures in the chat
 import CmpMore, { CallControl, type MoreForm } from "../components/cmp/CmpMore";
+import LoanCalculatorSheet from "../components/cmp/LoanCalculatorSheet"; // KS_CLIENT_v13_LOAN_CALCULATOR
 import CmpSettings, { type EditableDetails } from "../components/cmp/CmpSettings";
 import ReportProblemSheet from "../components/cmp/ReportProblemSheet"; // BF_CLIENT_v807_REPORT
 import BookCallSheet from "../components/cmp/BookCallSheet";
@@ -382,6 +383,7 @@ export default function MiniPortalPage() {
   // BF_CLIENT_BLOCK_53_v1 -- "upload" opens the DocPicker modal,
   // not a single-file native picker.
   const [showDocPicker, setShowDocPicker] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false); // KS_CLIENT_v13_LOAN_CALCULATOR
   // BF_CLIENT_NATIVE_WIRING_v236 - the document the picker was opened for, if any.
   const [pickerDoc, setPickerDoc] = useState<{ type: string; label: string } | null>(null);
   // BF_CLIENT_DIRECT_UPLOAD_v730 - what happened to the last upload, shown above the to-do list.
@@ -1258,7 +1260,7 @@ export default function MiniPortalPage() {
         {isPhone ? (
           <CmpMore forms={moreForms} docsStatus={docsChecked ? (hasOutstandingDocs ? "needed" : "done") : null}
             onForm={(id) => onChip(id)} onUpload={() => { setPickerDoc(null); setShowDocPicker(true); }}
-            onNewApplication={() => onChip("new")} />
+            onNewApplication={() => onChip("new")} onCalculator={() => setShowCalculator(true)} />
         ) : (
         <aside className="mp-actions" data-cmp-tab="more">
             {/* BF_CLIENT_BLOCK_53_v1 -- 7-pill 2-col grid; no per-doc cards. */}
@@ -1278,6 +1280,10 @@ export default function MiniPortalPage() {
               <button type="button" className="mp-chip mp-chip--action" data-testid="ask-maya" onClick={() => window.dispatchEvent(new CustomEvent("maya:open", { detail: { mode: "chat" } }))}>
                 Ask {assistantName()}
               </button>
+              {/* KS_CLIENT_v13_LOAN_CALCULATOR */}
+              <button type="button" className="mp-chip mp-chip--action" data-testid="open-loan-calculator" onClick={() => setShowCalculator(true)}>
+                Loan calculator
+              </button>
               {/* BF_CLIENT_BLOCK_v_HIDE_SIGNING_REASON_v1 — never surface the raw
                   signing-readiness status/reason (e.g. "lender_not_finalized") to the
                   client. Those are internal staff-workflow gates, not errors, and the
@@ -1295,6 +1301,7 @@ export default function MiniPortalPage() {
         </aside>
         )}
         {/* BF_CLIENT_v802_PHONE_UI - outside the tab sections: inside More it stayed hidden when opened from Home. */}
+        {showCalculator && <LoanCalculatorSheet onClose={() => setShowCalculator(false)} initialAmount={Number(currentApp?.requested_amount ?? 0) || null} />}
         {showDocPicker && (
           <DocPicker
             applicationId={applicationId}

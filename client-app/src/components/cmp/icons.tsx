@@ -12,6 +12,7 @@ const P: Record<string, JSX.Element> = {
   truck: <><path d="M2 6h11v10H2zM13 10h4l4 4v2h-8" /><circle cx="6" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></>,
   home: <path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  calculator: <><rect x="5" y="2.5" width="14" height="19" rx="2.5" /><path d="M8.5 6.5h7M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01" /></>, // KS_CLIENT_v13_LOAN_CALCULATOR
   shield: <path d="M12 3 4.5 6v6c0 4.5 3.2 8 7.5 9 4.3-1 7.5-4.5 7.5-9V6z" />,
   bell: <><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" /></>,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
