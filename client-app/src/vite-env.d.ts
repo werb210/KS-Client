@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
   readonly VITE_API_VERSION?: string;
   readonly VITE_IOS_APP_STORE_URL?: string; // BF_CLIENT_v817 - App Store listing (or bare numeric id)
+  readonly VITE_KS_PREVIEW?: string; // KS_CLIENT_PREVIEW_APP_v1 - "1" builds the offline Keystone Preview app
   readonly VITE_DEMO_SERVER_URL?: string; // KS_CLIENT_v7_DEMO - the shared demo server the /demo/<code> borrower page talks to
 }
 

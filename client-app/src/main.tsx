@@ -2,6 +2,8 @@ import "./bootStorageSafe"; // BF_CLIENT_BLOCK_v867_STORAGE_SHIM — must be fir
 // KS_CLIENT_v11_LIVE_DEMO - second: on /tour, storage goes in memory and fetch to the sample server before any app
 // module reads either (the application store reads storage as it loads).
 import { LIVE_DEMO } from "./liveDemo/early";
+// KS_CLIENT_PREVIEW_APP_v1 - third: the Keystone Preview build locks the network before any app module loads.
+import { PREVIEW } from "./preview/early";
 import { hydrateApplicationToken } from "@/auth/applicationToken";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -40,11 +42,11 @@ try {
 
 // KS_CLIENT_v7_DEMO - /demo/<code> (and /d/<code>) is the self-serve demo's borrower page: it boots on its own, with
 // no analytics, journey tracking, sign-in or service worker.
-const IS_DEMO_BORROWER = !LIVE_DEMO && /^\/(?:demo|d)\//.test(window.location.pathname);
+const IS_DEMO_BORROWER = !PREVIEW && !LIVE_DEMO && /^\/(?:demo|d)\//.test(window.location.pathname);
 
 // BF_CLIENT_v789_ANALYTICS_GATES - Consent Mode defaults, GTM and the Google Ads
 // tag, web only. Runs before anything can push to dataLayer.
-if (!IS_DEMO_BORROWER && !LIVE_DEMO) loadGoogleTags();
+if (!PREVIEW && !IS_DEMO_BORROWER && !LIVE_DEMO) loadGoogleTags();
 
 // BF_CLIENT_JOURNEY_BOOT_v185 - ORDER MATTERS. startJourney mints and persists the
 // journey session id and creates the server-side visitor_sessions row. It must run
@@ -97,6 +99,8 @@ registerClientSW();
 }
 
 // KS_CLIENT_v11_LIVE_DEMO - /tour is the live demo (checked before the older /demo/<code> borrower page).
-if (LIVE_DEMO) void import("./liveDemo/bootLiveDemo").then((m) => m.bootLiveDemo());
+// KS_CLIENT_PREVIEW_APP_v1 - the Keystone Preview app runs only the preview (sample data, no network).
+if (PREVIEW) void import("./preview/bootPreview").then((m) => m.bootPreview());
+else if (LIVE_DEMO) void import("./liveDemo/bootLiveDemo").then((m) => m.bootLiveDemo());
 else if (IS_DEMO_BORROWER) void import("./demo/bootDemo").then((m) => m.bootDemo());
 else void boot();

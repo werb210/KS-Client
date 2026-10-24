@@ -18,3 +18,10 @@ started by hand (Actions > Upload iOS build > Run workflow) and needs the reposi
 `build-licensee-apps.yml` builds each licensee's own branded client app (web, iOS, Android) from `licensees/<key>/`
 and uploads it to that licensee's App Store Connect and Google Play accounts. Run it by hand with a licensee key or
 `all`. Credentials come from the GitHub Environment named after the licensee key; see `docs/LICENSEE_APPS.md`.
+
+## Build Keystone Preview (KS_CLIENT_PREVIEW_APP_v1)
+
+`build-preview-app.yml` builds "Keystone Preview": the client app offline on sample data, for TestFlight (public link)
+and Google Play testing tracks. Run it by hand; pull requests that touch the preview build it unsigned as a check.
+Uploads run only when their secrets exist (`ASC_KEY_ID`/`ASC_ISSUER_ID`/`ASC_KEY_P8`, `PREVIEW_ANDROID_*`,
+`PREVIEW_PLAY_SERVICE_ACCOUNT_JSON`); see `docs/PREVIEW_APP.md`.

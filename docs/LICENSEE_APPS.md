@@ -5,8 +5,8 @@ screen, its colours, fonts and wording, published in the App Store and Google Pl
 developer accounts**. All of them are built from this one codebase.
 
 The licensee's clients never type a company code or anything else. Their app is already pointed at the licensee's
-own Keystone server. (Staff are different: the Keystone dialler and iPad apps are shared, and staff enter their
-company code once. Those apps are not built here.)
+own Keystone server. (Staff are different: the Keystone dialler and iPad apps are shared, and staff sign in with
+their work email or mobile number, which finds their company. Those apps are not built here.)
 
 Why the licensee's own accounts: Apple's App Review Guideline 4.2.6 rejects apps made from a commercial template
 when they are published by the template provider on behalf of clients. Each brokerage must publish its own app.
