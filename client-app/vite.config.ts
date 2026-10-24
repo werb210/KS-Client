@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -6,6 +6,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
 // KS_CLIENT_v5_LICENSEE_APPS - VITE_LICENSEE=<key> builds licensees/<key>'s branded client; unset = default Keystone.
 import { licenseePlugin, serverPlugin } from './vite.licensee'
+// KS_CLIENT_PREVIEW_APP_v1 - VITE_KS_PREVIEW=1 builds the offline Keystone Preview app (CSP, no outside links).
+import { previewPlugin } from './vite.preview'
 // KS_CLIENT_v7_DEMO - the demo borrower page (/demo/<code>) talks to the demo server: allow it in the built CSP.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -42,6 +44,7 @@ export default defineConfig(({ mode }) => {
   const licensee = licenseePlugin(mode, fileURLToPath(new URL('.', import.meta.url)))
   // KS_LICENSEE_DEPLOY_v1 - no licensee folder, but a server from the shell (a licensee's web deploy).
   const server = licensee ? null : serverPlugin()
+  const preview = previewPlugin(mode, fileURLToPath(new URL('.', import.meta.url)), loadEnv)
   return {
   esbuild: mode === 'production' ? { pure: PRODUCTION_DROPPED_CONSOLE, drop: ['debugger'] } : {},
   // BF_CLIENT_APP_UPDATE_v723 - stamp each build so an installed phone app can tell it is out of date.
@@ -53,6 +56,7 @@ export default defineConfig(({ mode }) => {
   plugins: [
     ...(licensee ? [licensee] : []),
     ...(server ? [server] : []),
+    ...(preview ? [preview] : []),
     demoCspPlugin(),
     react(),
     VitePWA({

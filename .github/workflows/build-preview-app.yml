@@ -1,0 +1,254 @@
+# KS_CLIENT_PREVIEW_APP_v1 - builds "Keystone Preview": the client app on sample data, fully offline, for licensees
+# and prospects to tap through. iOS goes to TestFlight (public link), Android to a Google Play testing track. Apple
+# tends to reject demo-only apps from the public App Store, so the preview is never submitted for App Store review.
+# See docs/PREVIEW_APP.md.
+#
+# Pull requests that touch the preview build both apps (unsigned) as a check; nothing is uploaded.
+# Actions > "Build Keystone Preview" > Run workflow builds, signs and uploads when the secrets exist:
+#   iOS (company Apple account, the same repository secrets as "Upload iOS build"): ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8
+#   Android: PREVIEW_ANDROID_KEYSTORE_B64, PREVIEW_ANDROID_KEYSTORE_PASSWORD, PREVIEW_ANDROID_KEY_ALIAS,
+#            PREVIEW_ANDROID_KEY_PASSWORD (upload key) and PREVIEW_PLAY_SERVICE_ACCOUNT_JSON (Play upload)
+# A missing secret never fails the run: the build is kept as a run artifact and the upload is skipped with a notice.
+name: Build Keystone Preview
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "client-app/src/preview/**"
+      - "client-app/vite.preview.ts"
+      - "preview/**"
+      - "scripts/preview/**"
+      - "scripts/brand-native.mjs"
+      - ".github/workflows/build-preview-app.yml"
+  workflow_dispatch:
+    inputs:
+      play_track:
+        description: Google Play testing track
+        required: false
+        default: internal
+        type: choice
+        options: [internal, alpha, beta]
+      play_status:
+        description: 'Google Play release status ("draft" until the app has passed its first review)'
+        required: false
+        default: draft
+        type: choice
+        options: [draft, completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-app-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  IOS_BUNDLE_ID: financial.boreal.keystone.preview
+  CAP_APP_ID: financial.boreal.keystone.preview
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 75
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+    steps:
+      - name: Check the App Store Connect key
+        id: creds
+        run: |
+          missing=""
+          for v in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do [ -n "${!v}" ] || missing="$missing $v"; done
+          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]; then
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Keystone Preview iOS::Pull request check - building an unsigned archive only."
+          elif [ -n "$missing" ]; then
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Keystone Preview iOS::Missing repository secrets:$missing - building an unsigned archive only, no TestFlight upload. See docs/PREVIEW_APP.md."
+          else
+            echo "upload=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "BUILD_NUMBER=$((1000 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - name: Use the newest released Xcode (App Store Connect refuses beta builds)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: npm ci
+      - name: Make the native project Keystone Preview (offline, sample data)
+        run: node scripts/preview/brand-preview.mjs
+      - run: npm run build
+      - name: The web build is the offline preview
+        run: |
+          grep -q 'http-equiv="Content-Security-Policy"' client-app/dist/index.html
+          ! grep -q 'fonts.googleapis.com' client-app/dist/index.html
+          grep -q '^VITE_KS_PREVIEW=1$' client-app/.env.production.local
+      - run: npx cap sync ios
+        working-directory: client-app
+      - name: Verify post-sync iOS release guardrails
+        run: python3 scripts/verify-ios-release.py
+      - name: Install the App Store Connect key
+        if: steps.creds.outputs.upload == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+          chmod 600 "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+      - name: Delete leftover cloud development certificates
+        if: steps.creds.outputs.upload == 'true'
+        continue-on-error: true
+        run: node scripts/asc-cleanup-dev-certs.mjs
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -project client-app/ios/App/App.xcodeproj -scheme App
+      - name: Archive (signed with the company team)
+        if: steps.creds.outputs.upload == 'true'
+        run: >-
+          xcodebuild archive
+          -project client-app/ios/App/App.xcodeproj
+          -scheme App
+          -configuration Release
+          -destination 'generic/platform=iOS'
+          -archivePath "$RUNNER_TEMP/App.xcarchive"
+          -allowProvisioningUpdates
+          -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+          -authenticationKeyID "$ASC_KEY_ID"
+          -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          DEVELOPMENT_TEAM=76VAY7UJKJ
+          CODE_SIGN_STYLE=Automatic
+          CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+      - name: Upload to App Store Connect (TestFlight)
+        if: steps.creds.outputs.upload == 'true'
+        run: >-
+          xcodebuild -exportArchive
+          -archivePath "$RUNNER_TEMP/App.xcarchive"
+          -exportOptionsPlist client-app/ios/App/ci/ExportOptions.plist
+          -exportPath "$RUNNER_TEMP/export"
+          -allowProvisioningUpdates
+          -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+          -authenticationKeyID "$ASC_KEY_ID"
+          -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+      - name: Archive (unsigned)
+        if: steps.creds.outputs.upload != 'true'
+        run: >-
+          xcodebuild archive
+          -project client-app/ios/App/App.xcodeproj
+          -scheme App
+          -configuration Release
+          -destination 'generic/platform=iOS'
+          -archivePath "$RUNNER_TEMP/App.xcarchive"
+          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_REQUIRED=NO
+          CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+      - name: Keep the archive
+        run: ditto -c -k --keepParent "$RUNNER_TEMP/App.xcarchive" "$RUNNER_TEMP/ios-keystone-preview.xcarchive.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-keystone-preview
+          path: ${{ runner.temp }}/ios-keystone-preview.xcarchive.zip
+          retention-days: 14
+      - name: Summary
+        run: |
+          {
+            echo "### Keystone Preview - iOS"
+            echo "- Bundle id: $IOS_BUNDLE_ID, build number $BUILD_NUMBER"
+            if [ "${{ steps.creds.outputs.upload }}" = "true" ]; then
+              echo "- Uploaded to App Store Connect. After 10-30 minutes of processing it shows in TestFlight; add it to the public-link group (docs/PREVIEW_APP.md)."
+            else
+              echo "- Not uploaded. Unsigned archive kept as the run artifact ios-keystone-preview."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove the key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc"
+
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      ANDROID_KEYSTORE_B64: ${{ secrets.PREVIEW_ANDROID_KEYSTORE_B64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.PREVIEW_ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.PREVIEW_ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.PREVIEW_ANDROID_KEY_PASSWORD }}
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PREVIEW_PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - name: Check the Android signing and Play credentials
+        id: creds
+        run: |
+          missing=""
+          for v in ANDROID_KEYSTORE_B64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            [ -n "${!v}" ] || missing="$missing PREVIEW_$v"
+          done
+          if [ "$GITHUB_EVENT_NAME" != "workflow_dispatch" ]; then
+            echo "sign=false" >> "$GITHUB_OUTPUT"; echo "upload=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Keystone Preview Android::Pull request check - building an unsigned bundle only."
+            exit 0
+          fi
+          if [ -n "$missing" ]; then
+            echo "sign=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Keystone Preview Android::Missing repository secrets:$missing - building an unsigned bundle only, no Google Play upload. See docs/PREVIEW_APP.md."
+          else
+            echo "sign=true" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -z "$missing" ] && [ -n "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "upload=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+            [ -n "$PLAY_SERVICE_ACCOUNT_JSON" ] || echo "::notice title=Keystone Preview Android::No PREVIEW_PLAY_SERVICE_ACCOUNT_JSON secret - skipping the Google Play upload."
+          fi
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: 21 }
+      - uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: 8.14.3
+      - run: npm ci
+      - name: Make the native project Keystone Preview (offline, sample data)
+        run: node scripts/preview/brand-preview.mjs
+      - run: npm run build
+      - run: npx cap sync android
+        working-directory: client-app
+      - name: Verify the Android identity and the offline settings
+        run: |
+          grep -Fq "applicationId \"$CAP_APP_ID\"" client-app/android/app/build.gradle
+          grep -Fq 'firebase_messaging_auto_init_enabled' client-app/android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:autoVerify="true"' client-app/android/app/src/main/AndroidManifest.xml
+      - name: Build the release bundle (AAB)
+        run: gradle bundleRelease
+        working-directory: client-app/android
+      - name: Sign the bundle with the upload key
+        if: steps.creds.outputs.sign == 'true'
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+          AAB=client-app/android/app/build/outputs/bundle/release/app-release.aab
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore "$RUNNER_TEMP/upload.jks" -storepass "$ANDROID_KEYSTORE_PASSWORD" -keypass "$ANDROID_KEY_PASSWORD" \
+            "$AAB" "$ANDROID_KEY_ALIAS"
+          jarsigner -verify "$AAB" > /dev/null
+          rm -f "$RUNNER_TEMP/upload.jks"
+      - name: Name the bundle
+        run: cp client-app/android/app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/android-keystone-preview.aab"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-keystone-preview
+          path: ${{ runner.temp }}/android-keystone-preview.aab
+          retention-days: 14
+      - name: Upload to the Google Play testing track
+        if: steps.creds.outputs.upload == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.CAP_APP_ID }}
+          releaseFiles: ${{ runner.temp }}/android-keystone-preview.aab
+          track: ${{ inputs.play_track || 'internal' }}
+          status: ${{ inputs.play_status || 'draft' }}
+      - name: Summary
+        run: |
+          {
+            echo "### Keystone Preview - Android"
+            echo "- Application id: $CAP_APP_ID"
+            echo "- Signed: ${{ steps.creds.outputs.sign }}; uploaded to Google Play: ${{ steps.creds.outputs.upload }} (track ${{ inputs.play_track || 'internal' }})"
+          } >> "$GITHUB_STEP_SUMMARY"

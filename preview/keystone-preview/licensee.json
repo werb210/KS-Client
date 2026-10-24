@@ -1,0 +1,28 @@
+{
+  "$schema": "../../licensees/licensee.schema.json",
+  "key": "keystone-preview",
+  "app_name": "Keystone Preview",
+  "company_name": "Keystone Preview",
+  "ios": { "bundle_id": "financial.boreal.keystone.preview", "team_id": "" },
+  "android": { "application_id": "financial.boreal.keystone.preview" },
+  "server_url": "https://preview.keystone.invalid",
+  "client_web_url": "https://preview.keystone.invalid",
+  "colors": {
+    "primary": "#1E3A5F",
+    "secondary": "#F2B544",
+    "background": "#FFFFFF",
+    "text": "#1F2937",
+    "on_primary": "#FFFFFF"
+  },
+  "fonts": {
+    "body": { "family": "Inter", "google": true, "weights": [400, 500, 600, 700] },
+    "heading": { "family": "Merriweather", "google": true, "weights": [400, 700] }
+  },
+  "wording": {},
+  "support": { "email": "keystone@boreal.financial", "phone": "" },
+  "legal": {
+    "privacy_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/privacy",
+    "terms_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/terms"
+  },
+  "assets": { "icon": "icon.png", "splash": "splash.png" }
+}
