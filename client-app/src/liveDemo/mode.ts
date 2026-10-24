@@ -102,6 +102,20 @@ export function usesSidePanel(search: string, embedded: boolean): boolean {
   }
 }
 
+/**
+ * KS_CLIENT_v12_PRESENTER - ?present=1: the staff "presenter mode" demo. The same app on the same sample data, with no
+ * tour at all (no spotlight, no pop-ups, no messages to the parent): a salesperson taps through it live. Only when
+ * embedded in the Keystone portal's presenter page.
+ */
+export function usesPresenterMode(search: string, embedded: boolean): boolean {
+  if (!embedded) return false;
+  try {
+    return new URLSearchParams(search).get("present") === "1";
+  } catch {
+    return false;
+  }
+}
+
 /** A command from the parent, or null (wrong origin, wrong shape). */
 export function commandFrom(ev: { origin: string; data: unknown }, parentOrigin: string | null): LiveDemoCommand["command"] | null {
   if (!parentOrigin || ev.origin !== parentOrigin) return null;

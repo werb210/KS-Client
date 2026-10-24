@@ -127,7 +127,7 @@ export const TOUR_STEPS: TourStep[] = [
     path: "/apply/step-4",
     target: wizardCard,
     title: "About Sam",
-    text: "Sam owns all of the business. His details are a sample - even the ID number (000-000-000).",
+    text: "Sam owns all of the business. His contact details, home address and date of birth are already filled in, so he checks them and carries on.",
     back: true,
     action: () => press(ctaButton(/^Continue to (Documents|Review)/)),
   },
