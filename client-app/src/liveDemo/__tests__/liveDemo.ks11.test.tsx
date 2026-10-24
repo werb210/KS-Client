@@ -13,6 +13,7 @@ import {
   commandFrom,
   parentOriginFrom,
   postToParent,
+  usesPresenterMode,
   usesSidePanel,
 } from "../mode";
 import { TOUR_STEPS, resolveStep } from "../tour";
@@ -112,6 +113,10 @@ describe("live demo mode and the parent page", () => {
     expect(usesSidePanel("?embed=1&panel=1", true)).toBe(true);
     expect(usesSidePanel("?embed=1&panel=1", false)).toBe(false);
     expect(usesSidePanel("?embed=1", true)).toBe(false);
+    // KS_CLIENT_v12_PRESENTER - presenter mode only inside the portal's frame.
+    expect(usesPresenterMode("?embed=1&present=1", true)).toBe(true);
+    expect(usesPresenterMode("?embed=1&present=1", false)).toBe(false);
+    expect(usesPresenterMode("?embed=1", true)).toBe(false);
     const ok = { type: "ks-live-demo", command: "next" };
     expect(commandFrom({ origin: DEFAULT_PORTAL_ORIGIN, data: ok }, DEFAULT_PORTAL_ORIGIN)).toBe("next");
     expect(commandFrom({ origin: "https://evil.example", data: ok }, DEFAULT_PORTAL_ORIGIN)).toBeNull();
@@ -187,6 +192,25 @@ describe("the tour over the real client app", () => {
     await waitFor(() => expect(currentStep()).not.toBe("step2"), { timeout: 15000 });
     postMessage.mockRestore();
   }, 30000);
+
+  it("presenter mode (?present=1): the real wizard with no tour, no spotlight and no messages to the parent", async () => {
+    const { prepareLiveDemo } = await import("../bootLiveDemo");
+    const { default: LiveDemoApp } = await import("../LiveDemoApp");
+    prepareLiveDemo();
+    const postMessage = vi.spyOn(window.parent, "postMessage").mockImplementation(() => undefined);
+    render(<LiveDemoApp parentOrigin={DEFAULT_PORTAL_ORIGIN} embedded presenter initialPath="/apply/step-2" />);
+    expect(await screen.findByText("Choose Product Category")).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 300));
+    expect(screen.queryByTestId("live-demo-tour")).toBeNull();
+    expect(screen.queryByTestId("live-demo-card")).toBeNull();
+    expect(postMessage).not.toHaveBeenCalled();
+    postMessage.mockRestore();
+  }, 30000);
+
+  it("the About Sam step no longer talks about the ID number", () => {
+    const step4 = TOUR_STEPS.find((s) => s.key === "step4")!;
+    expect(step4.text).not.toMatch(/000-000-000|ID number|sample/i);
+  });
 
   it("Back returns to the previous screen and its pop-up", async () => {
     const { prepareLiveDemo } = await import("../bootLiveDemo");

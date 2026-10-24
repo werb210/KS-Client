@@ -688,6 +688,10 @@ export function Step2_Product() {
                 borderRadius: 8,
                 padding: "16px 20px",
                 display: "flex",
+                // KS_CLIENT_v12_DEMO_FIXES - on a phone-width screen the buttons wrap under the name instead of
+                // running past the card's right edge.
+                flexWrap: "wrap",
+                rowGap: 10,
                 alignItems: "center",
                 justifyContent: "space-between",
                 background: isSelected ? "#eff6ff" : "#fff",
@@ -722,7 +726,7 @@ export function Step2_Product() {
                 )}
               </div>
               {/* BF_CLIENT_BLOCK_v470_CATEGORY_INFO - informational actions do not select the category. */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginLeft: "auto", marginRight: 12 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12, marginLeft: "auto", marginRight: 12 }}>
                 {CATEGORY_INFO[category as BucketId] && <button type="button" data-testid={`step2-info-${category}`} onClick={(e) => { e.stopPropagation(); setInfoFor(category as BucketId); }} style={{ padding: "6px 12px", borderRadius: 6, border: `1px solid ${tokens.colors.border}`, background: "#fff", color: tokens.colors.primary, fontWeight: 600, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}>What is this?</button>}
                 {CATEGORY_INFO[category as BucketId] && <label onClick={(e) => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#374151", cursor: "pointer", whiteSpace: "nowrap" }}>
                   <input type="checkbox" data-testid={`step2-compare-${category}`} checked={compareIds.includes(category as BucketId)} disabled={!compareIds.includes(category as BucketId) && compareIds.length >= MAX_COMPARE} onChange={() => toggleCompare(category as BucketId)} /> Compare

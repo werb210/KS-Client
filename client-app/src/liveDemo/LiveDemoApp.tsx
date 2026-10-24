@@ -14,17 +14,19 @@ export type LiveDemoAppProps = {
   parentOrigin: string | null;
   embedded: boolean;
   sidePanel?: boolean;
+  /** KS_CLIENT_v12_PRESENTER - no tour: the presenter taps through the app freely. */
+  presenter?: boolean;
   initialPath?: string;
   openTop?: (url: string) => void;
 };
 
-export default function LiveDemoApp({ parentOrigin, embedded, sidePanel = false, initialPath = "/apply/step-1", openTop }: LiveDemoAppProps) {
+export default function LiveDemoApp({ parentOrigin, embedded, sidePanel = false, presenter = false, initialPath = "/apply/step-1", openTop }: LiveDemoAppProps) {
   return (
     <MemoryRouter initialEntries={[initialPath]}>
       <ErrorBoundary fallback={<FatalErrorScreen />}>
         <AppRoutes />
       </ErrorBoundary>
-      <TourOverlay parentOrigin={parentOrigin} embedded={embedded} sidePanel={sidePanel} openTop={openTop} />
+      {presenter ? null : <TourOverlay parentOrigin={parentOrigin} embedded={embedded} sidePanel={sidePanel} openTop={openTop} />}
     </MemoryRouter>
   );
 }

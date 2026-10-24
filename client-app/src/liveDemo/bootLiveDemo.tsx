@@ -8,7 +8,7 @@ import { setToken } from "../auth/token";
 import { setApplicationToken } from "../auth/applicationToken";
 import { applyBrokerPrefill } from "../state/useApplicationStore";
 import LiveDemoApp from "./LiveDemoApp";
-import { isEmbedded, usesSidePanel, parentOriginFrom } from "./mode";
+import { isEmbedded, usesPresenterMode, usesSidePanel, parentOriginFrom } from "./mode";
 import { DEMO_APPLICATION_ID, samplePrefill } from "./sample";
 
 /** An unsigned token in the shape the app reads (it is never sent anywhere: the sample server answers every call). */
@@ -36,7 +36,12 @@ export function bootLiveDemo(): void {
   const embedded = isEmbedded(search);
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-      <LiveDemoApp parentOrigin={parentOriginFrom(search)} embedded={embedded} sidePanel={usesSidePanel(search, embedded)} />
+      <LiveDemoApp
+        parentOrigin={parentOriginFrom(search)}
+        embedded={embedded}
+        sidePanel={usesSidePanel(search, embedded)}
+        presenter={usesPresenterMode(search, embedded)}
+      />
     </React.StrictMode>,
   );
 }
