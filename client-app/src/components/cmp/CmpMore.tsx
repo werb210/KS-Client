@@ -65,6 +65,8 @@ export default function CmpMore(p: {
   onForm: (id: string) => void;
   onUpload: () => void;
   onNewApplication: () => void;
+  /** KS_CLIENT_v13_LOAN_CALCULATOR - opens the loan calculator. */
+  onCalculator?: () => void;
 }) {
   return (
     <section className="cmp-phone-only" data-cmp-tab="more" data-testid="cmp-more">
@@ -93,6 +95,14 @@ export default function CmpMore(p: {
           <Row icon="plus" title="Start a new application" desc="Apply for more funding or another product." onClick={p.onNewApplication} testId="cmp-more-new" />
         </div>
       </div>
+      {p.onCalculator ? (
+        <div className="cmpx-group">
+          <h2 className="cmpx-group__title">Tools</h2>
+          <div className="cmpx-list">
+            <Row icon="calculator" title="Loan calculator" desc="Payments, interest and a full schedule for any amount." onClick={p.onCalculator} testId="cmp-more-calculator" />
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
