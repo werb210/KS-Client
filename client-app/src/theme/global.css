@@ -11,12 +11,12 @@
    --boreal-green is left alone; it is a semantic success colour. */
 :root {
   --boreal-blue: #0B1F3A;
-  --boreal-blue-light: #F5F8FC;
+  --boreal-blue-light: var(--ks-bg, #F5F8FC);
   --boreal-accent: #BF9B49;
   --boreal-gold: #BF9B49;
-  --boreal-gold-soft: #F5F8FC;
+  --boreal-gold-soft: var(--ks-bg, #F5F8FC);
   --boreal-green: #1bbe7a;
-  --boreal-gray: #F5F8FC;
+  --boreal-gray: var(--ks-bg, #F5F8FC);
   --boreal-gray-border: #E4EAF2;
   --boreal-text: #0B1F3A;
   --boreal-text-muted: #51617D;

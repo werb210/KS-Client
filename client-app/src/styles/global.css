@@ -6,7 +6,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 /* BF_CLIENT_GLOBALS_v181 - this system stack overrode the Public Sans set in
    index.css for every element that does not name a face itself, which is most
    of the wizard. Ground and text move onto mist and ink at the same time. */
-body { margin: 0; font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F5F8FC; color: #0B1F3A; }
+body { margin: 0; font-family: var(--ks-font, "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif); background: var(--ks-bg, #F5F8FC); color: #0B1F3A; }
 input, select, textarea, button { font-family: inherit; }
 
 /* #28 — kill the browser autofill yellow so filled fields keep the design

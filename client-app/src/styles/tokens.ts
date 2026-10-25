@@ -14,6 +14,8 @@ export const tokens = {
     warning: "rgb(245 158 11)",
     error: "#b3261e",
     background: "#F5F8FC",
+    // KS_CLIENT_v14_BRAND_FONT - the licensee's background when set (src/config/brandTheme.ts), for styles only.
+    pageBackground: "var(--ks-bg, #F5F8FC)",
     surface: "rgb(255 255 255)",
     border: "#E4EAF2",
     textPrimary: "#0B1F3A",
@@ -24,8 +26,8 @@ export const tokens = {
     // BF_CLIENT_DESIGN_v172 - the marketing site's faces. Both are already
     // loaded non-blocking in index.html, so this adds no request. displayFamily
     // is the serif used for headings on every page of boreal.financial.
-    fontFamily: "'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-    displayFamily: "'Libre Caslon Text', Georgia, 'Times New Roman', serif",
+    fontFamily: "var(--ks-font, 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif)",
+    displayFamily: "var(--ks-font-display, 'Libre Caslon Text', Georgia, 'Times New Roman', serif)",
     h1: {
       fontSize: "36px",
       fontWeight: 700,

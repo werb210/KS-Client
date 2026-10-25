@@ -22,7 +22,7 @@
   font: inherit; color: #0B1F3A; cursor: default; min-height: 44px; }
 .cmpx-head__title--switch { cursor: pointer; }
 .cmpx-head__biz { font-size: 17px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cmpx-head__stage { flex: none; padding: 4px 10px; border-radius: 999px; background: #F5F8FC; border: 1px solid #E4EAF2; color: #0B1F3A; font-size: 13px; font-weight: 600; }
+.cmpx-head__stage { flex: none; padding: 4px 10px; border-radius: 999px; background: var(--ks-bg, #F5F8FC); border: 1px solid #E4EAF2; color: #0B1F3A; font-size: 13px; font-weight: 600; }
 
 /* Home */
 .cmpx-hello { margin: 4px 0 12px; }
@@ -33,7 +33,7 @@
 .cmpx-advisor__name { font-size: 18px; font-weight: 700; color: #0B1F3A; }
 .cmpx-advisor__actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
 .cmpx-advisor__actions--two { grid-template-columns: repeat(2, minmax(0, 1fr)); } /* BF_CLIENT_v808_WIDE_HOME */
-.cmpx-advisor__actions .cmpx-btn { flex-direction: column; gap: 4px; min-height: 64px; padding: 8px 4px; font-size: 14px; background: #F5F8FC; color: #0B1F3A; border: 1px solid #E4EAF2; }
+.cmpx-advisor__actions .cmpx-btn { flex-direction: column; gap: 4px; min-height: 64px; padding: 8px 4px; font-size: 14px; background: var(--ks-bg, #F5F8FC); color: #0B1F3A; border: 1px solid #E4EAF2; }
 .cmpx-status__stage { margin-top: 6px; font-size: 26px; font-weight: 700; color: #0B1F3A; line-height: 1.15; }
 .cmpx-status__row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .cmpx-status__step { font-size: 14px; font-weight: 600; color: #51617D; white-space: nowrap; }
@@ -44,7 +44,7 @@
 /* BF_CLIENT_v807_CHAT - two clear choices of who you're writing to, and the line above the message box. */
 .cmpx-chatto { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 10px 12px; background: #fff; border-bottom: 1px solid #E4EAF2; }
 .cmpx-chatto__opt { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 8px 10px; border: 1.5px solid #E4EAF2; border-radius: 14px;
-  background: #F5F8FC; text-align: left; font: inherit; color: #0B1F3A; cursor: pointer; }
+  background: var(--ks-bg, #F5F8FC); text-align: left; font: inherit; color: #0B1F3A; cursor: pointer; }
 .cmpx-chatto__opt[aria-selected="true"] { border-color: #0B1F3A; background: #fff; box-shadow: 0 0 0 2px rgba(11, 31, 58, 0.12); }
 .cmpx-chatto__opt .cmpx-avatar { width: 36px; height: 36px; font-size: 14px; flex: none; }
 .cmpx-avatar--maya { background: #0B1F3A; color: #E8C977; }
@@ -100,7 +100,7 @@
 
 /* Chat: full screen between the header and the tab bar, message box pinned to the bottom. */
 .cmpx-chat { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top) + 56px); bottom: calc(68px + env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; background: #F5F8FC; z-index: 30; }
+  display: flex; flex-direction: column; background: var(--ks-bg, #F5F8FC); z-index: 30; }
 .cmpx-chat__who { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fff; border-bottom: 1px solid #E4EAF2; }
 .cmpx-chat__who .cmpx-avatar { width: 36px; height: 36px; font-size: 14px; }
 .cmpx-chat__whoname { font-size: 15px; font-weight: 700; color: #0B1F3A; }
@@ -120,7 +120,7 @@
 .cmpx-msg__fwded { margin: 4px 6px 0; font-size: 12px; font-weight: 600; color: #065F46; }
 .cmpx-chat__typing { font-size: 13px; color: #51617D; font-style: italic; padding: 2px 6px 8px; }
 .cmpx-chat__empty { margin: 24px 8px; text-align: center; color: #51617D; font-size: 15px; line-height: 1.45; }
-.cmpx-suggest { display: flex; gap: 8px; overflow-x: auto; padding: 8px 12px 0; background: #F5F8FC; }
+.cmpx-suggest { display: flex; gap: 8px; overflow-x: auto; padding: 8px 12px 0; background: var(--ks-bg, #F5F8FC); }
 .cmpx-suggest button { flex: none; min-height: 36px; padding: 0 12px; border: 1px solid #CBD5E1; border-radius: 999px; background: #fff; color: #0B1F3A; font: inherit; font-size: 14px; cursor: pointer; white-space: nowrap; }
 .cmpx-composer { padding: 8px 10px 10px; background: #fff; border-top: 1px solid #E4EAF2; }
 .cmpx-composer__to { display: flex; align-items: center; gap: 6px; margin: 0 4px 6px; font-size: 13px; color: #51617D; }
@@ -142,7 +142,7 @@
   background: #fff; text-align: left; font: inherit; color: #0B1F3A; cursor: pointer; box-sizing: border-box; }
 .cmpx-list > .cmpx-row:first-child, .cmpx-list > :first-child .cmpx-row { border-top: 0; }
 .cmpx-row--static { cursor: default; }
-.cmpx-row__icon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: #F5F8FC; color: #0B1F3A; display: flex; align-items: center; justify-content: center; }
+.cmpx-row__icon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--ks-bg, #F5F8FC); color: #0B1F3A; display: flex; align-items: center; justify-content: center; }
 .cmpx-row__text { flex: 1; min-width: 0; }
 .cmpx-row__title { display: block; font-size: 16px; font-weight: 600; }
 .cmpx-row__desc { display: block; margin-top: 2px; font-size: 14px; color: #51617D; line-height: 1.35; }
@@ -158,7 +158,7 @@
   background: #0B1F3A; color: #fff; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
 .cmpx-call--end { background: #B42318; }
 .cmpx-callstate { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 0 14px; border-radius: 12px;
-  background: #F5F8FC; border: 1px solid #E4EAF2; color: #0B1F3A; font-size: 15px; font-weight: 600; }
+  background: var(--ks-bg, #F5F8FC); border: 1px solid #E4EAF2; color: #0B1F3A; font-size: 15px; font-weight: 600; }
 
 /* Settings */
 .cmpx-settings .cmpx-list { padding: 0; }
@@ -253,7 +253,7 @@
 .cmpx-report__shot { margin: 4px 0 12px; }
 .cmpx-report__shotlabel { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; font-size: 15px; color: #0B1F3A; }
 .cmpx-report__shotlabel input { width: 22px; height: 22px; }
-.cmpx-report__img { grid-column: 1 / -1; width: 100%; max-height: 220px; object-fit: contain; object-position: top; border: 1px solid #E4EAF2; border-radius: 10px; background: #F5F8FC; }
+.cmpx-report__img { grid-column: 1 / -1; width: 100%; max-height: 220px; object-fit: contain; object-position: top; border: 1px solid #E4EAF2; border-radius: 10px; background: var(--ks-bg, #F5F8FC); }
 /* BF_CLIENT_v807_DETAILS */
 .cmpx-details-form { margin: 0; }
 .cmpx-details-form__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

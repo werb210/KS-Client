@@ -9,19 +9,19 @@
 :root {
   --boreal-ink: #0B1F3A;
   --boreal-gold: #BF9B49;
-  --boreal-mist: #F5F8FC;
+  --boreal-mist: var(--ks-bg, #F5F8FC);
   --boreal-line: #E4EAF2;
   --boreal-body: #51617D;
 }
 
 html,
 body {
-  font-family: "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--ks-font, "Public Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif);
   color: var(--boreal-ink);
 }
 
 h1,
 h2,
 h3 {
-  font-family: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  font-family: var(--ks-font-display, "Libre Caslon Text", Georgia, "Times New Roman", serif);
 }

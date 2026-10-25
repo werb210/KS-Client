@@ -5,6 +5,7 @@
 import { useSyncExternalStore } from "react";
 import { SERVER_URL } from "./licensee";
 import { LICENSEE_BUILD } from "./licenseeBuild";
+import { applyBrandTheme } from "./brandTheme";
 
 export type Brand = {
   company_name: string;
@@ -15,6 +16,9 @@ export type Brand = {
   logo_url: string;
   primary_color: string;
   accent_color: string;
+  /** KS_CLIENT_v14_BRAND_FONT - "" = the app's own background / font. */
+  background_color: string;
+  font_family: string;
 };
 
 const CACHE_KEY = "ks_brand_v1";
@@ -29,6 +33,8 @@ const KEYSTONE_BRAND: Brand = {
   logo_url: "",
   primary_color: "#0B1F3A",
   accent_color: "#2563EB",
+  background_color: "",
+  font_family: "",
 };
 
 // KS_CLIENT_v5_LICENSEE_APPS - a licensee's branded build (VITE_LICENSEE) starts from licensee.json, and keeps those
@@ -43,6 +49,9 @@ export function brandFromBuild(build: typeof LICENSEE_BUILD, base: Brand = KEYST
     support_phone: build.support?.phone,
     primary_color: build.colors?.primary,
     accent_color: build.colors?.secondary,
+    background_color: build.colors?.background,
+    // licensee.json fonts.body is { family, google, weights } (older builds: a plain name).
+    font_family: typeof build.fonts?.body === "string" ? build.fonts.body : (build.fonts?.body as { family?: string } | undefined)?.family,
   };
   const out = { ...base };
   const pinned: Array<keyof Brand> = [];
@@ -67,6 +76,8 @@ function clean(raw: unknown): Brand {
   if (!/^https:\/\//i.test(out.logo_url)) out.logo_url = "";
   if (!/^#[0-9a-f]{6}$/i.test(out.primary_color)) out.primary_color = DEFAULT_BRAND.primary_color;
   if (!/^#[0-9a-f]{6}$/i.test(out.accent_color)) out.accent_color = DEFAULT_BRAND.accent_color;
+  if (out.background_color && !/^#[0-9a-f]{6}$/i.test(out.background_color)) out.background_color = DEFAULT_BRAND.background_color;
+  if (out.font_family && !/^[A-Za-z0-9][A-Za-z0-9 -]{0,59}$/.test(out.font_family)) out.font_family = DEFAULT_BRAND.font_family;
   for (const k of PINNED) out[k] = DEFAULT_BRAND[k];
   return out;
 }
@@ -83,6 +94,7 @@ function readCache(): Brand {
 let cached = false;
 try { cached = Boolean(window.localStorage.getItem(CACHE_KEY)); } catch { cached = false; }
 let current: Brand = readCache();
+try { applyBrandTheme(current); } catch { /* no document */ }
 /** True when an earlier visit saved the licensee's details on this device. */
 export function hasCachedBrand(): boolean { return cached; }
 const listeners = new Set<() => void>();
@@ -91,6 +103,7 @@ function set(next: Brand): void {
   current = next;
   try { window.localStorage.setItem(CACHE_KEY, JSON.stringify(next)); } catch { /* private mode */ }
   try { if (typeof document !== "undefined") document.title = next.company_name; } catch { /* no document */ }
+  try { applyBrandTheme(next); } catch { /* no document */ }
   listeners.forEach((l) => l());
 }
 

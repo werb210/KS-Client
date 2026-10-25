@@ -18,9 +18,9 @@ describe("typography matches BF-Website", () => {
     expect(COMPONENTS).toContain("fontFamily: tokens.typography.displayFamily");
   });
 
-  it("the root stylesheet sets both faces", () => {
-    expect(CSS).toContain('font-family: "Public Sans"');
-    expect(CSS).toContain('font-family: "Libre Caslon Text"');
+  it("the root stylesheet sets both faces (the licensee's font, when set, comes first - KS_CLIENT_v14_BRAND_FONT)", () => {
+    expect(CSS).toContain('font-family: var(--ks-font, "Public Sans"');
+    expect(CSS).toContain('font-family: var(--ks-font-display, "Libre Caslon Text"');
   });
 });
 

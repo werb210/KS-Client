@@ -922,7 +922,7 @@ export function Step6_Review(): JSX.Element {
                 marginBottom: tokens.spacing.xs,
                 borderRadius: tokens.radii.md,
                 border: `1px solid ${allAgreed ? tokens.colors.accent : tokens.colors.border}`,
-                background: allAgreed ? tokens.colors.background : tokens.colors.surface,
+                background: allAgreed ? tokens.colors.pageBackground : tokens.colors.surface,
                 cursor: "pointer",
                 fontSize: tokens.typography.label.fontSize,
                 fontWeight: tokens.typography.label.fontWeight,

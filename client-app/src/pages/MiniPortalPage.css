@@ -1,6 +1,6 @@
 /* BF_CLIENT_PORTAL_v178 - the portal is the screen a returning client sees
    most. It now shares the wizard's palette and faces: navy #0B1F3A, gold
-   #BF9B49, mist #F5F8FC, hairline #E4EAF2, body #51617D. Semantic colours for
+   #BF9B49, mist var(--ks-bg, #F5F8FC), hairline #E4EAF2, body #51617D. Semantic colours for
    call, hang-up, error and warning are deliberately unchanged. */
 .mp-root h1,
 .mp-root h2,
@@ -23,7 +23,7 @@
 .mp-stage--done:not(:last-child)::after, .mp-stage--current:not(:last-child)::after { background:#BF9B49; }
 /* BF_CLIENT_PORTAL_v178 - a gold bullet needs a navy glyph. White on #BF9B49
    fails contrast, the same reason the primary button is navy-on-gold. */
-.mp-stage__bullet { width:32px; height:32px; border-radius:999px; background:#F5F8FC; border:1px solid #E4EAF2; color:#0B1F3A; display:flex; align-items:center; justify-content:center; font-weight:700; position:relative; z-index:1; transition:background-color .6s ease, border-color .6s ease; }
+.mp-stage__bullet { width:32px; height:32px; border-radius:999px; background:var(--ks-bg, #F5F8FC); border:1px solid #E4EAF2; color:#0B1F3A; display:flex; align-items:center; justify-content:center; font-weight:700; position:relative; z-index:1; transition:background-color .6s ease, border-color .6s ease; }
 .mp-stage--done .mp-stage__bullet, .mp-stage--current .mp-stage__bullet { background:#BF9B49; border-color:#BF9B49; }
 .mp-stage__label{margin-top:8px;text-align:center;font-size:12px;color:#0B1F3A;line-height:1.2;display:flex;flex-direction:column}
 
@@ -38,7 +38,7 @@
 .mp-msg-avatar{width:32px;height:32px;border-radius:999px;background:#0B1F3A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
 .mp-msg-stack{max-width:70%}
 .mp-msg-bubble{padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.35}
-.mp-msg-bubble--in{background:#F5F8FC;color:#0B1F3A}
+.mp-msg-bubble--in{background:var(--ks-bg, #F5F8FC);color:#0B1F3A}
 .mp-msg-bubble--out{background:#fff;border:1px solid #E4EAF2;color:#0B1F3A}
 .mp-msg-time{font-size:11px;color:#51617D;white-space:nowrap}
 .mp-msg-cta{margin-top:8px;background:#BF9B49;color:#0B1F3A;border:0;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
@@ -50,7 +50,7 @@
 .mp-actions__chips{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
 /* BF_CLIENT_BLOCK_v_CMP_CALLUS_DEEMPHASIZE_v1 — cleaner bordered chips (mockup look). */
 .mp-chip--action{min-height:46px;border:1px solid #E4EAF2;background:#fff;color:#0B1F3A;border-radius:10px;font-size:14px;font-weight:600;padding:8px 12px;text-align:center;transition:border-color .15s,background .15s}
-.mp-chip--action:hover{border-color:#0B1F3A;background:#F5F8FC}
+.mp-chip--action:hover{border-color:#0B1F3A;background:var(--ks-bg, #F5F8FC)}
 /* BF_CLIENT_BLOCK_v_CMP_CALLUS_DEEMPHASIZE_v1 — was a 56px solid-green slab that dominated the panel; mockup de-emphasizes it to a small outline button. */
 .mp-callus{display:flex;align-items:center;justify-content:center;margin:0;min-height:42px;border:1px solid #047857;border-radius:10px;background:#fff;color:#047857;font-size:14px;font-weight:600;cursor:pointer}/* BF_CLIENT_UI_CLUSTER_2 */
 .mp-callus:hover{background:#f0fdf4}
@@ -67,7 +67,7 @@
   padding: 12px 14px;
   border: 1px solid #E4EAF2;
   border-radius: 12px;
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
 }
 .mp-signed-return {
   margin-top: 10px;
@@ -154,7 +154,7 @@
   padding: 12px 14px;
   border: 1px solid #E4EAF2;
   border-radius: 14px;
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
   cursor: pointer;
 }
 .mp-offer-bubble__lender { font-weight: 600; font-size: 14px; }
@@ -162,7 +162,7 @@
 .mp-offer-bubble__cta { margin-left: auto; font-size: 13px; font-weight: 600; color: #0B1F3A; }
 .mp-offer-bubble--expired {
   border-color: #E4EAF2;
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
   opacity: .65;
   cursor: default;
 }
