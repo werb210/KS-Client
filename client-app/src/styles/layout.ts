@@ -3,7 +3,7 @@ import { tokens } from "./tokens";
 export const layout = {
   page: {
     minHeight: "100vh",
-    background: tokens.colors.background,
+    background: tokens.colors.pageBackground,
     color: tokens.colors.textPrimary,
     fontFamily: tokens.typography.fontFamily,
     padding: "var(--page-padding)",

@@ -20,7 +20,7 @@ export function PgiSection({ app, update }: Props) {
     padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
     borderRadius: tokens.radii.md,
     border: `1px solid ${selected ? tokens.colors.accent : tokens.colors.border}`,
-    background: selected ? tokens.colors.background : tokens.colors.surface,
+    background: selected ? tokens.colors.pageBackground : tokens.colors.surface,
     fontSize: tokens.typography.label.fontSize,
     color: tokens.colors.textPrimary,
     cursor: "pointer",

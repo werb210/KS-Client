@@ -133,7 +133,7 @@ export const components = {
       padding: tokens.spacing.lg,
     },
     muted: {
-      background: tokens.colors.background,
+      background: tokens.colors.pageBackground,
       borderRadius: tokens.radii.lg,
       border: `1px solid ${tokens.colors.border}`,
       padding: tokens.spacing.md,
@@ -229,7 +229,7 @@ export const components = {
       border: `1px dashed ${tokens.colors.border}`,
       borderRadius: tokens.radii.lg,
       padding: tokens.spacing.md,
-      background: tokens.colors.background,
+      background: tokens.colors.pageBackground,
       display: "flex",
       flexDirection: "column" as const,
       gap: tokens.spacing.xs,
@@ -283,7 +283,7 @@ export const components = {
     bubble: {
       padding: tokens.spacing.sm,
       borderRadius: tokens.radii.md,
-      background: tokens.colors.background,
+      background: tokens.colors.pageBackground,
       fontSize: "14px",
       color: tokens.colors.textPrimary,
     },

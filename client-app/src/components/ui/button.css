@@ -45,7 +45,7 @@
   border: 1px solid #E4EAF2;
 }
 .bf-btn--secondary:hover:not(:disabled) {
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
   border-color: #0B1F3A;
 }
 
@@ -55,7 +55,7 @@
   border: 1px solid transparent;
 }
 .bf-btn--ghost:hover:not(:disabled) {
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
 }
 
 /* A solid muted state reads as "not yet available". Half-opacity reads as

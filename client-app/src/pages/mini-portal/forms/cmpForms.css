@@ -126,7 +126,7 @@
   cursor: pointer;
   font-family: inherit;
 }
-.cmpf-add:hover { background: #F5F8FC; }
+.cmpf-add:hover { background: var(--ks-bg, #F5F8FC); }
 
 /* Labelled Remove control with a real tap target. */
 .cmpf-remove {
@@ -207,7 +207,7 @@
   width: 24px;
   height: 24px;
   border-radius: 999px;
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
   border: 1px solid #E4EAF2;
   font-size: 13px;
   font-weight: 700;
@@ -232,7 +232,7 @@
 .cmpf-totals {
   margin-top: 12px;
   padding: 12px;
-  background: #F5F8FC;
+  background: var(--ks-bg, #F5F8FC);
   border: 1px solid #E4EAF2;
   border-radius: 8px;
   font-size: 14px;

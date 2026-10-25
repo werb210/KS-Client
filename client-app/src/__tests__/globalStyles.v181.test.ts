@@ -29,12 +29,12 @@ describe("brand variables hold brand values", () => {
 });
 
 describe("body does not override the brand face", () => {
-  it("names Public Sans first", () => {
-    expect(GLOBAL).toContain('font-family: "Public Sans"');
+  it("names Public Sans first (after the licensee's own font, when set - KS_CLIENT_v14_BRAND_FONT)", () => {
+    expect(GLOBAL).toContain('font-family: var(--ks-font, "Public Sans"');
   });
 
   it("uses mist and ink for ground and text", () => {
-    expect(GLOBAL).toContain("background: #F5F8FC");
+    expect(GLOBAL).toContain("background: var(--ks-bg, #F5F8FC)");
     expect(GLOBAL).toContain("color: #0B1F3A");
     expect(GLOBAL).not.toContain("#f9fafb");
     expect(GLOBAL).not.toContain("#111827");
