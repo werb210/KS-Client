@@ -250,7 +250,7 @@ export default function TourOverlay({ parentOrigin, embedded, sidePanel = false,
     <div data-testid="live-demo-tour" data-step={step.key} style={{ position: "fixed", inset: 0, zIndex: 2147483000, pointerEvents: "none" }}>
       {spot ? <div data-testid="live-demo-spotlight" style={spot} /> : final ? <div style={{ position: "fixed", inset: 0, background: C.scrim }} /> : null}
       <div role="dialog" aria-modal="false" aria-labelledby="live-demo-title" aria-describedby="live-demo-text" data-testid="live-demo-card" style={card}>
-        <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: C.muted }}>
+        <div style={{ fontSize: "var(--ks-text-help)", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: C.muted }}>
           {final ? "Client side done" : `You are the client · ${number} of ${total - 1}`}
         </div>
         <h2 id="live-demo-title" style={{ margin: "6px 0 4px", fontSize: final ? 20 : 17, lineHeight: 1.3, fontWeight: 700, color: C.ink }}>{step.title}</h2>

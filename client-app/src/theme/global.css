@@ -192,3 +192,35 @@ select option:checked {
   .wizard-modal { padding: 22px 18px; }
   .wizard-modal h3 { font-size: 18px; }
 }
+
+/* KS_CLIENT_v15_READABLE_TYPE - one type scale for the small sizes. A computer or tablet keeps the sizes it had; a phone
+   (narrower than 768px, or a touch screen held sideways) gets text it can read: everything a client reads is 15px or
+   more, captions that are truly secondary (a timestamp, a file size) are 13px, and the tab bar labels 12px.
+     --ks-text-body-sm  small body text, list rows          14px -> 15px
+     --ks-text-label    field labels, chips, buttons        13px -> 15px
+     --ks-text-help     helper and error text, notes        12px -> 15px
+     --ks-text-caption  secondary captions only             12px -> 13px
+     --ks-text-micro    tab bar labels, tiny badges         11px -> 12px
+     --ks-text-tiny     counters in a dot                   10px -> 12px
+   Inline styles, the CSS files and tokens.ts use these names; Tailwind's text-xs / text-sm follow the same steps. */
+:root {
+  --ks-text-body-sm: 14px;
+  --ks-text-label: 13px;
+  --ks-text-help: 12px;
+  --ks-text-caption: 12px;
+  --ks-text-micro: 11px;
+  --ks-text-tiny: 10px;
+}
+@media (max-width: 767px), (pointer: coarse) and (max-height: 500px) {
+  :root {
+    --ks-text-body-sm: 15px;
+    --ks-text-label: 15px;
+    --ks-text-help: 15px;
+    --ks-text-caption: 13px;
+    --ks-text-micro: 12px;
+    --ks-text-tiny: 12px;
+  }
+  :root .text-sm { font-size: var(--ks-text-body-sm); line-height: 1.4; }
+  :root .text-xs { font-size: var(--ks-text-help); line-height: 1.4; }
+  :root .text-\[13px\] { font-size: var(--ks-text-label); }
+}

@@ -197,7 +197,7 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
 
   // BF_CLIENT_v802_SCAN_FIRST - in the phone and tablet apps "Scan to PDF" (the camera finds the page edges,
   // crops, and joins the pages into one PDF) is the main button; choosing a file is the second.
-  const fileBtnPrimary: React.CSSProperties = { minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 600 };
+  const fileBtnPrimary: React.CSSProperties = { minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 };
   // BF_CLIENT_v805_PHONE_FIXES - Scan to PDF and Choose file are two equal navy buttons under the document name.
   const empty = !loading && !error && data.stillNeeded.length === 0 && data.rejected.length === 0; // BF_CLIENT_NO_FALSE_ALL_CLEAR_v728
 
@@ -224,13 +224,13 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
 
         {data.rejected.length > 0 && (
           <section style={{ marginBottom: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#b91c1c", margin: "12px 0 8px" }}>Re-upload rejected</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#b91c1c", margin: "12px 0 8px" }}>Re-upload rejected</h3>
             {data.rejected.map((d) => (
               <div key={`r-${d.document_type}`} className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <span style={{ fontSize: 14 }}>{d.label}</span>
+                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{d.label}</span>
                 <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                   {Capacitor.isNativePlatform() && (
-                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>
+                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>
                       Scan to PDF
                     </button>
                   )}
@@ -245,13 +245,13 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
 
         {data.stillNeeded.length > 0 && (
           <section>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", margin: "12px 0 8px" }}>Still needed</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 8px" }}>Still needed</h3>
             {data.stillNeeded.map((d) => (
               <div key={`n-${d.document_type}`} className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <span style={{ fontSize: 14 }}>{d.label}</span>
+                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{d.label}</span>
                 <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                   {Capacitor.isNativePlatform() && (
-                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>
+                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>
                       Scan to PDF
                     </button>
                   )}
@@ -267,11 +267,11 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
         {/* BF_CLIENT_v841_OTHER_DOC - always offered (not when opened for one specific item). */}
         {!aimedAt && !loading && (
           <section data-testid="docpicker-other" style={{ marginTop: 20 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", margin: "12px 0 4px" }}>Anything else?</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 4px" }}>Anything else?</h3>
             <div className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-              <span style={{ fontSize: 14 }}>
+              <span style={{ fontSize: "var(--ks-text-body-sm)" }}>
                 Other document (optional)
-                <span style={{ display: "block", fontSize: 13, color: "#475569" }}>Anything you think will help, even if we didn't ask for it.</span>
+                <span style={{ display: "block", fontSize: "var(--ks-text-label)", color: "#475569" }}>Anything you think will help, even if we didn't ask for it.</span>
               </span>
               <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                 {Capacitor.isNativePlatform() && (
