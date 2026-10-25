@@ -145,7 +145,7 @@ const RequirementRow = memo(function RequirementRow({
         <label style={{ display: "flex", alignItems: "center", gap: tokens.spacing.xs }} aria-label={formatDocumentLabel(docType)}>
           <Checkbox checked={docStatus !== "missing"} readOnly />
         </label>
-        <div style={{ ...components.form.helperText, fontSize: 12 }}>
+        <div style={{ ...components.form.helperText, fontSize: "var(--ks-text-help)" }}>
           {entry.required ? "Required" : "Optional"} · {docStatus === "missing" ? "Missing" : "Uploaded"}
         </div>
         <Button
@@ -213,7 +213,7 @@ function OptionSeparator() {
     >
       <span
         style={{
-          fontSize: 13,
+          fontSize: "var(--ks-text-label)",
           fontWeight: 600,
           letterSpacing: "0.08em",
           textTransform: "uppercase",
@@ -1043,7 +1043,7 @@ function Step5DocumentsBody() {
             type="button"
             data-testid="step5-change-option"
             onClick={() => setDocChoice(null)}
-            style={{ alignSelf: "center", background: "none", border: "none", padding: 0, cursor: "pointer", color: tokens.colors.primary, textDecoration: "underline", fontSize: 14 }}
+            style={{ alignSelf: "center", background: "none", border: "none", padding: 0, cursor: "pointer", color: tokens.colors.primary, textDecoration: "underline", fontSize: "var(--ks-text-body-sm)" }}
           >
             Choose a different option
           </button>

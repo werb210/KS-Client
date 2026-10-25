@@ -14,7 +14,7 @@ const panel: CSSProperties = {
   background: C.surface, color: C.text, width: "min(720px, 100vw)", maxHeight: "92vh", overflowY: "auto", borderRadius: "16px 16px 0 0",
   padding: "16px 16px calc(16px + env(safe-area-inset-bottom))", boxSizing: "border-box",
 };
-const label: CSSProperties = { display: "flex", flexDirection: "column", gap: 4, fontSize: 14, fontWeight: 600, color: C.text };
+const label: CSSProperties = { display: "flex", flexDirection: "column", gap: 4, fontSize: "var(--ks-text-body-sm)", fontWeight: 600, color: C.text };
 const input: CSSProperties = { border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px", fontSize: 16, background: C.surface, color: C.text, fontFamily: "inherit" };
 const btn: CSSProperties = { border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 14px", fontSize: 15, fontWeight: 600, background: C.surface, color: C.text, cursor: "pointer", fontFamily: "inherit" };
 const cell: CSSProperties = { padding: "6px 8px", textAlign: "right", whiteSpace: "nowrap", color: C.text };
@@ -43,7 +43,7 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
           <h2 style={{ margin: 0, fontSize: 20, color: C.text }}>Loan calculator</h2>
           <button type="button" style={btn} onClick={onClose}>Close</button>
         </div>
-        <p style={{ margin: "0 0 12px", fontSize: 14, color: C.muted }}>An estimate only. Your lender's offer sets the actual rate and payments.</p>
+        <p style={{ margin: "0 0 12px", fontSize: "var(--ks-text-body-sm)", color: C.muted }}>An estimate only. Your lender's offer sets the actual rate and payments.</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
           <label style={label}>Amount ($)<input style={input} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label="Amount" /></label>
@@ -59,7 +59,7 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
         </div>
 
         {errors.length > 0 && (
-          <ul role="alert" style={{ margin: "12px 0 0", padding: "8px 12px 8px 28px", background: C.errBg, border: `1px solid ${C.errBorder}`, borderRadius: 10, color: C.errText, fontSize: 14 }}>
+          <ul role="alert" style={{ margin: "12px 0 0", padding: "8px 12px 8px 28px", background: C.errBg, border: `1px solid ${C.errBorder}`, borderRadius: 10, color: C.errText, fontSize: "var(--ks-text-body-sm)" }}>
             {errors.map((e) => <li key={e}>{e}</li>)}
           </ul>
         )}
@@ -74,12 +74,12 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
                 ["Total cost", money(result.totalCost)],
               ].map(([k, v]) => (
                 <div key={k} style={{ border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 12px", background: C.tint }}>
-                  <div style={{ fontSize: 13, color: C.muted }}>{k}</div>
+                  <div style={{ fontSize: "var(--ks-text-label)", color: C.muted }}>{k}</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: C.text }}>{v}</div>
                 </div>
               ))}
             </div>
-            {result.balloon ? <p style={{ fontSize: 13, color: C.muted, margin: "8px 0 0" }}>The last payment includes the {money(result.balloon)} balloon.</p> : null}
+            {result.balloon ? <p style={{ fontSize: "var(--ks-text-label)", color: C.muted, margin: "8px 0 0" }}>The last payment includes the {money(result.balloon)} balloon.</p> : null}
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
               <button type="button" style={{ ...btn, background: C.primary, color: C.onPrimary, borderColor: C.primary }} onClick={() => downloadFile(schedulePdf(loan, result), "loan-schedule.pdf", "application/pdf")}>Download PDF</button>
@@ -87,7 +87,7 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
             </div>
 
             <div style={{ marginTop: 12, maxHeight: 320, overflow: "auto", border: `1px solid ${C.border}`, borderRadius: 10 }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }} data-testid="loan-calculator-schedule">
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--ks-text-label)" }} data-testid="loan-calculator-schedule">
                 <thead style={{ position: "sticky", top: 0, background: C.surface }}>
                   <tr>{["#", "Date", "Payment", "Principal", "Interest", "Balance"].map((h) => <th key={h} style={{ ...cell, fontWeight: 700, borderBottom: `1px solid ${C.border}` }}>{h}</th>)}</tr>
                 </thead>

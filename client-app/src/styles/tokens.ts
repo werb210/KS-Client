@@ -44,17 +44,17 @@ export const tokens = {
       lineHeight: "1.5",
     },
     label: {
-      fontSize: "14px",
+      fontSize: "var(--ks-text-body-sm)",
       fontWeight: 500,
       lineHeight: "1.4",
     },
     helper: {
-      fontSize: "12px",
+      fontSize: "var(--ks-text-help)",
       fontWeight: 400,
       lineHeight: "1.4",
     },
     error: {
-      fontSize: "12px",
+      fontSize: "var(--ks-text-help)",
       fontWeight: 600,
       lineHeight: "1.4",
     },
