@@ -19,6 +19,10 @@ const AccountantPage     = lazy(() => import("@/pages/AccountantPage"));
 const Stage2Page         = lazy(() => import("@/pages/mini-portal/forms/Stage2Page"));
 const SessionExpiredPage = lazy(() => import("@/pages/SessionExpiredPage").then((m) => ({ default: m.SessionExpiredPage })));
 const SessionRevokedPage = lazy(() => import("@/pages/SessionRevokedPage").then((m) => ({ default: m.SessionRevokedPage })));
+// KS_CLIENT_SETTINGS_PACK_v1 - public booking pages and the post-funding survey (no sign-in).
+const BookPage           = lazy(() => import("@/pages/publicPages/BookingPage").then((m) => ({ default: m.BookPage })));
+const ManageBookingPage  = lazy(() => import("@/pages/publicPages/BookingPage").then((m) => ({ default: m.ManageBookingPage })));
+const SurveyPage         = lazy(() => import("@/pages/publicPages/SurveyPage"));
 const OfflineFallback    = lazy(() => import("@/pages/OfflineFallback").then((m) => ({ default: m.OfflineFallback })));
 
 export default function AppRouter() {
@@ -32,6 +36,9 @@ export default function AppRouter() {
         <Route path="/expired" element={<SessionExpiredPage />} />
         <Route path="/revoked" element={<SessionRevokedPage />} />
         <Route path="/offline" element={<OfflineFallback />} />
+        <Route path="/book/manage/:token" element={<ManageBookingPage />} />
+        <Route path="/book/:slug" element={<BookPage />} />
+        <Route path="/survey/:token" element={<SurveyPage />} />
         {/* BF_WIZARD_NUCLEAR_v40 — Block 40-A — single Wizard component renders the
             current step from store state. Same component instance for every step
             so React Router only swaps params, never elements — no route transition

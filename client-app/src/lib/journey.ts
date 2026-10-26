@@ -1,4 +1,18 @@
 import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { CONSENT_KEY } from "@/utils/analytics";
+import { isNativeBuild } from "./thirdPartyTags";
+
+// KS_CLIENT_SETTINGS_PACK_v1_CONSENT - on the web, visitor tracking runs only after the visitor accepts in the cookie
+// banner (nothing is sent, and no journey id is minted, before that). The native apps show no banner and keep their
+// in-app journey, covered by the store privacy labels.
+export function trackingAllowed(): boolean {
+  try {
+    if (isNativeBuild()) return true;
+    return localStorage.getItem(CONSENT_KEY) === "granted";
+  } catch {
+    return false;
+  }
+}
 // BF_CLIENT_VISITOR_JOURNEY_v1 - continues the visitor journey inside the wizard.
 // Reuses the journey session id handed over from the website (?journeySession=...),
 // or mints one, so the CRM can show the full path: which ad -> pages -> wizard steps.
@@ -29,6 +43,7 @@ type JourneyEvent = { type: string; path?: string; title?: string; step?: string
 
 export function trackJourney(event: JourneyEvent): void {
   try {
+    if (!trackingAllowed()) return;
     const sessionId = getJourneySessionId();
     if (!sessionId) return;
     // BF_CLIENT_JOURNEY_BOOT_v185 - the collector accepts an attribution object and uses
@@ -71,6 +86,7 @@ export function trackApplicationSubmitted(): void {
 // localStorage when attribution is captured, and it fires the beacon that creates the row.
 export function startJourney(): void {
   try {
+    if (!trackingAllowed()) return;
     getJourneySessionId();
     trackJourney({
       type: "session_start",
