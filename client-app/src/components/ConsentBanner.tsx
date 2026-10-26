@@ -2,8 +2,35 @@ import { useEffect, useState, type ReactElement } from "react";
 import { initClarity } from "@/lib/clarity";
 import { isNativeBuild } from "@/lib/thirdPartyTags";
 import { CONSENT_KEY } from "@/utils/analytics";
+import { SERVER_URL } from "@/config/licensee";
+import { startJourney } from "@/lib/journey";
 
 const KEY = CONSENT_KEY;
+const VISITOR_KEY = "ks_consent_visitor";
+export const CONSENT_POLICY_VERSION = "2026-11";
+
+/** KS_CLIENT_SETTINGS_PACK_v1_CONSENT - which Keystone page the choice was made on. */
+export function consentSurface(path: string = typeof window !== "undefined" ? window.location.pathname : "/"): "booking_page" | "client_app" {
+  return /^\/(book|survey)(\/|$)/.test(path) ? "booking_page" : "client_app";
+}
+
+/** KS_CLIENT_SETTINGS_PACK_v1_CONSENT - the choice is recorded on the server (a random visitor id, never the journey
+ *  id, and no personal details). Best effort: a failed record never blocks the page. */
+export function recordConsentChoice(granted: boolean): void {
+  try {
+    let visitor = localStorage.getItem(VISITOR_KEY);
+    if (!visitor) {
+      visitor = `v_${window.crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
+      localStorage.setItem(VISITOR_KEY, visitor);
+    }
+    const body = JSON.stringify({
+      visitorId: visitor, surface: consentSurface(), choice: granted ? "granted" : "denied", policyVersion: CONSENT_POLICY_VERSION,
+      categories: { analytics: granted, session_replay: granted, advertising: granted },
+    });
+    void fetch(`${SERVER_URL}/api/privacy/consent`, { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true })
+      .catch(() => { /* recording the choice is best effort */ });
+  } catch { /* never break the page */ }
+}
 
 function applyConsent(granted: boolean) {
   // BF_CLIENT_CONSENT_GTAG_FORMAT_FIX_v1 - Consent Mode commands MUST be pushed
@@ -42,6 +69,7 @@ export default function ConsentBanner(): ReactElement | null {
       if (carried === "granted" || carried === "denied") {
         try { localStorage.setItem(KEY, carried); } catch { /* ignore */ }
         stored = carried;
+        recordConsentChoice(carried === "granted"); // KS_CLIENT_SETTINGS_PACK_v1_CONSENT
       }
     }
     if (stored === "granted") { applyConsent(true); initClarity(); return; }
@@ -54,15 +82,17 @@ export default function ConsentBanner(): ReactElement | null {
   const choose = (granted: boolean) => {
     try { localStorage.setItem(KEY, granted ? "granted" : "denied"); } catch { /* ignore */ }
     applyConsent(granted);
+    recordConsentChoice(granted); // KS_CLIENT_SETTINGS_PACK_v1_CONSENT
     // BF_CLIENT_v789_ANALYTICS_GATES - session recording starts only on Accept.
-    if (granted) initClarity();
+    // KS_CLIENT_SETTINGS_PACK_v1_CONSENT - and so does visitor tracking.
+    if (granted) { initClarity(); startJourney(); }
     setShow(false);
   };
 
   return (
     <div style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 80, background: "#0B1320", color: "#fff", borderTop: "1px solid rgba(255,255,255,0.12)", padding: "16px 20px calc(16px + env(safe-area-inset-bottom))", display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "center" }}>
       <p style={{ margin: 0, fontSize: "var(--ks-text-label)", maxWidth: 640, lineHeight: 1.5 }}>
-        We use cookies to analyze traffic and improve your experience. You can accept or decline analytics and advertising cookies.
+        We use cookies to see how visitors use this site (analytics and session recordings) and to measure our ads. Nothing is tracked unless you accept.
       </p>
       <div style={{ display: "flex", gap: 8 }}>
         <button onClick={() => choose(false)} style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", cursor: "pointer" }}>Decline</button>
