@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from "react";
 import { initClarity } from "@/lib/clarity";
-import { isNativeBuild } from "@/lib/thirdPartyTags";
+import { consentRegion, isNativeBuild, peekConsentRegion, type ConsentRegion } from "@/lib/thirdPartyTags";
 import { CONSENT_KEY } from "@/utils/analytics";
 import { SERVER_URL } from "@/config/licensee";
 import { startJourney } from "@/lib/journey";
@@ -51,8 +51,19 @@ function applyConsent(granted: boolean) {
   });
 }
 
+/** KS_PRIVACY_QUEBEC_CONSENT_v1 - what the banner says. Quebec (Law 25): Google waits for Accept like everything
+ *  else. Elsewhere: Google analytics and ad measurement run on notice until Decline; the rest waits for Accept. */
+export function consentNotice(region: ConsentRegion): string {
+  return region === "QC"
+    ? "We'd like to use cookies to see how visitors use this site (Google Analytics and session recordings) and to measure our Google ads. All tracking is off until you accept."
+    : "We use cookies to see how visitors use this site and to measure our ads. Google Analytics and Google Ads measurement are on unless you decline. Session recordings and visitor tracking start only if you accept.";
+}
+
 export default function ConsentBanner(): ReactElement | null {
   const [show, setShow] = useState(false);
+  // KS_PRIVACY_QUEBEC_CONSENT_v1 - the wording depends on whether the visitor is in Quebec, so the banner waits
+  // for that answer (usually already known by the time the app paints; 1.5 s at most).
+  const [region, setRegion] = useState<ConsentRegion | null>(() => peekConsentRegion());
 
   useEffect(() => {
     // BF_CLIENT_v789_ANALYTICS_GATES - the native apps load no analytics or
@@ -75,9 +86,12 @@ export default function ConsentBanner(): ReactElement | null {
     if (stored === "granted") { applyConsent(true); initClarity(); return; }
     if (stored === "denied") { applyConsent(false); return; }
     setShow(true);
+    let live = true;
+    if (!peekConsentRegion()) void consentRegion().then((r) => { if (live) setRegion(r); });
+    return () => { live = false; };
   }, []);
 
-  if (!show) return null;
+  if (!show || !region) return null;
 
   const choose = (granted: boolean) => {
     try { localStorage.setItem(KEY, granted ? "granted" : "denied"); } catch { /* ignore */ }
@@ -90,9 +104,9 @@ export default function ConsentBanner(): ReactElement | null {
   };
 
   return (
-    <div style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 80, background: "#0B1320", color: "#fff", borderTop: "1px solid rgba(255,255,255,0.12)", padding: "16px 20px calc(16px + env(safe-area-inset-bottom))", display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "center" }}>
+    <div data-testid="consent-banner" data-region={region} style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 80, background: "#0B1320", color: "#fff", borderTop: "1px solid rgba(255,255,255,0.12)", padding: "16px 20px calc(16px + env(safe-area-inset-bottom))", display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "center" }}>
       <p style={{ margin: 0, fontSize: "var(--ks-text-label)", maxWidth: 640, lineHeight: 1.5 }}>
-        We use cookies to see how visitors use this site (analytics and session recordings) and to measure our ads. Nothing is tracked unless you accept.
+        {consentNotice(region)}
       </p>
       <div style={{ display: "flex", gap: 8 }}>
         <button onClick={() => choose(false)} style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", cursor: "pointer" }}>Decline</button>
