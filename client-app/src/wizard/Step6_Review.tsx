@@ -1,3 +1,4 @@
+import { idVerificationNext } from "@/wizard/idVerificationStep"; // KS_CLIENT_v22_KYC
 import { useEffect, useMemo, useRef, useState } from "react";
 import { setApplicationToken } from "@/auth/applicationToken";
 import { isSbaWizardPath } from "./wizardSchema"; // BF_CLIENT_STEP6_BACK_v151
@@ -592,7 +593,10 @@ export function Step6_Review(): JSX.Element {
       clearStoredApplication();
       setTimeout(() => {
         if (nextApplicationId) {
-          navigate(`/application/${nextApplicationId}`, { replace: true, state: { submitted: true } });
+          // KS_CLIENT_v22_KYC - when the brokerage asks for ID right after submitting, go to "Verify your identity".
+          void idVerificationNext(nextApplicationId).then((verify) => {
+            navigate(verify ? `/verify/${encodeURIComponent(nextApplicationId)}?wizard=1` : `/application/${nextApplicationId}`, { replace: true, state: { submitted: true } });
+          });
           return;
         }
         navigate("/portal", { replace: true });

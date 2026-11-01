@@ -23,6 +23,7 @@ const SessionRevokedPage = lazy(() => import("@/pages/SessionRevokedPage").then(
 const BookPage           = lazy(() => import("@/pages/publicPages/BookingPage").then((m) => ({ default: m.BookPage })));
 const ManageBookingPage  = lazy(() => import("@/pages/publicPages/BookingPage").then((m) => ({ default: m.ManageBookingPage })));
 const SurveyPage         = lazy(() => import("@/pages/publicPages/SurveyPage"));
+const VerifyIdentityPage = lazy(() => import("@/pages/verify/VerifyIdentityPage")); // KS_CLIENT_v22_KYC
 const OfflineFallback    = lazy(() => import("@/pages/OfflineFallback").then((m) => ({ default: m.OfflineFallback })));
 
 export default function AppRouter() {
@@ -58,6 +59,7 @@ export default function AppRouter() {
         <Route path="/application/:id" element={<RequireOTP accountBarInPage><MiniPortalPage /></RequireOTP>} />
         {/* BF_CLIENT_BLOCK_TWO_STAGE_v1 */}
         <Route path="/mini-portal/forms/:applicationId" element={<RequireOTP><Stage2Page /></RequireOTP>} />
+        <Route path="/verify/:applicationId" element={<RequireOTP><VerifyIdentityPage /></RequireOTP>} /> {/* KS_CLIENT_v22_KYC */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
