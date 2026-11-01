@@ -202,6 +202,7 @@ const RequirementRow = memo(function RequirementRow({
 function OptionSeparator() {
   return (
     <div
+      className="step5-or"
       aria-hidden
       style={{
         display: "flex",
@@ -985,7 +986,22 @@ function Step5DocumentsBody() {
             {/* BF_CLIENT_BLOCK_v470_STEP5_SIDE_BY_SIDE - three options in one row. Supply
                 later goes straight to Step 6; the accountant option opens its form
                 and, once sent, also goes straight to Step 6. */}
-            <div data-testid="step5-options-row" style={{ display: "flex", flexWrap: "wrap", alignItems: "stretch", justifyContent: "center", gap: 12, margin: `${tokens.spacing.md} 0` }}>
+            {/* STEP5_OPTIONS_STACK_v1 - phones and the demo phone frame: one column, full-width buttons, OR centred between. */}
+            <style>{`
+              .step5-options-wrap { container-type: inline-size; width: 100%; }
+              @container (max-width: 700px) {
+                .step5-options-row { flex-direction: column !important; align-items: center !important; }
+                .step5-options-row > button { flex: 0 0 auto !important; width: 100% !important; max-width: 420px !important; }
+                .step5-or { width: 100%; padding: 2px 0 !important; }
+              }
+              @media (max-width: 700px) {
+                .step5-options-row { flex-direction: column !important; align-items: center !important; }
+                .step5-options-row > button { flex: 0 0 auto !important; width: 100% !important; max-width: 420px !important; }
+                .step5-or { width: 100%; padding: 2px 0 !important; }
+              }
+            `}</style>
+            <div className="step5-options-wrap">
+            <div className="step5-options-row" data-testid="step5-options-row" style={{ display: "flex", flexWrap: "wrap", alignItems: "stretch", justifyContent: "center", gap: 12, margin: `${tokens.spacing.md} 0` }}>
               <Button
                 variant="secondary"
                 data-testid="step5-choose-now"
@@ -1016,6 +1032,7 @@ function Step5DocumentsBody() {
               >
                 Have my accountant upload the documents
               </Button>
+            </div>
             </div>
           </>
         )}
