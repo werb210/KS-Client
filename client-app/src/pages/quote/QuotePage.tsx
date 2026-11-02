@@ -15,6 +15,7 @@ type Option = {
   id: string; lender_name: string; product_name: string | null; amount: number; term_months: number | null; rate_kind: "interest_rate" | "factor_rate";
   rate: number | null; payment_frequency: string; payment_count: number | null; payment_amount: number | null; fees: Fee[]; total_fees: number;
   total_repayment: number | null; cost_of_borrowing: number | null; net_proceeds: number | null; estimated_apr: number | null; recommended: boolean; notes: string | null;
+  tax_lines?: { label: string; amount: number }[]; // KS_BROKER_TOOLS_3_SALES_TAX - sales tax on the taxable fees
 };
 type Quote = { id: string; quote_number: string; status: string; title: string; message: string | null; currency: string; expires_on: string | null; accepted_option_id: string | null; options: Option[] };
 
@@ -108,6 +109,7 @@ export default function QuotePage() {
           <div style={s.row}><span style={s.k}>{o.rate_kind === "factor_rate" ? "Factor rate" : "Interest rate"}</span><span>{o.rate === null ? "-" : o.rate_kind === "factor_rate" ? o.rate.toFixed(2) : `${o.rate.toFixed(2)}% a year`}</span></div>
           <div style={s.row}><span style={s.k}>Payment</span><strong>{money(o.payment_amount, q.currency)} {FREQ[o.payment_frequency] ?? ""}{o.payment_count ? ` (${o.payment_count} payments)` : ""}</strong></div>
           {o.fees.map((f, k) => <div key={k} style={s.row}><span style={s.k}>{f.label}{f.deducted ? " (taken from the funds)" : ""}</span><span>{money(f.amount, q.currency)}</span></div>)}
+          {(o.tax_lines ?? []).map((t, k) => <div key={`tax-${k}`} style={s.row} data-testid="quote-tax-line"><span style={s.k}>Tax on fees: {t.label}</span><span>{money(t.amount, q.currency)}</span></div>)}
           <div style={s.row}><span style={s.k}>Funds you receive</span><span>{money(o.net_proceeds, q.currency)}</span></div>
           <div style={s.row}><span style={s.k}>Total you repay</span><span>{money(o.total_repayment, q.currency)}</span></div>
           <div style={s.row}><span style={s.k}>Total cost of borrowing</span><strong>{money(o.cost_of_borrowing, q.currency)}</strong></div>
