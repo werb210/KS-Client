@@ -48,6 +48,7 @@ import AuthorizedAttachment from "../components/cmp/AuthorizedAttachment"; // BF
 import CmpMore, { CallControl, type MoreForm } from "../components/cmp/CmpMore";
 import LoanCalculatorSheet from "../components/cmp/LoanCalculatorSheet"; // KS_CLIENT_v13_LOAN_CALCULATOR
 import FundingConditionsCard from "../components/cmp/FundingConditionsCard"; // KS_BROKER_TOOLS_1_FUNDING_CONDITIONS
+import CreditConsentCard from "../components/cmp/CreditConsentCard"; // KS_BROKER_TOOLS_CREDIT_BUREAU
 import CmpSettings, { type EditableDetails } from "../components/cmp/CmpSettings";
 import ReportProblemSheet from "../components/cmp/ReportProblemSheet"; // BF_CLIENT_v807_REPORT
 import BookCallSheet from "../components/cmp/BookCallSheet";
@@ -1142,6 +1143,7 @@ export default function MiniPortalPage() {
       <div data-cmp-tab="home">
       {applicationId ? <ActionCenter applicationId={applicationId} onAction={onActionCenterItem} refreshKey={todoRefresh} onData={onTodoData} extraItems={todoExtras} grouped={isPhone} /> : null}
       {applicationId ? <FundingConditionsCard applicationId={applicationId} /> : null}{/* KS_BROKER_TOOLS_1_FUNDING_CONDITIONS */}
+      {applicationId ? <CreditConsentCard applicationId={applicationId} /> : null}{/* KS_BROKER_TOOLS_CREDIT_BUREAU */}
       </div>
       {isPhone ? <CmpOffersCard count={liveOffers.length} bestAmount={bestOfferAmount} onOpen={() => setOffersOpen(true)} /> : null}
       {isPhone && funded ? <CmpReferCard shareUrl={`${WEBSITE_URL}/?utm_source=client_app&utm_medium=referral&utm_campaign=refer_a_business`} /> : null}
