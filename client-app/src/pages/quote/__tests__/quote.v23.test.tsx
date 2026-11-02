@@ -29,6 +29,13 @@ describe("Your quote", () => {
     expect(screen.getByTestId("quote-option-1").textContent).toMatch(/14\.00% a year/);
   });
 
+  // KS_BROKER_TOOLS_3_SALES_TAX
+  it("shows the sales tax on fees when the quote has it", async () => {
+    h.apiCall.mockResolvedValue({ ok: true, quote: quote({ options: [opt("a", "Northern Capital", { fees: [{ label: "Documentation", amount: 300, deducted: false, taxable: true }], tax_lines: [{ label: "HST 13%", amount: 39 }], total_fees: 339 })] }) });
+    renderAt();
+    expect((await screen.findByTestId("quote-tax-line")).textContent).toMatch(/Tax on fees: HST 13%\$39\.00/);
+  });
+
   it("accepting needs an option, then sends the name and the tick", async () => {
     h.apiCall.mockImplementation(async (url?: string) => (String(url ?? "").endsWith("/accept") ? { ok: true, quote: quote({ status: "accepted", accepted_option_id: "b" }) } : { ok: true, quote: quote() }));
     renderAt();
