@@ -7,7 +7,10 @@
 // is the fallback when the server can't be reached.
 import { signedInDestination } from "@/native/useLeaveIfSignedIn";
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
+import { SERVER_URL } from "@/config/licensee";
+
+// KS_SHARED_HOSTING_v1 - never a same-origin /api: the web host only serves files (no Static Web Apps /api rewrite).
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) || SERVER_URL;
 
 export async function resolveSignedInRoute(token: string, timeoutMs = 5000): Promise<string> {
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;

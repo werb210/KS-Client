@@ -26,7 +26,7 @@ when they are published by the template provider on behalf of clients. Each brok
 | Wording changes | Optional. Any of the keys in `client-app/src/config/copy.defaults.json`, e.g. the welcome heading. |
 | Support email and phone | Shown in the app. |
 | Privacy policy and terms URLs | Their own pages, https. Both stores require a privacy policy URL. |
-| Web address for the client app | Where the web version is served (their Azure Static Web App or custom domain). |
+| Web address for the client app | Where the web version is served: a client host of the brokerage on Keystone's shared web host (e.g. `<code>.app.<domain>` or their own custom domain). |
 
 From Boreal's side: the licensee's **KS-server address** (from KS-Ops).
 
@@ -80,7 +80,7 @@ From Boreal's side: the licensee's **KS-server address** (from KS-Ops).
 | `ANDROID_KEY_PASSWORD` | Key password |
 | `PLAY_SERVICE_ACCOUNT_JSON` | Full text of the service account JSON key |
 | `GOOGLE_SERVICES_JSON` (optional) | Firebase `google-services.json` (text or base64) for Android push |
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` (optional) | Deploys the web build to the licensee's Static Web App |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN` (optional, legacy) | Deploys this run's web build to a Static Web App of the licensee's own. Leave it unset with shared hosting: brokerages' web builds are published to the shared web host by `azure-static-web-apps.yml` (KS_SHARED_HOSTING_v1, see `.github/workflows/README.md`). |
 
 Missing secrets never fail the run: the apps are still built and kept as run artifacts, and the upload is skipped
 with a notice. So the first run can happen before the licensee's accounts are ready.
@@ -101,7 +101,8 @@ with a notice. So the first run can happen before the licensee's accounts are re
 - `licensees/<key>/licensee.json` is the single source. `scripts/licensee/lib.mjs` loads and validates it.
 - Web: `VITE_LICENSEE=<key>` makes `client-app/vite.licensee.ts` point the app at the licensee's server, pass the
   public settings to the app (`VITE_KS_LICENSEE`), swap Keystone's colours and fonts for the licensee's at build time,
-  and set the title, manifest, icons and Static Web Apps server rewrite/CSP.
+  and set the title, manifest, icons and the server rewrite/CSP in `staticwebapp.config.json` (KS_SHARED_HOSTING_v1 -
+  the shared web host applies its headers; it has no `/api` proxy, so the app always calls the server directly).
 - In the app: `src/config/licenseeBuild.ts` reads those settings; `brand.ts` pins the name, colours and support
   contact from the build (the server's `GET /api/licensee` still fills the logo, legal name and assistant name);
   `copy.ts` (`t(key)`) applies wording overrides; `licensee.ts` gives the support and legal links.

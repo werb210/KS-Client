@@ -58,6 +58,10 @@ jobs:
       # KS_LICENSEE_DEPLOY_v1 - the licensee registry the deploy jobs read must be valid before it reaches main.
       - name: Licensee deploy registry
         run: node ../deploy/licensee-matrix.mjs --check
+      # KS_SHARED_HOSTING_v1 - the deploy scripts (registry and publishing to the shared web host) have their own tests.
+      - name: Deploy script tests
+        working-directory: .
+        run: node --test deploy/*.test.mjs
 
       - name: Build
         run: npm run build
@@ -73,6 +77,8 @@ jobs:
             exit 1
           fi
           echo "OK staticwebapp.config.json present in dist/"
+          # KS_SHARED_HOSTING_v1 - what a brokerage publish would upload (content types, index.html last); touches nothing.
+          node ../deploy/publish-site.mjs client ci-check dist --dry-run
 
       - name: Check build size
         run: |
@@ -94,16 +100,22 @@ jobs:
           app_location: "client-app/dist"
           skip_app_build: true
 
-  # KS_LICENSEE_DEPLOY_v1 - every licensee's own client web app (Static Web App ks-<code>-client), after the gates above
-  # passed. deploy/licensees.json lists the licensees; each one's settings live in its GitHub environment (normally
-  # ks-<code>, Settings > Environments):
-  #   secret    AZURE_STATIC_WEB_APPS_API_TOKEN   the deployment token of ks-<code>-client
-  #   variables VITE_API_BASE_URL                 the licensee's KS-server (https://...)        required
+  # KS_LICENSEE_DEPLOY_v1 + KS_SHARED_HOSTING_v1 - every brokerage's client web app, after the gates above passed.
+  # Brokerages no longer get a Static Web App each: their builds are served by the shared web host (ks-shared-web,
+  # KS-Ops web-host/), which streams them from the blob container `sites` at <code>/client/. deploy/licensees.json
+  # lists the brokerages; each one's build settings live in its GitHub environment (normally ks-<code>,
+  # Settings > Environments):
+  #   variables VITE_API_BASE_URL                 the brokerage's api host on the shared KS-server (https://...)  required
   #             VITE_LICENSEE                     a licensees/<key> folder: brand, icons, fonts, wording   optional
   #             VITE_CLIENT_APP_URL, VITE_WEBSITE_URL, VITE_SUPPORT_EMAIL, VITE_COMPANY_NAME             optional
-  # The build takes the server from VITE_API_BASE_URL instead of client-app/.env.production (and over licensee.json's
-  # server_url) and points staticwebapp.config.json's /api rewrite and CSP at it. The self-serve demo page stays off.
-  # The iPhone/iPad/Android apps are still built by build-licensee-apps.yml. One licensee failing never stops the rest.
+  #   secret    KS_SITES_STORAGE_CONNECTION_STRING  the shared storage account (normally a repository secret, the same
+  #                                                 for every brokerage)
+  # The build is the same as before: it takes the server from VITE_API_BASE_URL instead of client-app/.env.production
+  # (and over licensee.json's server_url) and points staticwebapp.config.json's CSP at it; the shared web host applies
+  # those headers. The app calls the server at its absolute address (the web host has no /api proxy). The self-serve
+  # demo page stays off. deploy/publish-site.mjs uploads dist/ with explicit content types and removes the previous
+  # build's leftover files. The iPhone/iPad/Android apps are still built by build-licensee-apps.yml. One brokerage
+  # failing never stops the rest.
   licensee-plan:
     needs: build_and_deploy
     if: >-
@@ -113,7 +125,6 @@ jobs:
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       count: ${{ steps.plan.outputs.count }}
-      repo_token: ${{ steps.repo.outputs.token }}
       repo_api_base_url: ${{ steps.repo.outputs.api_base_url }}
     steps:
       - uses: actions/checkout@v5
@@ -124,19 +135,13 @@ jobs:
           WANTED: ${{ inputs.licensee }}
         run: node deploy/licensee-matrix.mjs client "$WANTED"
 
-      # A licensee environment without its own value silently gets the repository's (the development copy's): its
-      # build would talk to the development server, or deploy over the development client app. Fingerprints and the
-      # repository-level value let each licensee job refuse that without the secret itself leaving this job.
+      # A brokerage environment without its own value silently gets the repository's (the development copy's): its
+      # build would talk to the development server. The repository-level value lets each brokerage job refuse that.
       - name: Repository-level settings (to tell them apart from a licensee's)
         id: repo
         env:
-          REPO_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           REPO_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-        run: |
-          {
-            echo "token=$(printf '%s' "$REPO_TOKEN" | sha256sum | cut -d' ' -f1)"
-            echo "api_base_url=$REPO_API_BASE_URL"
-          } >> "$GITHUB_OUTPUT"
+        run: echo "api_base_url=$REPO_API_BASE_URL" >> "$GITHUB_OUTPUT"
 
   licensee-deploy:
     name: deploy ${{ matrix.code }}
@@ -156,25 +161,22 @@ jobs:
     env:
       CODE: ${{ matrix.code }}
       ENVIRONMENT: ${{ matrix.environment }}
-      SWA_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      SITES_CONNECTION: ${{ secrets.KS_SITES_STORAGE_CONNECTION_STRING }}
     steps:
       - name: Check the licensee's settings
         working-directory: .
         env:
           API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-          REPO_TOKEN: ${{ needs.licensee-plan.outputs.repo_token }}
           REPO_API_BASE_URL: ${{ needs.licensee-plan.outputs.repo_api_base_url }}
         run: |
           missing=""
-          if [ -z "$SWA_TOKEN" ] || [ "$(printf '%s' "$SWA_TOKEN" | sha256sum | cut -d' ' -f1)" = "$REPO_TOKEN" ]; then
-            missing="$missing secret:AZURE_STATIC_WEB_APPS_API_TOKEN"
-          fi
+          [ -n "$SITES_CONNECTION" ] || missing="$missing secret:KS_SITES_STORAGE_CONNECTION_STRING"
           case "$API_BASE_URL" in
             https://*) [ "$API_BASE_URL" != "$REPO_API_BASE_URL" ] || missing="$missing variable:VITE_API_BASE_URL" ;;
             *) missing="$missing variable:VITE_API_BASE_URL" ;;
           esac
           if [ -n "$missing" ]; then
-            echo "::error title=$CODE::Add to the GitHub environment '$ENVIRONMENT':$missing (an https address for the variable)."
+            echo "::error title=$CODE::Add to the GitHub environment '$ENVIRONMENT' (or the repository, for the secret):$missing (an https address for the variable)."
             exit 1
           fi
 
@@ -212,18 +214,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The shared web host applies dist/staticwebapp.config.json's headers (CSP etc.): it must be there and allow the
+      # brokerage's server.
       - name: Verify the build points at the licensee's server
         run: |
           host="${VITE_API_BASE_URL#https://}"; host="${host%%/*}"
-          test -f dist/staticwebapp.config.json
+          test -f dist/index.html || { echo "::error::dist/index.html missing"; exit 1; }
+          test -f dist/staticwebapp.config.json || { echo "::error::dist/staticwebapp.config.json missing - the web host would serve no CSP"; exit 1; }
           grep -q "$host" dist/staticwebapp.config.json || { echo "::error::dist/staticwebapp.config.json does not name $host"; exit 1; }
           grep -rqF "$VITE_API_BASE_URL" dist/assets || { echo "::error::the bundle does not contain $VITE_API_BASE_URL"; exit 1; }
 
-      - name: Deploy (NO ORYX)
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          action: "upload"
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          app_location: "client-app/dist"
-          skip_app_build: true
+      - name: Publish to the shared web host (sites/${{ matrix.code }}/client/)
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.KS_SITES_STORAGE_CONNECTION_STRING }}
+        run: node ../deploy/publish-site.mjs client "$CODE" dist
