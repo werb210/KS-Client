@@ -14,6 +14,8 @@ describe("where a signed-in client lands", () => {
     vi.stubGlobal("fetch", fetchMock);
     expect(await resolveSignedInRoute(token("+15875550100"))).toBe("/application/app-123");
     expect(String((fetchMock.mock.calls[0] as unknown[])[0])).toContain("/api/client/applications/by-phone");
+    // KS_SHARED_HOSTING_v1 - always the server's absolute address: the web host serves files only (no /api).
+    expect(String((fetchMock.mock.calls[0] as unknown[])[0])).toMatch(/^https?:\/\/[^/]+\/api\//);
   });
 
   it("starts the application when the server has none and the device has no memory", async () => {
