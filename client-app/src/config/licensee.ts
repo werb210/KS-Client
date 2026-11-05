@@ -26,7 +26,7 @@ export const CLIENT_URL: string = clean(env.VITE_CLIENT_APP_URL) || DEV.client;
 export const WEBSITE_URL: string = clean(env.VITE_WEBSITE_URL) || CLIENT_URL;
 
 export const SUPPORT_EMAIL: string =
-  LICENSEE_BUILD?.support.email || String(env.VITE_SUPPORT_EMAIL ?? "").trim() || "keystone@boreal.financial";
+  LICENSEE_BUILD?.support.email || String(env.VITE_SUPPORT_EMAIL ?? "").trim() || "support@keystonecrm.online";
 
 /** The licensee's support phone, or "" when it has none. */
 export const SUPPORT_PHONE: string = LICENSEE_BUILD?.support.phone || "";
