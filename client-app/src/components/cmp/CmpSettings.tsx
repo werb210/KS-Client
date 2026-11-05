@@ -9,12 +9,14 @@ import { wipeSession } from "@/auth/logout";
 import { openExternal } from "@/native/openExternal"; // BF_CLIENT_v805_PHONE_FIXES
 import { CmpMoreFooter } from "@/components/CmpPhone";
 import { apiCall } from "@/api/client"; // BF_CLIENT_v809_SMS_UPDATES_CONSENT
-import { SMS_UPDATES_CONSENT_TEXT } from "@/lib/smsUpdatesConsent";
+import { smsUpdatesConsentText } from "@/lib/smsUpdatesConsent";
 import { Icon } from "./icons";
 import { ANDROID_PLAY_STORE_URL, iosAppStoreUrl } from "@/lib/appStoreLinks"; // BF_CLIENT_v817
 import "./cmp.css";
+import { offeredLangs, t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
+import LanguagePicker from "@/i18n/LanguagePicker";
 import { PRIVACY_URL, TERMS_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE + v5
-import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
+import { brandName, useBrand } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type PushState = "checking" | "on" | "off" | "blocked" | "web";
 
@@ -44,7 +46,7 @@ export function usePushStatus(): { state: PushState; turnOn: () => Promise<void>
         if (Capacitor.getPlatform() === "ios") {
           try { const { AppLauncher } = await import("@capacitor/app-launcher"); await AppLauncher.openUrl({ url: "app-settings:" }); return; } catch { /* fall through to the note */ }
         }
-        setNote(`Notifications are off for ${brandName()} in your phone's Settings. Open Settings, find ${brandName()}, and turn on Notifications.`);
+        setNote(tr("Notifications are off for {brand} in your phone's Settings. Open Settings, find {brand}, and turn on Notifications.", { brand: brandName() }));
         return;
       }
       if (p.receive !== "granted") p = await PushNotifications.requestPermissions();
@@ -70,10 +72,10 @@ export function GetTheAppGroup() {
   if (native !== false) return null;
   return (
     <div className="cmpx-group" data-testid="cmp-settings-get-app">
-      <h2 className="cmpx-group__title">Get the app</h2>
+      <h2 className="cmpx-group__title">{tr("Get the app")}</h2>
       <div className="cmpx-list">
-        <Action icon="phone" title="Download for iPhone and iPad" desc={`${brandName()} on the App Store`} href={iosAppStoreUrl()} testId="cmp-get-app-ios" />
-        <Action icon="phone" title="Download for Android" desc={`${brandName()} on Google Play`} href={ANDROID_PLAY_STORE_URL} testId="cmp-get-app-android" />
+        <Action icon="phone" title={tr("Download for iPhone and iPad")} desc={`${brandName()} on the App Store`} href={iosAppStoreUrl()} testId="cmp-get-app-ios" />
+        <Action icon="phone" title={tr("Download for Android")} desc={`${brandName()} on Google Play`} href={ANDROID_PLAY_STORE_URL} testId="cmp-get-app-android" />
       </div>
     </div>
   );
@@ -117,7 +119,7 @@ export function SmsUpdatesToggle() {
   const change = async (next: boolean) => {
     setBusy(true); setErr(null);
     try { await apiCall("/api/client/sms-updates", { method: "POST", body: { smsUpdates: next } }); setOn(next); }
-    catch { setErr("We couldn't save that. Check your connection and try again."); }
+    catch { setErr(tr("We couldn't save that. Check your connection and try again.")); }
     finally { setBusy(false); }
   };
   return (
@@ -127,8 +129,8 @@ export function SmsUpdatesToggle() {
         <input type="checkbox" checked={on === true} disabled={busy || on === null} onChange={(e) => void change(e.target.checked)}
           data-testid="cmp-sms-updates-checkbox" style={{ width: 20, height: 20, marginTop: 2, flex: "0 0 auto" }} />
         <span>
-          <span className="cmpx-row__title">Text me updates about my application</span>
-          <span className="cmpx-row__desc">{SMS_UPDATES_CONSENT_TEXT.replace(/^Text me updates about my application: /, "")}</span>
+          <span className="cmpx-row__title">{tr("Text me updates about my application")}</span>
+          <span className="cmpx-row__desc">{smsUpdatesConsentText().replace(/^[^:]*:\s*/, "")}</span>
           {err ? <span className="cmpx-err" role="alert" style={{ display: "block" }}>{err}</span> : null}
         </span>
       </label>
@@ -171,14 +173,14 @@ export function DetailsEditor({ details, phone, onSave }: { details: EditableDet
     return (
       <>
         <div className="cmpx-list" data-testid="cmp-settings-details">
-          <Line icon="user" title="Name" value={name} />
-          <Line icon="phone" title="Mobile" value={phone} />
-          <Line icon="chat" title="Email" value={details.email} />
-          <Line icon="folder" title="Business" value={details.business} />
+          <Line icon="user" title={tr("Name")} value={name} />
+          <Line icon="phone" title={tr("Mobile")} value={phone} />
+          <Line icon="chat" title={tr("Email")} value={details.email} />
+          <Line icon="folder" title={tr("Business")} value={details.business} />
         </div>
-        {saved ? <p className="cmpx-muted" role="status" style={{ margin: "8px 4px 0", color: "#065F46", fontWeight: 600 }}>Saved. Your advisor sees the change too.</p> : null}
-        <button type="button" className="cmpx-btn cmpx-btn--ghost cmpx-btn--block" style={{ marginTop: 10 }} onClick={start} data-testid="cmp-details-edit">Edit my details</button>
-        <p className="cmpx-muted" style={{ margin: "8px 4px 0" }}>Your mobile number is how you sign in. To change it, ask your advisor.</p>
+        {saved ? <p className="cmpx-muted" role="status" style={{ margin: "8px 4px 0", color: "#065F46", fontWeight: 600 }}>{tr("Saved. Your advisor sees the change too.")}</p> : null}
+        <button type="button" className="cmpx-btn cmpx-btn--ghost cmpx-btn--block" style={{ marginTop: 10 }} onClick={start} data-testid="cmp-details-edit">{tr("Edit my details")}</button>
+        <p className="cmpx-muted" style={{ margin: "8px 4px 0" }}>{tr("Your mobile number is how you sign in. To change it, ask your advisor.")}</p>
       </>
     );
   }
@@ -198,9 +200,21 @@ export function DetailsEditor({ details, phone, onSave }: { details: EditableDet
       <p className="cmpx-muted" style={{ margin: "0 0 10px" }}>Mobile: {phone || "\u2014"} (your sign-in number; ask your advisor to change it)</p>
       {err ? <p className="cmpx-err" role="alert">{err}</p> : null}
       <div className="cmpx-details-form__actions">
-        <button type="button" className="cmpx-btn cmpx-btn--ghost" onClick={() => setEditing(false)} disabled={busy}>Cancel</button>
-        <button type="button" className="cmpx-btn" onClick={() => void save()} disabled={busy} data-testid="cmp-details-save">{busy ? "Saving..." : "Save"}</button>
+        <button type="button" className="cmpx-btn cmpx-btn--ghost" onClick={() => setEditing(false)} disabled={busy}>{tr("Cancel")}</button>
+        <button type="button" className="cmpx-btn" onClick={() => void save()} disabled={busy} data-testid="cmp-details-save">{busy ? tr("Saving...") : tr("Save")}</button>
       </div>
+    </div>
+  );
+}
+
+// KS_CLIENT_LANGUAGES_v1 - only when the brokerage offers more than English.
+function LanguageGroup() {
+  const b = useBrand();
+  if (offeredLangs(b.client_languages).length < 2) return null;
+  return (
+    <div className="cmpx-group" data-testid="cmp-settings-language">
+      <h2 className="cmpx-group__title">Language / Langue / Idioma</h2>
+      <div className="cmpx-list"><div className="cmpx-row cmpx-row--static"><LanguagePicker tone="light" label={false} /></div></div>
     </div>
   );
 }
@@ -224,28 +238,29 @@ export default function CmpSettings(p: {
   };
   return (
     <section className="cmp-phone-only cmpx-settings" data-cmp-tab="settings" data-testid="cmp-settings">
+      <LanguageGroup />{/* KS_CLIENT_LANGUAGES_v1 */}
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Sign-in and security</h2>
+        <h2 className="cmpx-group__title">{tr("Sign-in and security")}</h2>
         <div className="cmpx-list cmpx-settings__toggles" data-testid="cmp-settings-security">
           <FaceIdSignInToggle variant="row" />
           <PasskeySignInToggle />
           <div className="cmpx-row cmpx-row--static">
             <span className="cmpx-row__icon"><Icon name="lock" /></span>
-            <span className="cmpx-row__text"><span className="cmpx-row__title">Text-message code</span><span className="cmpx-row__desc">You can always sign in with a code sent to your mobile.</span></span>
+            <span className="cmpx-row__text"><span className="cmpx-row__title">{tr("Text-message code")}</span><span className="cmpx-row__desc">{tr("You can always sign in with a code sent to your mobile.")}</span></span>
           </div>
         </div>
       </div>
 
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Notifications</h2>
+        <h2 className="cmpx-group__title">{tr("Notifications")}</h2>
         <div className="cmpx-list" data-testid="cmp-settings-push">
           <div className="cmpx-row cmpx-row--static">
             <span className="cmpx-row__icon"><Icon name="bell" /></span>
             <span className="cmpx-row__text">
-              <span className="cmpx-row__title">{push.state === "on" ? "Notifications are on" : push.state === "web" ? "Notifications" : push.state === "checking" ? "Checking..." : "Notifications are off"}</span>
-              <span className="cmpx-row__desc">{push.state === "web" ? `Get the ${brandName()} app to be told about offers, document requests and messages.` : "Offers, document requests and messages from your advisor."}</span>
+              <span className="cmpx-row__title">{push.state === "on" ? "Notifications are on" : push.state === "web" ? "Notifications" : push.state === "checking" ? tr("Checking...") : tr("Notifications are off")}</span>
+              <span className="cmpx-row__desc">{push.state === "web" ? tr("Get the {brand} app to be told about offers, document requests and messages.", { brand: brandName() }) : "Offers, document requests and messages from your advisor."}</span>
             </span>
-            {push.state === "off" || push.state === "blocked" ? <button type="button" className="cmpx-btn" style={{ minHeight: 40, fontSize: "var(--ks-text-body-sm)" }} onClick={() => void push.turnOn()}>Turn on</button> : null}
+            {push.state === "off" || push.state === "blocked" ? <button type="button" className="cmpx-btn" style={{ minHeight: 40, fontSize: "var(--ks-text-body-sm)" }} onClick={() => void push.turnOn()}>{tr("Turn on")}</button> : null}
           </div>
         </div>
         {push.note ? <p className="cmpx-muted" role="status" style={{ margin: "8px 4px 0" }}>{push.note}</p> : null}
@@ -255,30 +270,30 @@ export default function CmpSettings(p: {
       <GetTheAppGroup />
 
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Your details</h2>
+        <h2 className="cmpx-group__title">{tr("Your details")}</h2>
         <DetailsEditor details={p.details} phone={p.phone} onSave={p.onSaveDetails} />
       </div>
 
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Your file</h2>
+        <h2 className="cmpx-group__title">{tr("Your file")}</h2>
         <div className="cmpx-list" data-testid="cmp-settings-file">
-          <Line icon="doc" title="Application number" value={p.applicationNumber} />
-          <Line icon="flag" title="Stage" value={p.stage} />
+          <Line icon="doc" title={tr("Application number")} value={p.applicationNumber} />
+          <Line icon="flag" title={tr("Stage")} value={p.stage} />
         </div>
       </div>
 
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Help</h2>
+        <h2 className="cmpx-group__title">{tr("Help")}</h2>
         <div className="cmpx-list">
           {/* BF_CLIENT_v807_SETTINGS - "Documents" (on More) and "Ask a question" (on Home and in Chat) are not repeated here. */}
-          <Action icon="flag" title="Report a problem" desc="Tell us what went wrong. A picture of your screen is included." onClick={p.onReportProblem} testId="cmp-settings-report" />
+          <Action icon="flag" title={tr("Report a problem")} desc="Tell us what went wrong. A picture of your screen is included." onClick={p.onReportProblem} testId="cmp-settings-report" />
           <Action icon="shield" title={t("legal.privacy_short")} href={PRIVACY_URL} />
           <Action icon="doc" title={t("legal.terms_short")} href={TERMS_URL} />
         </div>
       </div>
 
       <button type="button" className="cmpx-btn cmpx-btn--ghost cmpx-btn--block cmpx-signout" disabled={signingOut} onClick={() => void signOut()} data-testid="cmp-sign-out">
-        <Icon name="out" />{signingOut ? "Signing out..." : "Sign out"}
+        <Icon name="out" />{signingOut ? tr("Signing out...") : tr("Sign out")}
       </button>
       <CmpMoreFooter onDeleteAccount={p.onDeleteAccount} />
     </section>

@@ -16,6 +16,7 @@ import {
 } from "@/api/accountant";
 import { normalizePhone } from "@/utils/normalizePhone";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 // BF_CLIENT_PHONE_LEADING_ONE_v4 - see utils/normalizePhone.ts.
 function toE164(raw: string): string {
   try {
@@ -32,7 +33,7 @@ function getError(error: unknown): Error & { status?: number } {
 function signInMessage(error: unknown): string {
   const err = getError(error);
   if (err.message === "no_accountant_for_phone") return "We don't have this number on file as an accountant. Check with your client that they gave us this number.";
-  if (err.message === "ambiguous_accountant_phone") return `This number is recorded for more than one firm. Please contact ${brandName()} so we can correct it.`;
+  if (err.message === "ambiguous_accountant_phone") return tr("This number is recorded for more than one firm. Please contact {brand} so we can correct it.", { brand: brandName() });
   if (err.status === 401) return "That code was wrong or has expired. Request a new one.";
   return "Something went wrong signing you in. Please try again.";
 }
@@ -98,7 +99,7 @@ export default function AccountantPage() {
       setSignedIn(true);
     } catch (error) {
       if (getError(error).status === 401) { clearAccountantToken(); setSignedIn(false); }
-      else setError("We couldn't load your client's applications. Please try again.");
+      else setError(tr("We couldn't load your client's applications. Please try again."));
     }
   }, []);
 
@@ -108,7 +109,7 @@ export default function AccountantPage() {
     if (id === openId) { setOpenId(null); setUploads([]); setForms([]); setOpenForm(null); return; }
     setOpenId(id); setNotice(null); setError(null);
     try { const detail = await fetchAccountantApplication(id); setUploads(detail.uploads ?? []); setForms((detail.forms ?? []).filter((f) => FORM_RENDERERS[f])); setOpenForm(null); }
-    catch { setOpenId(null); setError("We couldn't open that application."); }
+    catch { setOpenId(null); setError(tr("We couldn't open that application.")); }
   }
 
   async function handleUpload(category: string, fileList: File[]) {
@@ -121,9 +122,9 @@ export default function AccountantPage() {
       setUploads(detail.uploads ?? []);
     } catch (error) {
       const code = getError(error).message;
-      if (code === "UNSUPPORTED_FILE_TYPE") setError("That file type isn't accepted. PDF, images, Word and Excel work.");
-      else if (code === "APPLICATION_NOT_ACCEPTING_UPLOADS") setError("This application is closed and no longer accepts documents.");
-      else setError("The upload didn't go through. Please try again.");
+      if (code === "UNSUPPORTED_FILE_TYPE") setError(tr("That file type isn't accepted. PDF, images, Word and Excel work."));
+      else if (code === "APPLICATION_NOT_ACCEPTING_UPLOADS") setError(tr("This application is closed and no longer accepts documents."));
+      else setError(tr("The upload didn't go through. Please try again."));
     } finally { setUploadingCategory(null); }
   }
 
@@ -131,7 +132,7 @@ export default function AccountantPage() {
     if (busy || !phone.trim()) return;
     setBusy(true); setError(null);
     try { await startAccountantOtp(toE164(phone)); setPhase("code"); }
-    catch { setError("We couldn't send the code. Check the number and try again."); }
+    catch { setError(tr("We couldn't send the code. Check the number and try again.")); }
     finally { setBusy(false); }
   }
 
@@ -150,18 +151,18 @@ export default function AccountantPage() {
 
   if (!signedIn) return shell(
     <div style={wrap}>
-      <h1 style={{ fontSize: 22, marginBottom: 4 }}>Accountant sign-in</h1>
-      <p style={{ color: "#475569", fontSize: "var(--ks-text-body-sm)", marginTop: 0 }}>Use the mobile number your client gave us. We'll text you a code.</p>
+      <h1 style={{ fontSize: 22, marginBottom: 4 }}>{tr("Accountant sign-in")}</h1>
+      <p style={{ color: "#475569", fontSize: "var(--ks-text-body-sm)", marginTop: 0 }}>{tr("Use the mobile number your client gave us. We'll text you a code.")}</p>
       <div style={card}>
         {phase === "phone" ? <>
-          <label htmlFor="accountant-phone" style={{ fontSize: "var(--ks-text-label)" }}>Mobile number</label>
+          <label htmlFor="accountant-phone" style={{ fontSize: "var(--ks-text-label)" }}>{tr("Mobile number")}</label>
           <input id="accountant-phone" type="tel" name="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void sendCode(); } }} style={{ ...input, marginTop: 4, marginBottom: 12 }} />
-          <button type="button" style={button} disabled={busy || !phone.trim()} onClick={() => void sendCode()}>{busy ? "Sending…" : "Send code"}</button>
+          <button type="button" style={button} disabled={busy || !phone.trim()} onClick={() => void sendCode()}>{busy ? tr("Sending…") : tr("Send code")}</button>
         </> : <>
-          <label htmlFor="accountant-code" style={{ fontSize: "var(--ks-text-label)" }}>6-digit code</label>
+          <label htmlFor="accountant-code" style={{ fontSize: "var(--ks-text-label)" }}>{tr("6-digit code")}</label>
           <input id="accountant-code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(event) => setCode(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void verifyCode(); } }} style={{ ...input, marginTop: 4, marginBottom: 12 }} />
-          <button type="button" style={button} disabled={busy || code.trim().length < 6} onClick={() => void verifyCode()}>{busy ? "Checking…" : "Sign in"}</button>
-          <div style={{ marginTop: 10 }}><button type="button" style={link} onClick={() => { setPhase("phone"); setCode(""); setError(null); }}>Use a different number</button></div>
+          <button type="button" style={button} disabled={busy || code.trim().length < 6} onClick={() => void verifyCode()}>{busy ? tr("Checking…") : tr("Sign in")}</button>
+          <div style={{ marginTop: 10 }}><button type="button" style={link} onClick={() => { setPhase("phone"); setCode(""); setError(null); }}>{tr("Use a different number")}</button></div>
         </>}
         {error && <div role="alert" style={{ color: "#b91c1c", fontSize: "var(--ks-text-label)", marginTop: 10 }}>{error}</div>}
       </div>
@@ -171,33 +172,27 @@ export default function AccountantPage() {
   return shell(<div style={wrap}>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
       <h1 style={{ fontSize: 22 }}>{name ? `Hello, ${name}` : "Documents"}</h1>
-      <button type="button" style={link} onClick={() => { clearAccountantToken(); setSignedIn(false); setPhase("phone"); setCode(""); setOpenId(null); }}>Sign out</button>
+      <button type="button" style={link} onClick={() => { clearAccountantToken(); setSignedIn(false); setPhase("phone"); setCode(""); setOpenId(null); }}>{tr("Sign out")}</button>
     </div>
     {error && <div role="alert" style={{ color: "#b91c1c", fontSize: "var(--ks-text-label)", marginBottom: 10 }}>{error}</div>}
     {notice && <div role="status" style={{ color: "#15803d", fontSize: "var(--ks-text-label)", marginBottom: 10 }}>{notice}</div>}
     {/* BF_CLIENT_ACCOUNTANT_UX_v2 */}
     <div style={{ ...card, background: "#f8fafc", fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5, marginBottom: 12 }}>
-      <div style={{ fontWeight: 600, marginBottom: 6 }}>What we need from you</div>
-      <div style={{ color: "#475569" }}>
-        Your client has asked us to collect their financial documents from you directly.
-        Open the application below and upload only the items listed — you can select
-        several files at once or drag them in. You will not see anything else on your
-        client's file. If you are not sure you are authorised to release these
-        documents, please confirm with your client first.
-      </div>
+      <div style={{ fontWeight: 600, marginBottom: 6 }}>{tr("What we need from you")}</div>
+      <div style={{ color: "#475569" }}>{tr("Your client has asked us to collect their financial documents from you directly. Open the application below and upload only the items listed — you can select several files at once or drag them in. You will not see anything else on your client's file. If you are not sure you are authorised to release these documents, please confirm with your client first.")}</div>
     </div>
-    {applications.length === 0 ? <div style={card}>Nothing is waiting on you right now.</div> : applications.map((app) => <div key={app.id} style={card}>
+    {applications.length === 0 ? <div style={card}>{tr("Nothing is waiting on you right now.")}</div> : applications.map((app) => <div key={app.id} style={card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <strong>{app.business_name || "Application"}</strong>
-        <button type="button" style={link} aria-expanded={openId === app.id} onClick={() => void openApplication(app.id)}>{openId === app.id ? "Hide" : "Open"}</button>
+        <button type="button" style={link} aria-expanded={openId === app.id} onClick={() => void openApplication(app.id)}>{openId === app.id ? tr("Hide") : tr("Open")}</button>
       </div>
       {openId === app.id && <div style={{ marginTop: 12 }}>
-        {uploads.length === 0 ? <div style={{ fontSize: "var(--ks-text-label)", color: "#475569" }}>No documents are outstanding.</div> : uploads.map((slot) => <div key={slot.category} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "8px 0", borderTop: "1px solid #e2e8f0" }}>
+        {uploads.length === 0 ? <div style={{ fontSize: "var(--ks-text-label)", color: "#475569" }}>{tr("No documents are outstanding.")}</div> : uploads.map((slot) => <div key={slot.category} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "8px 0", borderTop: "1px solid #e2e8f0" }}>
           <span style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 500 }}>
             {slot.category}
             {!slot.outstanding
-              ? <span style={{ color: "#15803d", marginLeft: 8, fontSize: "var(--ks-text-help)", fontWeight: 400 }}>received</span>
-              : <span style={{ color: "#b45309", marginLeft: 8, fontSize: "var(--ks-text-help)", fontWeight: 400 }}>needed</span>}
+              ? <span style={{ color: "#15803d", marginLeft: 8, fontSize: "var(--ks-text-help)", fontWeight: 400 }}>{tr("received")}</span>
+              : <span style={{ color: "#b45309", marginLeft: 8, fontSize: "var(--ks-text-help)", fontWeight: 400 }}>{tr("needed")}</span>}
           </span>
           {/* BF_CLIENT_ACCOUNTANT_UX_v2 - select or drop multiple documents. */}
           <label
@@ -209,7 +204,7 @@ export default function AccountantPage() {
               const dropped = Array.from(event.dataTransfer.files);
               if (dropped.length) void handleUpload(slot.category, dropped);
             }}
-          >{uploadingCategory === slot.category ? "Uploading…" : "Choose files or drop here"}
+          >{uploadingCategory === slot.category ? tr("Uploading…") : tr("Choose files or drop here")}
             <input type="file" multiple data-testid={`accountant-upload-${slot.category}`} style={{ display: "none" }} disabled={uploadingCategory !== null} onChange={(event) => {
               const picked = Array.from(event.target.files ?? []);
               if (picked.length) void handleUpload(slot.category, picked);
@@ -219,13 +214,13 @@ export default function AccountantPage() {
         </div>)}
 
         {forms.length > 0 && <div style={{ marginTop: 16 }}>
-          <div style={{ fontSize: "var(--ks-text-label)", fontWeight: 600, color: "#334155", marginBottom: 6 }}>Forms</div>
+          <div style={{ fontSize: "var(--ks-text-label)", fontWeight: 600, color: "#334155", marginBottom: 6 }}>{tr("Forms")}</div>
           {forms.map((docType) => {
             const Form = FORM_RENDERERS[docType];
             return <div key={docType} style={{ borderTop: "1px solid #e2e8f0", padding: "8px 0" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{FORM_LABELS[docType] ?? docType}</span>
-                <button type="button" style={link} data-testid={`accountant-form-${docType}`} aria-expanded={openForm === docType} onClick={() => setOpenForm(openForm === docType ? null : docType)}>{openForm === docType ? "Close" : "Open"}</button>
+                <button type="button" style={link} data-testid={`accountant-form-${docType}`} aria-expanded={openForm === docType} onClick={() => setOpenForm(openForm === docType ? null : docType)}>{openForm === docType ? tr("Close") : tr("Open")}</button>
               </div>
               {openForm === docType && <div style={{ marginTop: 10 }}>
                 <Form applicationId={app.id} onComplete={() => { setOpenForm(null); setNotice(`${FORM_LABELS[docType] ?? docType} saved. Thank you.`); }} />

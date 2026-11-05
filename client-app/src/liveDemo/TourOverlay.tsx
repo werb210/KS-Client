@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { TOUR_STEPS, resolveStep, stepFits, waitUntil, type TourStep } from "./tour";
 import { LIVE_DEMO_TAG, brokerSideUrl, commandFrom, postToParent } from "./mode";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export type TourOverlayProps = {
   /** The portal's origin (validated), or null. */
   parentOrigin: string | null;
@@ -258,19 +259,15 @@ export default function TourOverlay({ parentOrigin, embedded, sidePanel = false,
         <div style={{ display: "flex", justifyContent: canBack ? "space-between" : "flex-end", gap: 10, marginTop: 14 }}>
           {canBack ? (
             <button type="button" data-testid="live-demo-back" onClick={back} disabled={busy}
-              style={{ ...btn, background: C.surface, color: C.ink, border: `1px solid ${C.ink}` }}>
-              Back
-            </button>
+              style={{ ...btn, background: C.surface, color: C.ink, border: `1px solid ${C.ink}` }}>{tr("Back")}</button>
           ) : null}
           {final ? (
             <button type="button" data-testid="live-demo-broker" onClick={handOver}
-              style={{ ...btn, background: C.ink, color: C.surface, border: `1px solid ${C.ink}`, flex: canBack ? undefined : 1 }}>
-              Show me the broker side
-            </button>
+              style={{ ...btn, background: C.ink, color: C.surface, border: `1px solid ${C.ink}`, flex: canBack ? undefined : 1 }}>{tr("Show me the broker side")}</button>
           ) : (
             <button type="button" data-testid="live-demo-next" onClick={() => void next()} disabled={busy} aria-busy={busy}
               style={{ ...btn, background: C.ink, color: C.surface, border: `1px solid ${C.ink}`, opacity: busy ? 0.85 : 1 }}>
-              {busy ? "One moment..." : "Next"}
+              {busy ? tr("One moment...") : tr("Next")}
             </button>
           )}
         </div>

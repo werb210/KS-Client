@@ -6,6 +6,7 @@ import { resolveSignedInRoute } from "@/auth/signedInRoute"; // BF_CLIENT_v799_S
 import { ClientProfileStore } from "@/state/clientProfiles";
 import { biometryAvailable, isEnrolled, phoneFromToken, signInWithFaceId } from "@/native/deviceSignIn";
 import { passkeysSupported, signInWithPasskey, PasskeyError } from "@/auth/passkeys";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
 
 export default function QuickSignIn() {
@@ -63,13 +64,13 @@ export default function QuickSignIn() {
     <div data-testid="quick-sign-in" style={{ marginBottom: 14 }}>
       {showFaceId ? (
         <button type="button" data-testid="face-id-sign-in" disabled={busy} onClick={() => void run("faceid")}
-          style={{ ...btn, border: 0, background: "#0B1F3A", color: "#fff" }}>{busy ? "Signing in..." : "Sign in with Face ID"}</button>
+          style={{ ...btn, border: 0, background: "#0B1F3A", color: "#fff" }}>{busy ? tr("Signing in...") : tr("Sign in with Face ID")}</button>
       ) : (
         <button type="button" data-testid="passkey-sign-in" disabled={busy} onClick={() => void run("passkey")}
-          style={{ ...btn, border: "1px solid #CBD5E1", background: "#fff", color: "#0B1F3A" }}>{busy ? "Signing in..." : "Sign in with a passkey"}</button>
+          style={{ ...btn, border: "1px solid #CBD5E1", background: "#fff", color: "#0B1F3A" }}>{busy ? tr("Signing in...") : tr("Sign in with a passkey")}</button>
       )}
       {error ? <p role="alert" style={{ margin: "0 0 8px", color: "#b42318", fontSize: "var(--ks-text-body-sm)" }}>{error}</p> : null}
-      <p style={{ margin: 0, textAlign: "center", color: "#64748b", fontSize: "var(--ks-text-body-sm)" }}>or get a text code</p>
+      <p style={{ margin: 0, textAlign: "center", color: "#64748b", fontSize: "var(--ks-text-body-sm)" }}>{tr("or get a text code")}</p>
     </div>
   );
 }

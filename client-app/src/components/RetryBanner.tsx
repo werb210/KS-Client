@@ -10,6 +10,7 @@ import {
   type RetryState,
 } from "../state/pendingSubmit";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export default function RetryBanner() {
   const [state, setState] = useState<RetryState>(() => getRetryState());
   const [busy, setBusy] = useState(false);
@@ -69,7 +70,7 @@ export default function RetryBanner() {
         <span>
           {state.inFlight
             ? "Submitting your application…"
-            : `Submission queued — retrying. Attempts: ${state.attempts}. Last try: ${sinceLast}.`}
+            : tr("Submission queued — retrying. Attempts: {attempts}. Last try: {sinceLast}.", { attempts: state.attempts, sinceLast: sinceLast })}
         </span>
       </div>
       <button
@@ -88,7 +89,7 @@ export default function RetryBanner() {
           fontWeight: 600,
         }}
       >
-        {busy || state.inFlight ? "Trying…" : "Try now"}
+        {busy || state.inFlight ? tr("Trying…") : tr("Try now")}
       </button>
     </div>
   );

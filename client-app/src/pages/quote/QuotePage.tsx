@@ -10,6 +10,7 @@ import { ENV } from "@/env";
 import { SERVER_URL } from "@/config/licensee";
 import { A11Y_COLORS } from "@/styles/a11yColors";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Fee = { label: string; amount: number; deducted: boolean };
 type Option = {
   id: string; lender_name: string; product_name: string | null; amount: number; term_months: number | null; rate_kind: "interest_rate" | "factor_rate";
@@ -52,7 +53,7 @@ export default function QuotePage() {
 
   const load = useCallback(async () => {
     try { const r = await apiCall<{ ok: boolean; quote: Quote }>(`/api/client/quotes/${encodeURIComponent(quoteId)}`); setQ(r.quote); setError(null); }
-    catch { setError("We could not open this quote. Please check your connection, or ask your advisor to send it again."); }
+    catch { setError(tr("We could not open this quote. Please check your connection, or ask your advisor to send it again.")); }
   }, [quoteId]);
   useEffect(() => { void load(); }, [load]);
 
@@ -62,7 +63,7 @@ export default function QuotePage() {
   };
 
   const accept = async () => {
-    if (!pick) { setError("Please choose one of the options."); return; }
+    if (!pick) { setError(tr("Please choose one of the options.")); return; }
     setBusy(true); setError(null);
     try { const r = await apiCall<{ ok: boolean; quote: Quote }>(`/api/client/quotes/${encodeURIComponent(quoteId)}/accept`, { method: "POST", body: { option_id: pick, name, agree } as any }); setQ(r.quote); }
     catch (e) { setError(errMsg(e, "We could not record your choice. Please try again.")); }
@@ -81,10 +82,10 @@ export default function QuotePage() {
       const url = URL.createObjectURL(await res.blob());
       window.open(url, "_blank", "noreferrer");
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    } catch { setError("We could not open the PDF. Please try again."); }
+    } catch { setError(tr("We could not open the PDF. Please try again.")); }
   };
 
-  if (!q) return <main style={s.page}>{error ? <p role="alert" style={s.err}>{error}</p> : <p style={s.p}>Loading…</p>}</main>;
+  if (!q) return <main style={s.page}>{error ? <p role="alert" style={s.err}>{error}</p> : <p style={s.p}>{tr("Loading…")}</p>}</main>;
   const open = q.status === "sent" || q.status === "viewed";
   const chosen = q.options.find((o) => o.id === q.accepted_option_id);
 
@@ -93,56 +94,54 @@ export default function QuotePage() {
       <h1 style={s.h1}>{q.title}</h1>
       <p style={{ ...s.p, fontSize: 14 }}>Quote {q.quote_number}{q.expires_on ? ` · valid until ${q.expires_on}` : ""}</p>
       {q.message ? <p style={s.p}>{q.message}</p> : null}
-      {q.status === "accepted" && chosen ? <p style={s.ok} data-testid="quote-done">Thank you. You chose {chosen.lender_name}. Your advisor will be in touch with the lender's documents to sign.</p> : null}
-      {q.status === "declined" ? <p style={s.p} data-testid="quote-done">You declined this quote. Your advisor will be in touch.</p> : null}
-      {q.status === "expired" ? <p style={s.p} data-testid="quote-done">This quote has expired. Your advisor can send you a new one.</p> : null}
-      {q.status === "withdrawn" ? <p style={s.p} data-testid="quote-done">This quote was withdrawn. Your advisor will send you an updated one.</p> : null}
+      {q.status === "accepted" && chosen ? <p style={s.ok} data-testid="quote-done">{tr("Thank you. You chose {lender_name}. Your advisor will be in touch with the lender's documents to sign.", { lender_name: chosen.lender_name })}</p> : null}
+      {q.status === "declined" ? <p style={s.p} data-testid="quote-done">{tr("You declined this quote. Your advisor will be in touch.")}</p> : null}
+      {q.status === "expired" ? <p style={s.p} data-testid="quote-done">{tr("This quote has expired. Your advisor can send you a new one.")}</p> : null}
+      {q.status === "withdrawn" ? <p style={s.p} data-testid="quote-done">{tr("This quote was withdrawn. Your advisor will send you an updated one.")}</p> : null}
       {q.options.map((o, i) => (
         <section key={o.id} style={s.card(pick === o.id || q.accepted_option_id === o.id)} data-testid={`quote-option-${i}`}>
           <h2 style={{ fontSize: 18, margin: "0 0 8px" }}>
             {open ? <label style={{ cursor: "pointer" }}><input type="radio" name="option" value={o.id} checked={pick === o.id} onChange={() => setPick(o.id)} style={{ width: 20, height: 20, marginRight: 8, verticalAlign: "middle" }} />{o.lender_name}</label> : o.lender_name}
             {o.product_name ? <span style={{ fontWeight: 400 }}> · {o.product_name}</span> : null}
-            {o.recommended ? <span style={s.badge}>Recommended</span> : null}
+            {o.recommended ? <span style={s.badge}>{tr("Recommended")}</span> : null}
           </h2>
-          <div style={s.row}><span style={s.k}>Amount</span><strong>{money(o.amount, q.currency)}</strong></div>
-          <div style={s.row}><span style={s.k}>Term</span><span>{term(o.term_months)}</span></div>
-          <div style={s.row}><span style={s.k}>{o.rate_kind === "factor_rate" ? "Factor rate" : "Interest rate"}</span><span>{o.rate === null ? "-" : o.rate_kind === "factor_rate" ? o.rate.toFixed(2) : `${o.rate.toFixed(2)}% a year`}</span></div>
-          <div style={s.row}><span style={s.k}>Payment</span><strong>{money(o.payment_amount, q.currency)} {FREQ[o.payment_frequency] ?? ""}{o.payment_count ? ` (${o.payment_count} payments)` : ""}</strong></div>
+          <div style={s.row}><span style={s.k}>{tr("Amount")}</span><strong>{money(o.amount, q.currency)}</strong></div>
+          <div style={s.row}><span style={s.k}>{tr("Term")}</span><span>{term(o.term_months)}</span></div>
+          <div style={s.row}><span style={s.k}>{o.rate_kind === "factor_rate" ? tr("Factor rate") : tr("Interest rate")}</span><span>{o.rate === null ? "-" : o.rate_kind === "factor_rate" ? o.rate.toFixed(2) : `${o.rate.toFixed(2)}% a year`}</span></div>
+          <div style={s.row}><span style={s.k}>{tr("Payment")}</span><strong>{money(o.payment_amount, q.currency)} {FREQ[o.payment_frequency] ?? ""}{o.payment_count ? ` (${o.payment_count} payments)` : ""}</strong></div>
           {o.fees.map((f, k) => <div key={k} style={s.row}><span style={s.k}>{f.label}{f.deducted ? " (taken from the funds)" : ""}</span><span>{money(f.amount, q.currency)}</span></div>)}
-          {(o.tax_lines ?? []).map((t, k) => <div key={`tax-${k}`} style={s.row} data-testid="quote-tax-line"><span style={s.k}>Tax on fees: {t.label}</span><span>{money(t.amount, q.currency)}</span></div>)}
-          <div style={s.row}><span style={s.k}>Funds you receive</span><span>{money(o.net_proceeds, q.currency)}</span></div>
-          <div style={s.row}><span style={s.k}>Total you repay</span><span>{money(o.total_repayment, q.currency)}</span></div>
-          <div style={s.row}><span style={s.k}>Total cost of borrowing</span><strong>{money(o.cost_of_borrowing, q.currency)}</strong></div>
-          {o.estimated_apr !== null ? <div style={s.row}><span style={s.k}>Estimated APR</span><span>{o.estimated_apr.toFixed(2)}%</span></div> : null}
+          {(o.tax_lines ?? []).map((t, k) => <div key={`tax-${k}`} style={s.row} data-testid="quote-tax-line"><span style={s.k}>{tr("Tax on fees: {label}", { label: t.label })}</span><span>{money(t.amount, q.currency)}</span></div>)}
+          <div style={s.row}><span style={s.k}>{tr("Funds you receive")}</span><span>{money(o.net_proceeds, q.currency)}</span></div>
+          <div style={s.row}><span style={s.k}>{tr("Total you repay")}</span><span>{money(o.total_repayment, q.currency)}</span></div>
+          <div style={s.row}><span style={s.k}>{tr("Total cost of borrowing")}</span><strong>{money(o.cost_of_borrowing, q.currency)}</strong></div>
+          {o.estimated_apr !== null ? <div style={s.row}><span style={s.k}>{tr("Estimated APR")}</span><span>{o.estimated_apr.toFixed(2)}%</span></div> : null}
           {o.notes ? <p style={{ ...s.p, fontSize: 14, marginTop: 8 }}>{o.notes}</p> : null}
         </section>
       ))}
-      <p style={{ ...s.p, fontSize: 13, marginTop: 14 }}>Total cost of borrowing is everything you repay plus every fee, less the amount you borrow. Each lender's own agreement sets the final terms.</p>
-      <button type="button" style={s.ghost} onClick={() => void openPdf()}>Open the PDF</button>
+      <p style={{ ...s.p, fontSize: 13, marginTop: 14 }}>{tr("Total cost of borrowing is everything you repay plus every fee, less the amount you borrow. Each lender's own agreement sets the final terms.")}</p>
+      <button type="button" style={s.ghost} onClick={() => void openPdf()}>{tr("Open the PDF")}</button>
       {error ? <p role="alert" style={s.err}>{error}</p> : null}
       {open && !declining ? (
         <section style={{ ...s.card(false), marginTop: 18 }}>
-          <label htmlFor="quote-name" style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>Type your full name</label>
+          <label htmlFor="quote-name" style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>{tr("Type your full name")}</label>
           <input id="quote-name" style={s.input} value={name} autoComplete="name" onChange={(e) => setName(e.target.value)} />
           <label style={{ display: "flex", gap: 10, alignItems: "flex-start", marginTop: 12, fontSize: 15, color: "#374151" }}>
-            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} style={{ width: 20, height: 20, marginTop: 2 }} />
-            I accept the option I chose, and I understand the lender's own agreement will set the final terms.
-          </label>
+            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} style={{ width: 20, height: 20, marginTop: 2 }} />{tr("I accept the option I chose, and I understand the lender's own agreement will set the final terms.")}</label>
           <div style={{ marginTop: 14 }}>
-            <button type="button" style={s.btn} disabled={busy} onClick={() => void accept()}>Accept this option</button>
-            <button type="button" style={s.ghost} onClick={() => setDeclining(true)}>None of these work for me</button>
+            <button type="button" style={s.btn} disabled={busy} onClick={() => void accept()}>{tr("Accept this option")}</button>
+            <button type="button" style={s.ghost} onClick={() => setDeclining(true)}>{tr("None of these work for me")}</button>
           </div>
         </section>
       ) : null}
       {open && declining ? (
         <section style={{ ...s.card(false), marginTop: 18 }}>
-          <label htmlFor="quote-reason" style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>Tell us why (optional)</label>
+          <label htmlFor="quote-reason" style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>{tr("Tell us why (optional)")}</label>
           <textarea id="quote-reason" style={{ ...s.input, minHeight: 80 }} value={reason} onChange={(e) => setReason(e.target.value)} />
-          <button type="button" style={{ ...s.btn, marginTop: 12 }} disabled={busy} onClick={() => void decline()}>Decline the quote</button>
-          <button type="button" style={s.ghost} onClick={() => setDeclining(false)}>Back</button>
+          <button type="button" style={{ ...s.btn, marginTop: 12 }} disabled={busy} onClick={() => void decline()}>{tr("Decline the quote")}</button>
+          <button type="button" style={s.ghost} onClick={() => setDeclining(false)}>{tr("Back")}</button>
         </section>
       ) : null}
-      <button type="button" style={s.ghost} onClick={() => navigate(-1)}>Back to my application</button>
+      <button type="button" style={s.ghost} onClick={() => navigate(-1)}>{tr("Back to my application")}</button>
     </main>
   );
 }

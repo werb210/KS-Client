@@ -45,6 +45,7 @@ import { useAuth } from "@/auth/useAuth";
 import { CREDIT_SCORE_BANDS } from "./creditScoreBands";
 import { isAccordLOCApp } from "./accordRisk";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 // BF_CLIENT_v66_STEP4_CAPITALIZE — title-case helper (Unicode-aware
 // for the basic Latin alphabet; preserves embedded punctuation like
 // hyphens and apostrophes).
@@ -129,7 +130,7 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
   const fmtMoney = (v: unknown) => { const n = String(v ?? "").replace(/[^\d]/g, ""); return n ? Number(n).toLocaleString("en-CA") : ""; };
   const yn = (key: string) => (
     <select value={String(data[key] ?? "")} onChange={(e) => setField(key, e.target.value)}>
-      <option value="">—</option><option value="Yes">Yes</option><option value="No">No</option>
+      <option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option>
     </select>
   );
   const setName = (field: "firstName" | "lastName", v: string) => {
@@ -146,78 +147,76 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
       {F("email", "Email", <Input type="email" autoComplete="email" value={data.email || ""} onChange={(e) => setField("email", e.target.value)} />)}
       {F("phone", "Mobile Phone", <PhoneInput value={formatPhoneNumber(data.phone || "", countryCode)} onChange={(e) => setField("phone", formatPhoneNumber(e.target.value, countryCode))} />)}
       {isAccordLOC && (
-        <div><label style={L}>Home Phone</label><PhoneInput value={formatPhoneNumber(data.homePhone || "", countryCode)} onChange={(e) => setField("homePhone", formatPhoneNumber(e.target.value, countryCode))} /></div>
+        <div><label style={L}>{tr("Home Phone")}</label><PhoneInput value={formatPhoneNumber(data.homePhone || "", countryCode)} onChange={(e) => setField("homePhone", formatPhoneNumber(e.target.value, countryCode))} /></div>
       )}
       {F("dob", "Date of Birth", <Input type="date" autoComplete="bday" value={data.dob || ""} onChange={(e) => setField("dob", e.target.value)} />)}
       {F("ssn", identityLabel, <Input inputMode="numeric" autoComplete="off" value={formatIdentityNumber(data.ssn || "", countryCode)} onChange={(e) => setField("ssn", formatIdentityNumber(e.target.value, countryCode))} />)}
       {/* BF_CLIENT_BLOCK_v_ACCORD_FIELDS_v1 — Title/Role (Accord senior leadership). Shared component → applicant + partner. */}
       {isAccordLOC && (
-        <div><label style={L}>Title / Role</label>
+        <div><label style={L}>{tr("Title / Role")}</label>
           <select value={data.title || ""} onChange={(e) => setField("title", e.target.value)}>
-            <option value="">Select a title...</option><option value="Owner/Operator">Owner/Operator</option><option value="Partner">Partner</option><option value="President">President</option><option value="Director">Director</option><option value="Officer">Officer</option><option value="CEO">CEO</option><option value="CFO">CFO</option><option value="Secretary">Secretary</option><option value="Treasurer">Treasurer</option><option value="Other">Other</option>
+            <option value="">{tr("Select a title...")}</option><option value="Owner/Operator">{tr("Owner/Operator")}</option><option value="Partner">{tr("Partner")}</option><option value="President">{tr("President")}</option><option value="Director">{tr("Director")}</option><option value="Officer">{tr("Officer")}</option><option value="CEO">{tr("CEO")}</option><option value="CFO">{tr("CFO")}</option><option value="Secretary">{tr("Secretary")}</option><option value="Treasurer">{tr("Treasurer")}</option><option value="Other">{tr("Other")}</option>
           </select>
         </div>
       )}
       {/* BF_CLIENT_UI_CLUSTER_2 — single column so Street pairs with City (true 2-col). */}
-      <div><label style={L}>Street Address</label>
+      <div><label style={L}>{tr("Street Address")}</label>
         <AddressAutocompleteInput autoComplete="address-line1" /* BF_CLIENT_AUTOFILL_v744 */ country={regionCountry} value={data.street || ""}
           onChange={(e) => setField("street", e.target.value)}
           onSelect={(sel) => { if (!("street" in sel)) return; setMany({ street: sel.street || data.street, city: sel.city || data.city, state: sel.state || data.state, zip: formatPostalCode(sel.postalCode || data.zip || "", countryCode) }); }} />
       </div>
-      <div><label style={L}>City</label><Input autoComplete="address-level2" value={data.city || ""} onChange={(e) => setField("city", e.target.value)} /></div>
+      <div><label style={L}>{tr("City")}</label><Input autoComplete="address-level2" value={data.city || ""} onChange={(e) => setField("city", e.target.value)} /></div>
       <div><label style={L}>{regionLabel}</label><RegionSelect country={regionCountry} value={data.state || ""} onChange={(v) => setField("state", v)} /></div>
       <div><label style={L}>{postalLabel}</label><Input autoComplete="postal-code" value={formatPostalCode(data.zip || "", countryCode)} onChange={(e) => setField("zip", formatPostalCode(e.target.value, countryCode))} /></div>
       {isAccordLOC && (
         <div style={{ gridColumn: "1 / -1" }}>
           <label style={{ ...L, display: "flex", alignItems: "center", gap: 8, fontWeight: 400 }}>
-            <input type="checkbox" style={{ width: "auto" }} checked={data.mailingSameAsPhysical !== false} onChange={(e) => setField("mailingSameAsPhysical", e.target.checked)} />
-            Mailing address same as physical
-          </label>
+            <input type="checkbox" style={{ width: "auto" }} checked={data.mailingSameAsPhysical !== false} onChange={(e) => setField("mailingSameAsPhysical", e.target.checked)} />{tr("Mailing address same as physical")}</label>
         </div>
       )}
       {isAccordLOC && data.mailingSameAsPhysical === false && (
         <>
-          <div style={{ gridColumn: "1 / -1" }}><label style={L}>Mailing Address</label><Input value={data.mailingStreet || ""} onChange={(e) => setField("mailingStreet", e.target.value)} /></div>
-          <div><label style={L}>Mailing City</label><Input value={data.mailingCity || ""} onChange={(e) => setField("mailingCity", e.target.value)} /></div>
-          <div><label style={L}>Mailing {regionLabel}</label><Input value={data.mailingState || ""} onChange={(e) => setField("mailingState", e.target.value)} /></div>
-          <div><label style={L}>Mailing {postalLabel}</label><Input value={data.mailingZip || ""} onChange={(e) => setField("mailingZip", e.target.value)} /></div>
+          <div style={{ gridColumn: "1 / -1" }}><label style={L}>{tr("Mailing Address")}</label><Input value={data.mailingStreet || ""} onChange={(e) => setField("mailingStreet", e.target.value)} /></div>
+          <div><label style={L}>{tr("Mailing City")}</label><Input value={data.mailingCity || ""} onChange={(e) => setField("mailingCity", e.target.value)} /></div>
+          <div><label style={L}>{tr("Mailing {regionLabel}", { regionLabel: regionLabel })}</label><Input value={data.mailingState || ""} onChange={(e) => setField("mailingState", e.target.value)} /></div>
+          <div><label style={L}>{tr("Mailing {postalLabel}", { postalLabel: postalLabel })}</label><Input value={data.mailingZip || ""} onChange={(e) => setField("mailingZip", e.target.value)} /></div>
         </>
       )}
       {/* BF_CLIENT_STEP4_ADDRESS_SINCE_v139 - the SBA block below asks for this
           too. Rendering both would put two controls on one field. */}
       {isAccordLOC && !onSba && (
-        <div><label style={L}>At this address since</label><MonthYearSelect ariaLabel="At this address since" value={data.addressSince || ""} onChange={(v) => setField("addressSince", v)} /></div>
+        <div><label style={L}>{tr("At this address since")}</label><MonthYearSelect ariaLabel="At this address since" value={data.addressSince || ""} onChange={(v) => setField("addressSince", v)} /></div>
       )}
       {isAccordLOC && (
-        <div><label style={L}>Own or Rent</label>
+        <div><label style={L}>{tr("Own or Rent")}</label>
           <select value={data.ownRent || ""} onChange={(e) => setField("ownRent", e.target.value)}>
-            <option value="">—</option><option value="Own">Own</option><option value="Rent">Rent</option>
+            <option value="">—</option><option value="Own">{tr("Own")}</option><option value="Rent">{tr("Rent")}</option>
           </select>
         </div>
       )}
       {isAccordLOC && data.ownRent === "Own" && (
         <>
-          <div><label style={L}>Property Value</label><Input value={data.propertyValue || ""} onChange={(e) => setField("propertyValue", fmtMoney(e.target.value))} placeholder="$" /></div>
-          <div><label style={L}>Mortgage Value</label><Input value={data.mortgageBalance || ""} onChange={(e) => setField("mortgageBalance", fmtMoney(e.target.value))} placeholder="$" /></div>
+          <div><label style={L}>{tr("Property Value")}</label><Input value={data.propertyValue || ""} onChange={(e) => setField("propertyValue", fmtMoney(e.target.value))} placeholder="$" /></div>
+          <div><label style={L}>{tr("Mortgage Value")}</label><Input value={data.mortgageBalance || ""} onChange={(e) => setField("mortgageBalance", fmtMoney(e.target.value))} placeholder="$" /></div>
         </>
       )}
-      <div><label style={L}>Credit Score Range <span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
+      <div><label style={L}>{tr("Credit Score Range")}{" "}<span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
         <select value={data.creditScoreRange || ""} onChange={(e) => setField("creditScoreRange", e.target.value)}>
-          <option value="">Prefer not to say</option>
-          {CREDIT_SCORE_BANDS.map((b) => (<option key={b.label} value={b.label}>{b.label}</option>))}
+          <option value="">{tr("Prefer not to say")}</option>
+          {CREDIT_SCORE_BANDS.map((b) => (<option key={b.label} value={b.label}>{tr(b.label)}</option>))}
         </select>
       </div>
       {isAccordLOC && (
         <>
-          <div><label style={L}>Director?</label>{yn("director")}</div>
-          <div><label style={L}>Officer?</label>{yn("officer")}</div>
-          <div><label style={L}>Ever filed bankruptcy / proposal?</label>{yn("bankruptcyFiled")}</div>
+          <div><label style={L}>{tr("Director?")}</label>{yn("director")}</div>
+          <div><label style={L}>{tr("Officer?")}</label>{yn("officer")}</div>
+          <div><label style={L}>{tr("Ever filed bankruptcy / proposal?")}</label>{yn("bankruptcyFiled")}</div>
           {data.bankruptcyFiled === "Yes" && (
-            <div><label style={L}>If yes, when?</label><Input value={data.bankruptcyWhen || ""} onChange={(e) => setField("bankruptcyWhen", e.target.value)} placeholder="Month / Year" /></div>
+            <div><label style={L}>{tr("If yes, when?")}</label><Input value={data.bankruptcyWhen || ""} onChange={(e) => setField("bankruptcyWhen", e.target.value)} placeholder={tr("Month / Year")} /></div>
           )}
         </>
       )}
-      <div><label style={L}>Ownership %</label><Input type="number" min="1" max="100" value={data.ownership || ""} onChange={(e) => setField("ownership", e.target.value)} placeholder="%" /></div>
+      <div><label style={L}>{tr("Ownership %")}</label><Input type="number" min="1" max="100" value={data.ownership || ""} onChange={(e) => setField("ownership", e.target.value)} placeholder="%" /></div>
 
       {/* BF_CLIENT_SBA_912_STEP4_v197
           SBA Form 912, Statement of Personal History. Everything here is per
@@ -229,29 +228,27 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
           refusing to advance. */}
       {onSba && (
         <>
-          <div style={{ gridColumn: "1 / -1", ...components.form.eyebrow, marginTop: tokens.spacing.md }}>
-            SBA personal history (Form 912)
-          </div>
-          <div><label style={L}>Place of birth (city and state, or country)</label>
+          <div style={{ gridColumn: "1 / -1", ...components.form.eyebrow, marginTop: tokens.spacing.md }}>{tr("SBA personal history (Form 912)")}</div>
+          <div><label style={L}>{tr("Place of birth (city and state, or country)")}</label>
             <Input value={data.placeOfBirth || ""} onChange={(e) => setField("placeOfBirth", e.target.value)} /></div>
-          <div><label style={L}>Are you a US citizen?</label>
+          <div><label style={L}>{tr("Are you a US citizen?")}</label>
             <select value={data.usCitizen || ""} onChange={(e) => setField("usCitizen", e.target.value)}>
-              <option value="">Select...</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
+              <option value="">{tr("Select...")}</option>
+              <option value="yes">{tr("Yes")}</option>
+              <option value="no">{tr("No")}</option>
             </select>
           </div>
           {data.usCitizen === "no" && (
-            <div><label style={L}>Alien registration number</label>
-              <Input value={data.alienRegistrationNumber || ""} onChange={(e) => setField("alienRegistrationNumber", e.target.value)} placeholder="Leave blank if you do not have one" /></div>
+            <div><label style={L}>{tr("Alien registration number")}</label>
+              <Input value={data.alienRegistrationNumber || ""} onChange={(e) => setField("alienRegistrationNumber", e.target.value)} placeholder={tr("Leave blank if you do not have one")} /></div>
           )}
           {/* BF_CLIENT_STEP4_ADDRESS_SINCE_v139
               Paired deliberately: former names sat alone with an empty cell
               beside it, and the 912 needs the residence date the server had no
               way to fill. */}
-          <div><label style={L}>Any former names used, and when <span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
-            <Input value={data.formerNames || ""} onChange={(e) => setField("formerNames", e.target.value)} placeholder="e.g. Jane Smith, 2010-2018" /></div>
-          <div><label style={L}>At this address since</label>
+          <div><label style={L}>{tr("Any former names used, and when")}{" "}<span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
+            <Input value={data.formerNames || ""} onChange={(e) => setField("formerNames", e.target.value)} placeholder={tr("e.g. Jane Smith, 2010-2018")} /></div>
+          <div><label style={L}>{tr("At this address since")}</label>
             <MonthYearSelect ariaLabel="At this address since" value={data.addressSince || ""} onChange={(v) => setField("addressSince", v)} /></div>
           {/* 912 asks for the previous address only when under ten years at the
               current one. Until v139 that rule was a comment and the field was
@@ -259,8 +256,8 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
               field stays visible while addressSince is blank, so nobody is
               blocked from answering by not having answered yet. */}
           {underTenYearsAtAddress(data.addressSince) && (
-            <div style={{ gridColumn: "1 / -1" }}><label style={L}>Previous address, if you have been at your current address under 10 years</label>
-              <Input value={data.priorAddress || ""} onChange={(e) => setField("priorAddress", e.target.value)} placeholder="Street, city, state, ZIP - and the dates you lived there" /></div>
+            <div style={{ gridColumn: "1 / -1" }}><label style={L}>{tr("Previous address, if you have been at your current address under 10 years")}</label>
+              <Input value={data.priorAddress || ""} onChange={(e) => setField("priorAddress", e.target.value)} placeholder={tr("Street, city, state, ZIP - and the dates you lived there")} /></div>
           )}
 
           {/* BF_CLIENT_SBA_YES_DETAIL_v214
@@ -271,17 +268,14 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
               answer it refers to, and nothing tells them.
               Ask here instead, while the question is on screen and the answer is
               the one they just gave. */}
-          <div><label style={L}>
-            Are you currently incarcerated, serving a sentence, or under indictment for a felony
-            or any crime involving financial misconduct or a false statement?
-          </label>{yn("sba912Q8")}
+          <div><label style={L}>{tr("Are you currently incarcerated, serving a sentence, or under indictment for a felony or any crime involving financial misconduct or a false statement?")}</label>{yn("sba912Q8")}
             {data.sba912Q8 === "yes" && (
               <div style={{ marginTop: 8 }}>
-                <label style={L}>Please give the details</label>
+                <label style={L}>{tr("Please give the details")}</label>
                 <textarea
                   value={data.sba912Q8Detail || ""}
                   onChange={(e) => setField("sba912Q8Detail", e.target.value)}
-                  placeholder="Charge or offence, date, jurisdiction, and current status"
+                  placeholder={tr("Charge or offence, date, jurisdiction, and current status")}
                   rows={3}
                   style={{ ...components.inputs.base, width: "100%", resize: "vertical", fontFamily: "inherit" }}
                 />
@@ -289,17 +283,14 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
             )}
           </div>
 
-          <div><label style={L}>
-            In the past year, have you been convicted of a criminal offence committed during and
-            in connection with a riot, civil disorder or other declared disaster?
-          </label>{yn("sba912Q9")}
+          <div><label style={L}>{tr("In the past year, have you been convicted of a criminal offence committed during and in connection with a riot, civil disorder or other declared disaster?")}</label>{yn("sba912Q9")}
             {data.sba912Q9 === "yes" && (
               <div style={{ marginTop: 8 }}>
-                <label style={L}>Please give the details</label>
+                <label style={L}>{tr("Please give the details")}</label>
                 <textarea
                   value={data.sba912Q9Detail || ""}
                   onChange={(e) => setField("sba912Q9Detail", e.target.value)}
-                  placeholder="Offence, date, jurisdiction, and the outcome"
+                  placeholder={tr("Offence, date, jurisdiction, and the outcome")}
                   rows={3}
                   style={{ ...components.inputs.base, width: "100%", resize: "vertical", fontFamily: "inherit" }}
                 />
@@ -307,16 +298,14 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
             )}
           </div>
 
-          <div><label style={L}>
-            Are you currently more than 60 days late on any child support obligation?
-          </label>{yn("sba912Q10")}
+          <div><label style={L}>{tr("Are you currently more than 60 days late on any child support obligation?")}</label>{yn("sba912Q10")}
             {data.sba912Q10 === "yes" && (
               <div style={{ marginTop: 8 }}>
-                <label style={L}>Please give the details</label>
+                <label style={L}>{tr("Please give the details")}</label>
                 <textarea
                   value={data.sba912Q10Detail || ""}
                   onChange={(e) => setField("sba912Q10Detail", e.target.value)}
-                  placeholder="Amount outstanding, jurisdiction, and any arrangement in place"
+                  placeholder={tr("Amount outstanding, jurisdiction, and any arrangement in place")}
                   rows={3}
                   style={{ ...components.inputs.base, width: "100%", resize: "vertical", fontFamily: "inherit" }}
                 />
@@ -324,44 +313,40 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
             )}
           </div>
 
-          <div><label style={L}>
-            Your initials, confirming the three answers above
-          </label><Input value={data.sba912Initials || ""} onChange={(e) => setField("sba912Initials", e.target.value.toUpperCase())} placeholder="e.g. WJ" maxLength={5} /></div>
+          <div><label style={L}>{tr("Your initials, confirming the three answers above")}</label><Input value={data.sba912Initials || ""} onChange={(e) => setField("sba912Initials", e.target.value.toUpperCase())} placeholder={tr("e.g. WJ")} maxLength={5} /></div>
 
-          <div style={{ gridColumn: "1 / -1", ...components.form.eyebrow, marginTop: tokens.spacing.md }}>
-            Demographics (optional, for SBA reporting only)
-          </div>
-          <div><label style={L}>Veteran status</label>
+          <div style={{ gridColumn: "1 / -1", ...components.form.eyebrow, marginTop: tokens.spacing.md }}>{tr("Demographics (optional, for SBA reporting only)")}</div>
+          <div><label style={L}>{tr("Veteran status")}</label>
             <select value={data.veteranStatus || ""} onChange={(e) => setField("veteranStatus", e.target.value)}>
-              <option value="">Not disclosed</option>
-              <option value="non_veteran">Non-veteran</option>
-              <option value="veteran">Veteran</option>
-              <option value="service_disabled">Service-disabled veteran</option>
-              <option value="spouse">Spouse of veteran</option>
+              <option value="">{tr("Not disclosed")}</option>
+              <option value="non_veteran">{tr("Non-veteran")}</option>
+              <option value="veteran">{tr("Veteran")}</option>
+              <option value="service_disabled">{tr("Service-disabled veteran")}</option>
+              <option value="spouse">{tr("Spouse of veteran")}</option>
             </select>
           </div>
-          <div><label style={L}>Sex</label>
+          <div><label style={L}>{tr("Sex")}</label>
             <select value={data.sex || ""} onChange={(e) => setField("sex", e.target.value)}>
-              <option value="">Not disclosed</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="">{tr("Not disclosed")}</option>
+              <option value="male">{tr("Male")}</option>
+              <option value="female">{tr("Female")}</option>
             </select>
           </div>
-          <div><label style={L}>Race</label>
+          <div><label style={L}>{tr("Race")}</label>
             <select value={data.race || ""} onChange={(e) => setField("race", e.target.value)}>
-              <option value="">Not disclosed</option>
-              <option value="american_indian">American Indian or Alaska Native</option>
-              <option value="asian">Asian</option>
-              <option value="black">Black or African American</option>
-              <option value="pacific_islander">Native Hawaiian or Pacific Islander</option>
-              <option value="white">White</option>
+              <option value="">{tr("Not disclosed")}</option>
+              <option value="american_indian">{tr("American Indian or Alaska Native")}</option>
+              <option value="asian">{tr("Asian")}</option>
+              <option value="black">{tr("Black or African American")}</option>
+              <option value="pacific_islander">{tr("Native Hawaiian or Pacific Islander")}</option>
+              <option value="white">{tr("White")}</option>
             </select>
           </div>
-          <div><label style={L}>Ethnicity</label>
+          <div><label style={L}>{tr("Ethnicity")}</label>
             <select value={data.ethnicity || ""} onChange={(e) => setField("ethnicity", e.target.value)}>
-              <option value="">Not disclosed</option>
-              <option value="hispanic">Hispanic or Latino</option>
-              <option value="not_hispanic">Not Hispanic or Latino</option>
+              <option value="">{tr("Not disclosed")}</option>
+              <option value="hispanic">{tr("Hispanic or Latino")}</option>
+              <option value="not_hispanic">{tr("Not Hispanic or Latino")}</option>
             </select>
           </div>
         </>
@@ -390,18 +375,18 @@ function AccordAdditionalShareholders({ list, onChange }: { list: ShareholderRow
     <div style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.md }}>
       {rows.map((r, i) => (
         <div key={i} style={{ border: `1px solid ${tokens.colors.border}`, borderRadius: 8, padding: tokens.spacing.md, display: "grid", gridTemplateColumns: typeof window !== "undefined" && window.innerWidth < 600 ? "1fr" : "1fr 1fr", gap: tokens.spacing.sm }}>
-          <div style={{ gridColumn: "1 / -1" }}><label style={L}>Name</label><Input value={r.name || ""} onChange={(e) => setRow(i, "name", e.target.value)} /></div>
-          <div style={{ gridColumn: "1 / -1" }}><label style={L}>Home Address</label><Input value={r.address || ""} onChange={(e) => setRow(i, "address", e.target.value)} /></div>
-          <div><label style={L}>Office #</label><Input value={r.office || ""} onChange={(e) => setRow(i, "office", e.target.value)} /></div>
-          <div><label style={L}>Mobile #</label><Input value={r.mobile || ""} onChange={(e) => setRow(i, "mobile", e.target.value)} /></div>
-          <div><label style={L}>Email</label><Input value={r.email || ""} onChange={(e) => setRow(i, "email", e.target.value)} /></div>
-          <div><label style={L}>Ownership %</label><Input type="number" min="0" max="100" value={r.ownership || ""} onChange={(e) => setRow(i, "ownership", e.target.value)} /></div>
-          <div><label style={L}>Director?</label><select value={r.director || ""} onChange={(e) => setRow(i, "director", e.target.value)}><option value="">—</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
-          <div><label style={L}>Officer?</label><select value={r.officer || ""} onChange={(e) => setRow(i, "officer", e.target.value)}><option value="">—</option><option value="Yes">Yes</option><option value="No">No</option></select></div>
-          <div style={{ gridColumn: "1 / -1" }}><button type="button" onClick={() => remove(i)} style={{ background: "transparent", border: `1px solid ${tokens.colors.border}`, borderRadius: 6, padding: "6px 12px", color: "#b91c1c", cursor: "pointer", fontSize: "var(--ks-text-label)" }}>Remove</button></div>
+          <div style={{ gridColumn: "1 / -1" }}><label style={L}>{tr("Name")}</label><Input value={r.name || ""} onChange={(e) => setRow(i, "name", e.target.value)} /></div>
+          <div style={{ gridColumn: "1 / -1" }}><label style={L}>{tr("Home Address")}</label><Input value={r.address || ""} onChange={(e) => setRow(i, "address", e.target.value)} /></div>
+          <div><label style={L}>{tr("Office #")}</label><Input value={r.office || ""} onChange={(e) => setRow(i, "office", e.target.value)} /></div>
+          <div><label style={L}>{tr("Mobile #")}</label><Input value={r.mobile || ""} onChange={(e) => setRow(i, "mobile", e.target.value)} /></div>
+          <div><label style={L}>{tr("Email")}</label><Input value={r.email || ""} onChange={(e) => setRow(i, "email", e.target.value)} /></div>
+          <div><label style={L}>{tr("Ownership %")}</label><Input type="number" min="0" max="100" value={r.ownership || ""} onChange={(e) => setRow(i, "ownership", e.target.value)} /></div>
+          <div><label style={L}>{tr("Director?")}</label><select value={r.director || ""} onChange={(e) => setRow(i, "director", e.target.value)}><option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
+          <div><label style={L}>{tr("Officer?")}</label><select value={r.officer || ""} onChange={(e) => setRow(i, "officer", e.target.value)}><option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
+          <div style={{ gridColumn: "1 / -1" }}><button type="button" onClick={() => remove(i)} style={{ background: "transparent", border: `1px solid ${tokens.colors.border}`, borderRadius: 6, padding: "6px 12px", color: "#b91c1c", cursor: "pointer", fontSize: "var(--ks-text-label)" }}>{tr("Remove")}</button></div>
         </div>
       ))}
-      <button type="button" onClick={add} style={{ background: "transparent", border: `1px dashed ${tokens.colors.border}`, borderRadius: 8, padding: "10px", color: tokens.colors.textPrimary, cursor: "pointer", fontSize: "var(--ks-text-body-sm)" }}>+ Add shareholder</button>
+      <button type="button" onClick={add} style={{ background: "transparent", border: `1px dashed ${tokens.colors.border}`, borderRadius: 8, padding: "10px", color: tokens.colors.textPrimary, cursor: "pointer", fontSize: "var(--ks-text-body-sm)" }}>{tr("+ Add shareholder")}</button>
     </div>
   );
 }
@@ -641,7 +626,7 @@ export function Step4_Applicant() {
       return next;
     });
     if (Object.keys(applicantErrors).length > 0) {
-      setSaveError("Please correct the highlighted fields below.");
+      setSaveError(tr("Please correct the highlighted fields below."));
       focusFirstError(applicantErrors, "");
       return;
     }
@@ -651,11 +636,11 @@ export function Step4_Applicant() {
         (field) => !Validate.required(partner[field])
       );
       if (partnerMissing) {
-        setSaveError("Please complete all required partner details.");
+        setSaveError(tr("Please complete all required partner details."));
         return;
       }
       if (!Validate.phone(partner.phone)) {
-        setSaveError("Please enter a valid 10-digit phone number for the partner.");
+        setSaveError(tr("Please enter a valid 10-digit phone number for the partner."));
         return;
       }
       // v_PNW_FORM: each owner needs their own login identity. Partner cannot
@@ -666,7 +651,7 @@ export function Step4_Applicant() {
       const samePhone = last10(partner.phone).length === 10 &&
         last10(partner.phone) === last10(values.phone);
       if (sameEmail || samePhone) {
-        setSaveError("Each owner must use their own email and phone number — the partner cannot reuse the applicant's contact details.");
+        setSaveError(tr("Each owner must use their own email and phone number — the partner cannot reuse the applicant's contact details."));
         return;
       }
     }
@@ -704,7 +689,7 @@ export function Step4_Applicant() {
 
     const { ownershipValid } = getOwnershipValidity(values);
     if (!ownershipValid) {
-      setSaveError("Ownership percentages must total 100.");
+      setSaveError(tr("Ownership percentages must total 100."));
       return;
     }
 
@@ -912,7 +897,7 @@ export function Step4_Applicant() {
       <style>{`.wizard-step-shell label{display:block;font-size:var(--ks-text-label);font-weight:500;color:#374151;margin-bottom:6px}.wizard-step-shell input,.wizard-step-shell select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:var(--ks-text-body-sm);color:#111827;background:#fff;box-sizing:border-box}.wizard-step-shell select{appearance:none;cursor:pointer}`}</style>
         <WizardLayout>
           <div className="wizard-step-shell">
-            <StepHeader step={4} title="Applicant Information" subtitle="List everyone with 20%+ ownership - that is the SBA threshold. Each of them signs their own copy." /* BF_CLIENT_OWNERSHIP_20_v145 */ />
+            <StepHeader step={4} title={tr("Applicant Information")} subtitle="List everyone with 20%+ ownership - that is the SBA threshold. Each of them signs their own copy." /* BF_CLIENT_OWNERSHIP_20_v145 */ />
             {saveError && (
               <Card variant="muted" data-error={true}>
                 <div style={components.form.errorText}>{saveError}</div>
@@ -925,7 +910,7 @@ export function Step4_Applicant() {
             )}
 
             <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }} onBlurCapture={() => saveStepData(4, values)}>
-              <div style={components.form.eyebrow}>Primary applicant</div>
+              <div style={components.form.eyebrow}>{tr("Primary applicant")}</div>
               {/* BF_CLIENT_SBA_912_STEP4_v197 */}
               <OwnerFields errors={errors} touched={touched} onBlurField={handleBlurField}
                 data={values}
@@ -952,7 +937,7 @@ export function Step4_Applicant() {
 
             {impliesMultipleOwners(values) && (
               <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg, marginTop: tokens.spacing.lg }} onBlurCapture={() => saveStepData(4, values)}>
-                <div style={components.form.eyebrow}>Partner / second owner</div>
+                <div style={components.form.eyebrow}>{tr("Partner / second owner")}</div>
                 {/* BF_CLIENT_SBA_912_STEP4_v197 */}
                 <OwnerFields
                   data={partner}
@@ -971,14 +956,14 @@ export function Step4_Applicant() {
 
             {impliesMultipleOwners(values) && (
               <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.md, marginTop: tokens.spacing.lg }}>
-                <div style={components.form.eyebrow}>Additional shareholders (optional)</div>
+                <div style={components.form.eyebrow}>{tr("Additional shareholders (optional)")}</div>
                 <AccordAdditionalShareholders list={values.additionalShareholders || []} onChange={(next: ShareholderRow[]) => setField("additionalShareholders", next)} />
               </Card>
             )}
 
             <div className="wiz-cta" style={{ ...layout.stickyCta, marginTop: tokens.spacing.lg }}>
               <div style={{ display: "flex", flexWrap: "wrap", gap: tokens.spacing.sm }}>
-                <Button variant="secondary" style={{ width: "100%", maxWidth: "160px" }} onClick={() => navigate("/apply/step-3")}>← Back</Button>
+                <Button variant="secondary" style={{ width: "100%", maxWidth: "160px" }} onClick={() => navigate("/apply/step-3")}>{tr("← Back")}</Button>
                 {/* BF_CLIENT_SBA_WIZARD_FLOW_v210 - SBA skips Step 5 because its
                     documents are collected in Stage 2, so describe the real destination. */}
                 {/* BF_CLIENT_STEP34_GUIDE_v156 - see Step 3. */}
@@ -997,7 +982,7 @@ export function Step4_Applicant() {
                     void next();
                   }}
                   aria-disabled={!isValid}
-                >{onSba ? "Continue to Review →" : "Continue to Documents →"}</Button>
+                >{onSba ? tr("Continue to Review →") : tr("Continue to Documents →")}</Button>
                   {/* BF_CLIENT_UX6_SBA_DOCS_NOTE_v1 */}
                   {onSba && (
                     <div style={{ fontSize: "var(--ks-text-help)", color: "#64748b", marginTop: 8, textAlign: "center" }}>On the SBA path, documents are collected after you submit &mdash; you&rsquo;ll see the checklist on your portal.</div>

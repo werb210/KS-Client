@@ -6,6 +6,7 @@ import { useSyncExternalStore } from "react";
 import { SERVER_URL } from "./licensee";
 import { LICENSEE_BUILD } from "./licenseeBuild";
 import { applyBrandTheme } from "./brandTheme";
+import { offeredLangs, settleLang } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 
 export type Brand = {
   company_name: string;
@@ -19,6 +20,8 @@ export type Brand = {
   /** KS_CLIENT_v14_BRAND_FONT - "" = the app's own background / font. */
   background_color: string;
   font_family: string;
+  /** KS_CLIENT_LANGUAGES_v1 - the languages the brokerage offers its clients, e.g. "en,fr" (English always). */
+  client_languages: string;
 };
 
 const CACHE_KEY = "ks_brand_v1";
@@ -35,6 +38,7 @@ const KEYSTONE_BRAND: Brand = {
   accent_color: "#2563EB",
   background_color: "",
   font_family: "",
+  client_languages: "en",
 };
 
 // KS_CLIENT_v5_LICENSEE_APPS - a licensee's branded build (VITE_LICENSEE) starts from licensee.json, and keeps those
@@ -78,6 +82,7 @@ function clean(raw: unknown): Brand {
   if (!/^#[0-9a-f]{6}$/i.test(out.accent_color)) out.accent_color = DEFAULT_BRAND.accent_color;
   if (out.background_color && !/^#[0-9a-f]{6}$/i.test(out.background_color)) out.background_color = DEFAULT_BRAND.background_color;
   if (out.font_family && !/^[A-Za-z0-9][A-Za-z0-9 -]{0,59}$/.test(out.font_family)) out.font_family = DEFAULT_BRAND.font_family;
+  out.client_languages = offeredLangs(out.client_languages).join(","); // KS_CLIENT_LANGUAGES_v1
   for (const k of PINNED) out[k] = DEFAULT_BRAND[k];
   return out;
 }
@@ -131,6 +136,7 @@ export async function loadBrand(timeoutMs = 2500, fetchImpl: typeof fetch = fetc
     const body = await res.json();
     if (!body?.licensee) return current;
     set(clean(body.licensee));
+    settleLang(offeredLangs(current.client_languages)); // KS_CLIENT_LANGUAGES_v1 - a first visit on a French or Spanish phone
   } catch {
     /* offline or slow - keep the cached or default name */
   } finally {

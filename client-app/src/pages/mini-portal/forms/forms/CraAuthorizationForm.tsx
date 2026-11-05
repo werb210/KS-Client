@@ -5,6 +5,7 @@
 // Persists via the generic form-responses endpoint, key "cra_view_only_authorization".
 import { useEffect, useState } from "react";
 import { getFormResponse, submitFormResponse, saveFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { mergeDraft, readDraft, useFormDraft } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
 import { openExternal } from "@/native/openExternal"; // BF_CLIENT_v805_PHONE_FIXES
@@ -26,8 +27,8 @@ export const CORPORATE_STEPS: string[] = [
   "Tap PROFILE (top right).",
   "Under Authorized representatives, tap Manage authorized representatives.",
   "Tap Authorize a representative.",
-  `In "RepID, GroupID, or BN", enter ${ACCORD_BN} (no spaces), then Next.`,
-  `Check the firm shows as ${ACCORD_FIRM} (if not, re-check the number).`,
+  tr("In \"RepID, GroupID, or BN\", enter {ACCORD_BN} (no spaces), then Next.", { ACCORD_BN: ACCORD_BN }),
+  tr("Check the firm shows as {ACCORD_FIRM} (if not, re-check the number).", { ACCORD_FIRM: ACCORD_FIRM }),
   "Level of authorization: View Only (level 1).",
   "Expiry Date: leave blank.",
   "Accounts: tick the first option (All accounts), then Next.",
@@ -40,7 +41,7 @@ export const INDIVIDUAL_STEPS: string[] = [
   "Tap your name (top right), then Profile.",
   "Under Authorized representative(s), tap + Add.",
   "On Authorize a Representative, tap Start.",
-  `In "RepID, GroupID, or BN", enter ${ACCORD_BN} (no spaces), then Search.`,
+  tr("In \"RepID, GroupID, or BN\", enter {ACCORD_BN} (no spaces), then Search.", { ACCORD_BN: ACCORD_BN }),
   "Check Accord Small Business Finance appears (if not, re-check the number), then Next.",
   "Authorization Level: Level 1 (View Only).",
   "Online Access: Yes.",
@@ -118,22 +119,20 @@ export default function CraAuthorizationForm({
 
   return (
     <div className="cmpf">
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>CRA View-Only Authorization</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("CRA View-Only Authorization")}</h2>
       <p className="cmpf-intro">
         {/* BF_CLIENT_v807_FORMS - the firm name and number stay: they are what the CRA shows. */}
         Grant view-only (Level 1) access to {ACCORD_FIRM} (business number {ACCORD_BN}). This is read-only -
         nothing can be filed or changed with the CRA through it.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Confirmed</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Confirmed")}</span>}
       </p>
 
-      <div className="cmpf-seg" role="group" aria-label="Who is authorizing">
+      <div className="cmpf-seg" role="group" aria-label={tr("Who is authorizing")}>
         {tab("corporate", "Corporation")}
         {tab("individual", "Individual / Sole Prop / Partnership")}
       </div>
 
-      <button type="button" className="cmpf-cta" onClick={openCra}>
-        Open CRA My Business
-      </button>
+      <button type="button" className="cmpf-cta" onClick={openCra}>{tr("Open CRA My Business")}</button>
 
       <ol className="cmpf-steps" data-testid="cra-steps" style={{ marginTop: 12 }}>
         {steps.map((step, i) => (
@@ -141,15 +140,13 @@ export default function CraAuthorizationForm({
         ))}
       </ol>
 
-      <p className="cmpf-note">
-        Important: {brandName()} is not alerted when you finish. After submitting, please let your {brandName()} representative know.
-      </p>
+      <p className="cmpf-note">{tr("Important: {brand} is not alerted when you finish. After submitting, please let your {brand} representative know.", { brand: brandName() })}</p>
 
       {error && <p className="cmpf-error">{error}</p>}
 
       <label className="cmpf-check">
         <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />
-        <span>I have completed the CRA view-only authorization.</span>
+        <span>{tr("I have completed the CRA view-only authorization.")}</span>
       </label>
 
       <div className="cmpf-actions">
@@ -159,7 +156,7 @@ export default function CraAuthorizationForm({
           disabled={submitting || !confirmed}
           onClick={() => void handleSubmit()}
         >
-          {submitting ? "Submitting..." : "Confirm Authorization"}
+          {submitting ? tr("Submitting...") : tr("Confirm Authorization")}
         </button>
       </div>
     </div>

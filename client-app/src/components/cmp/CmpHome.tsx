@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon, BrandMark } from "./icons";
 import { type Advisor, advisorName, initials, shortStageLabel } from "./cmpData";
 import "./cmp.css";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_v828_FINISH_IMPORTED_FILE - readyToFinish: a file Boreal prepared for the client from documents they
@@ -75,7 +76,7 @@ export function Sheet({ title, onClose, children, testId, panelClassName }: { ti
         <div className="cmpx-sheet__grip" aria-hidden="true" />
         <div className="cmpx-sheet__head">
           <h2 className="cmpx-sheet__title">{title}</h2>
-          <button type="button" className="cmpx-sheet__close" aria-label="Close" onClick={onClose}>&times;</button>
+          <button type="button" className="cmpx-sheet__close" aria-label={tr("Close")} onClick={onClose}>&times;</button>
         </div>
         {children}
       </div>
@@ -87,7 +88,7 @@ export function Sheet({ title, onClose, children, testId, panelClassName }: { ti
 // BF_CLIENT_v839_REMOVE_UNFINISHED - onRemove: takes an unfinished application the client started off their list.
 export function AppSwitcherSheet({ apps, currentId, onPick, onContinue, onRemove, onClose }: { apps: SwitcherApp[]; currentId: string; onPick: (id: string) => void; onContinue?: (id: string) => void; onRemove?: (id: string) => void; onClose: () => void }) {
   return (
-    <Sheet title="Your applications" onClose={onClose} testId="cmp-app-switcher">
+    <Sheet title={tr("Your applications")} onClose={onClose} testId="cmp-app-switcher">
       <ul className="cmpx-apps">
         {apps.map((a) => (
           <li key={a.id}>
@@ -101,9 +102,9 @@ export function AppSwitcherSheet({ apps, currentId, onPick, onContinue, onRemove
                 </span>
                 <span className="cmpx-app__actions">
                   {onRemove && !a.readyToFinish ? (
-                    <button type="button" className="cmpx-app__remove" onClick={() => onRemove(a.id)} aria-label={"Remove " + a.business} data-testid="cmp-app-remove">Remove</button>
+                    <button type="button" className="cmpx-app__remove" onClick={() => onRemove(a.id)} aria-label={"Remove " + a.business} data-testid="cmp-app-remove">{tr("Remove")}</button>
                   ) : null}
-                  <button type="button" className="cmpx-app__go" onClick={() => onContinue(a.id)}>Continue</button>
+                  <button type="button" className="cmpx-app__go" onClick={() => onContinue(a.id)}>{tr("Continue")}</button>
                 </span>
               </div>
             ) : (
@@ -111,9 +112,9 @@ export function AppSwitcherSheet({ apps, currentId, onPick, onContinue, onRemove
               <span style={{ minWidth: 0 }}>
                 <span className="cmpx-app__biz" style={{ display: "block" }}>{a.business}</span>
                 <span className="cmpx-app__sub" style={{ display: "block" }}>{[a.product, a.amount].filter(Boolean).join(" \u00b7 ")}{a.stage ? " \u2014 " + a.stage : ""}</span>
-                {a.signatureNeeded ? <span className="cmpx-app__flag">Signature needed</span> : null}
+                {a.signatureNeeded ? <span className="cmpx-app__flag">{tr("Signature needed")}</span> : null}
               </span>
-              {a.id === currentId ? <span className="cmpx-app__tick" aria-label="Open now"><Icon name="check" /></span> : null}
+              {a.id === currentId ? <span className="cmpx-app__tick" aria-label={tr("Open now")}><Icon name="check" /></span> : null}
             </button>
             )}
           </li>
@@ -141,15 +142,15 @@ export function CmpHello({ firstName, advisor, onCall, onMessage, onBook }: { fi
               : <span className="cmpx-avatar cmpx-avatar--brand" aria-hidden="true"><BrandMark size={30} /></span>}
           <div style={{ minWidth: 0 }}>
             {/* BF_CLIENT_v805_PHONE_FIXES - no advisor assigned yet: the Boreal team, with the Boreal logo. */}
-            <div className="cmpx-eyebrow">{name ? "Your advisor" : "Your team"}</div>
+            <div className="cmpx-eyebrow">{name ? tr("Your advisor") : tr("Your team")}</div>
             <div className="cmpx-advisor__name">{name || t("advisor.team")}</div>
           </div>
         </div>
         {/* BF_CLIENT_v808_WIDE_HOME - no Message button where Chat is already open beside Home (wide screens). */}
         <div className={"cmpx-advisor__actions" + (onMessage ? "" : " cmpx-advisor__actions--two")}>
-          <button type="button" className="cmpx-btn" onClick={onCall} data-testid="cmp-advisor-call"><Icon name="phone" />Call</button>
-          {onMessage ? <button type="button" className="cmpx-btn" onClick={onMessage} data-testid="cmp-advisor-message"><Icon name="chat" />Message</button> : null}
-          <button type="button" className="cmpx-btn" onClick={onBook} data-testid="cmp-advisor-book"><Icon name="calendar" />Book</button>
+          <button type="button" className="cmpx-btn" onClick={onCall} data-testid="cmp-advisor-call"><Icon name="phone" />{tr("Call")}</button>
+          {onMessage ? <button type="button" className="cmpx-btn" onClick={onMessage} data-testid="cmp-advisor-message"><Icon name="chat" />{tr("Message")}</button> : null}
+          <button type="button" className="cmpx-btn" onClick={onBook} data-testid="cmp-advisor-book"><Icon name="calendar" />{tr("Book")}</button>
         </div>
       </div>
     </section>
@@ -160,9 +161,9 @@ export function CmpHello({ firstName, advisor, onCall, onMessage, onBook }: { fi
 export function CmpStatusCard({ stageLabel, step, total, next, caughtUp }: { stageLabel: string; step: number; total: number; next: string; caughtUp: boolean }) {
   const pct = Math.max(0, Math.min(100, Math.round((step / total) * 100)));
   return (
-    <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-status" aria-label="Application status">
+    <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-status" aria-label={tr("Application status")}>
       {/* BF_CLIENT_v807_STATUS - a plain question instead of "Status / Step 4 of 6", which told the client nothing. */}
-      <h2 className="cmpx-status__title">What stage is your application at?</h2>
+      <h2 className="cmpx-status__title">{tr("What stage is your application at?")}</h2>
       <div className="cmpx-status__stage" data-testid="cmp-status-stage">{stageLabel}</div>
       <div className="cmpx-bar" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={step} aria-label={"Step " + step + " of " + total}>
         <div className="cmpx-bar__fill" style={{ width: pct + "%" }} />
@@ -170,7 +171,7 @@ export function CmpStatusCard({ stageLabel, step, total, next, caughtUp }: { sta
       {caughtUp ? (
         <div className="cmpx-caught" data-testid="cmp-home-caught-up">
           <Icon name="check" />
-          <span>You're all caught up. We have everything we need from you right now.</span>
+          <span>{tr("You're all caught up. We have everything we need from you right now.")}</span>
         </div>
       ) : null}
       <div className="cmpx-status__next" data-testid="cmp-status-next">{next}</div>
@@ -182,10 +183,10 @@ export function CmpOffersCard({ count, bestAmount, onOpen }: { count: number; be
   if (count <= 0) return null;
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-offers-card">
-      <div className="cmpx-eyebrow">{count === 1 ? "Your offer" : "Your offers"}</div>
+      <div className="cmpx-eyebrow">{count === 1 ? tr("Your offer") : tr("Your offers")}</div>
       {bestAmount ? <div className="cmpx-offers__amount">{count > 1 ? "Up to " : ""}{bestAmount}</div> : null}
       <p className="cmpx-offers__sub">{count === 1 ? "One lender has made you an offer." : count + " lenders have made you offers. Compare them side by side."}</p>
-      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onOpen} data-testid="open-offers-btn">{count === 1 ? "Review the offer" : "Compare offers"}</button>
+      <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onOpen} data-testid="open-offers-btn">{count === 1 ? tr("Review the offer") : tr("Compare offers")}</button>
     </section>
   );
 }
@@ -193,7 +194,7 @@ export function CmpOffersCard({ count, bestAmount, onOpen }: { count: number; be
 /** Item 27 - once funded, ask the client to refer another business owner. */
 export function CmpReferCard({ shareUrl }: { shareUrl: string }) {
   const [note, setNote] = useState<string | null>(null);
-  const text = `I used ${brandName()} to get business financing. Have a look:`;
+  const text = tr("I used {brand} to get business financing. Have a look:", { brand: brandName() });
   const share = async () => {
     setNote(null);
     try {
@@ -207,9 +208,9 @@ export function CmpReferCard({ shareUrl }: { shareUrl: string }) {
   };
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-refer">
-      <div className="cmpx-eyebrow">Know a business owner?</div>
+      <div className="cmpx-eyebrow">{tr("Know a business owner?")}</div>
       <h2 className="cmpx-refer__title">{t("refer.title")}</h2>
-      <p className="cmpx-refer__sub">If someone you know needs financing, send them our way. Your advisor will take good care of them.</p>
+      <p className="cmpx-refer__sub">{tr("If someone you know needs financing, send them our way. Your advisor will take good care of them.")}</p>
       <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void share()}><Icon name="share" />{t("refer.share")}</button>
       {note ? <div className="cmpx-note" role="status">{note}</div> : null}
     </section>

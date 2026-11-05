@@ -1,5 +1,6 @@
 import { useServiceWorkerUpdate } from "@/hooks/useServiceWorkerUpdate";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export default function UpdatePromptBanner() {
   const { updateAvailable, applyUpdate } = useServiceWorkerUpdate();
   if (!updateAvailable) return null;
@@ -12,8 +13,8 @@ export default function UpdatePromptBanner() {
       borderRadius: 10, display: "flex", gap: 12, alignItems: "center",
       maxWidth: 480, margin: "0 auto", fontWeight: 600
     }}>
-      <span style={{ flex: 1 }}>A new version is available.</span>
-      <button onClick={applyUpdate} style={{ background: "#020C1C", color: "#F5C443", border: 0, padding: "6px 12px", borderRadius: 8 }}>Refresh</button>
+      <span style={{ flex: 1 }}>{tr("A new version is available.")}</span>
+      <button onClick={applyUpdate} style={{ background: "#020C1C", color: "#F5C443", border: 0, padding: "6px 12px", borderRadius: 8 }}>{tr("Refresh")}</button>
     </div>
   );
 }

@@ -19,6 +19,7 @@ import {
   readAddress, readDraft, useFormDraft, type AddressValue,
 } from "../cmpFormKit";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 const FORM_KEY = "real_estate_collateral_disclosure";
 
 type Property = Record<string, string>;
@@ -181,9 +182,9 @@ export default function RealEstateCollateralForm({
       <div>
         <label className="cmpf-label" htmlFor={id}>{label}</label>
         <select id={id} className="cmpf-select" value={properties[idx][key] ?? ""} onChange={(e) => { setField(idx, key, e.target.value); }} onBlur={persist}>
-          <option value="">Select...</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
+          <option value="">{tr("Select...")}</option>
+          <option value="yes">{tr("Yes")}</option>
+          <option value="no">{tr("No")}</option>
         </select>
       </div>
     );
@@ -204,17 +205,17 @@ export default function RealEstateCollateralForm({
 
   const owner = (idx: number, n: 1 | 2 | 3) => (
     <div key={n} className="cmp-grid-2" data-testid={`re-${idx}-owner-${n}`}>
-      {field(idx, `owner${n}`, `Owner ${n} - full legal name`)}
-      {field(idx, `owner${n}_marital`, `Owner ${n} - marital status`)}
+      {field(idx, `owner${n}`, tr("Owner {n} - full legal name", { n: n }))}
+      {field(idx, `owner${n}_marital`, tr("Owner {n} - marital status", { n: n }))}
     </div>
   );
 
   return (
     <div className="cmpf">
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Real Estate Collateral</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Real Estate Collateral")}</h2>
       <p className="cmpf-intro">
         Details on real estate offered as additional collateral. Complete one block per property.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Submitted")}</span>}
       </p>
 
       {properties.map((p, idx) => {
@@ -225,7 +226,7 @@ export default function RealEstateCollateralForm({
             <div className="cmpf-card-head">
               <span className="cmpf-card-title">Property #{idx + 1}</span>
               {properties.length > 1 && (
-                <button type="button" className="cmpf-remove" onClick={() => removeProperty(idx)}>Remove</button>
+                <button type="button" className="cmpf-remove" onClick={() => removeProperty(idx)}>{tr("Remove")}</button>
               )}
             </div>
 
@@ -240,10 +241,10 @@ export default function RealEstateCollateralForm({
             />
             {field(idx, "legal_address", "Legal address (if known)")}
 
-            <div className="cmpf-section">Owners</div>
+            <div className="cmpf-section">{tr("Owners")}</div>
             {([1, 2, 3] as const).filter((n) => n <= owners).map((n) => owner(idx, n))}
             {owners < 3 && (
-              <button type="button" className="cmpf-add" onClick={() => bump(idx, "owners", owners)}>+ Add owner</button>
+              <button type="button" className="cmpf-add" onClick={() => bump(idx, "owners", owners)}>{tr("+ Add owner")}</button>
             )}
             <div className="cmp-grid-2">
               {yesNo(idx, "matrimonial", "Family / matrimonial home?")}
@@ -264,13 +265,13 @@ export default function RealEstateCollateralForm({
               {field(idx, "value_method", "Value method")}
             </div>
 
-            <div className="cmpf-section">Mortgages</div>
+            <div className="cmpf-section">{tr("Mortgages")}</div>
             {([1, 2, 3] as const).filter((n) => n <= mortgages).map((n) => mortgage(idx, n))}
             {mortgages < 3 && (
-              <button type="button" className="cmpf-add" onClick={() => bump(idx, "mortgages", mortgages)}>+ Add mortgage</button>
+              <button type="button" className="cmpf-add" onClick={() => bump(idx, "mortgages", mortgages)}>{tr("+ Add mortgage")}</button>
             )}
 
-            <div className="cmpf-section">Disclosures</div>
+            <div className="cmpf-section">{tr("Disclosures")}</div>
             <div className="cmp-grid-2">
               {yesNo(idx, "taxes_current", "Property taxes current?")}
               {yesNo(idx, "other_charges", "Other charges on title?")}
@@ -281,15 +282,13 @@ export default function RealEstateCollateralForm({
         );
       })}
 
-      <button type="button" className="cmpf-add" onClick={addProperty}>
-        + Add another property
-      </button>
+      <button type="button" className="cmpf-add" onClick={addProperty}>{tr("+ Add another property")}</button>
 
       {error && <p className="cmpf-error">{error}</p>}
 
       <div className="cmpf-actions">
         <button type="button" className="cmpf-primary" disabled={submitting} onClick={() => void handleSubmit()}>
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? tr("Submitting...") : tr("Submit")}
         </button>
       </div>
     </div>

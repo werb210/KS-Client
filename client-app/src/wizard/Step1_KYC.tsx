@@ -44,6 +44,7 @@ import { fetchCreditPrefill } from "../services/creditPrefill";
 import { getAttribution } from "../lib/attribution";
 import { getClarityPlaybackUrl } from "../lib/clarityPlayback"; // BF_CLIENT_CLARITY_PLAYBACK_v170
 import { fetchReadinessPrefill } from "@/api/readiness";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { ENV } from "@/env"; // BF_CLIENT_REPORT_BLOCK_v154
 import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
@@ -925,7 +926,7 @@ export function Step1_KYC(): JSX.Element {
       navigate("/apply/step-2");
     } catch (err) {
       console.error("[wizard] Step 1 unexpected error", err);
-      setSubmitError("Something went wrong. Please try again.");
+      setSubmitError(tr("Something went wrong. Please try again."));
     } finally {
       startInFlightRef.current = false;
       setStarting(false);
@@ -972,7 +973,7 @@ export function Step1_KYC(): JSX.Element {
       <style>{`.wizard-step-shell label{display:block;font-size:var(--ks-text-label);font-weight:500;color:#374151;margin-bottom:6px}.wizard-step-shell input,.wizard-step-shell select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:var(--ks-text-body-sm);color:#111827;background:#fff;box-sizing:border-box}.wizard-step-shell select{appearance:none;cursor:pointer}`}</style>
       <WizardLayout>
       <div className="wizard-step-shell">
-        <StepHeader step={1} title="Financial Profile" subtitle="Tell us what you need so your advisor can find the right financing." /* BF_CLIENT_v806_TFV */ />
+        <StepHeader step={1} title={tr("Financial Profile")} subtitle="Tell us what you need so your advisor can find the right financing." /* BF_CLIENT_v806_TFV */ />
         {/* BF_CLIENT_STEP1_TALK_TO_HUMAN_v169 - a human escape hatch at the top of
             Step 1: opens Maya straight to the "an advisor will text you back"
             callback screen so someone unsure of their options reaches a person
@@ -996,9 +997,7 @@ export function Step1_KYC(): JSX.Element {
               fontWeight: 600,
               cursor: "pointer",
             }}
-          >
-            Questions? Talk to a specialist
-          </button>
+          >{tr("Questions? Talk to a specialist")}</button>
         </div>
         {submitError && (
           <Card variant="muted" data-error={true}>
@@ -1023,9 +1022,7 @@ export function Step1_KYC(): JSX.Element {
               background: "rgba(245, 158, 11, 0.12)",
               color: tokens.colors.textPrimary,
             }}
-          >
-            Your previous session expired. Please start again — we kept things short.
-          </Card>
+          >{tr("Your previous session expired. Please start again — we kept things short.")}</Card>
         )}
         <Card
           style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}
@@ -1034,12 +1031,10 @@ export function Step1_KYC(): JSX.Element {
           <div style={fieldGridStyle}>
             {/* BF_CLIENT_STEP1_SPLIT_v169 - required matching questions */}
             <div style={{ gridColumn: "1 / -1" }}>
-              <div style={{ ...components.form.label, fontWeight: 700, marginBottom: 0 }}>
-                These questions are required to find the best options for you.
-              </div>
+              <div style={{ ...components.form.label, fontWeight: 700, marginBottom: 0 }}>{tr("These questions are required to find the best options for you.")}</div>
             </div>
             <div data-error={showErrors && fieldErrors.lookingFor}>
-              <label style={components.form.label}>What are you looking for?</label>
+              <label style={components.form.label}>{tr("What are you looking for?")}</label>
               <Select
                 id={getWizardFieldId("step1", "lookingFor")}
                 value={normalizeFundingIntent(app.kyc.lookingFor) || ""}
@@ -1071,7 +1066,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.lookingFor}
               >
-                <option value="">Select…</option>
+                <option value="">{tr("Select…")}</option>
                 {FUNDING_INTENT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -1079,7 +1074,7 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.lookingFor && (
-                <div style={components.form.errorText}>Please select a funding intent.</div>
+                <div style={components.form.errorText}>{tr("Please select a funding intent.")}</div>
               )}
             </div>
             {/* BF_CLIENT_BLOCK_v91_ELIGIBILITY_RULES_AND_STEP1_HARDSTOPS_v1 */}
@@ -1088,9 +1083,9 @@ export function Step1_KYC(): JSX.Element {
               if (intent === "EQUIPMENT") {
                 return (
                   <div data-error={showErrors && fieldErrors.equipmentAmount}>
-                    <label style={components.form.label}>How much equipment financing are you seeking?</label>
+                    <label style={components.form.label}>{tr("How much equipment financing are you seeking?")}</label>
                     <Input id={getWizardFieldId("step1", "equipmentAmount")} inputMode="decimal" value={app.kyc.equipmentAmount || ""} onChange={(e) => { const nextKyc = { ...app.kyc, equipmentAmount: formatCurrencyOnInput(e.target.value, countryCode) }; update({ kyc: nextKyc }); }} onBlur={() => { if (!app.kyc.equipmentAmount) return; const nextKyc = { ...app.kyc, equipmentAmount: formatCurrencyValue(app.kyc.equipmentAmount, countryCode) }; update({ kyc: nextKyc }); handleAutoAdvance("equipmentAmount", nextKyc); }} hasError={showErrors && fieldErrors.equipmentAmount} placeholder={countryCode === "CA" ? "CA$" : "$"} />
-                    {showErrors && fieldErrors.equipmentAmount && (<div style={components.form.errorText}>Please enter an equipment amount.</div>)}
+                    {showErrors && fieldErrors.equipmentAmount && (<div style={components.form.errorText}>{tr("Please enter an equipment amount.")}</div>)}
                   </div>
                 );
               }
@@ -1101,7 +1096,7 @@ export function Step1_KYC(): JSX.Element {
                               <div data-error={showErrors && fieldErrors.fundingAmount}>
               {/* BF_CLIENT_BOTH_INTENT_LABELS_v1 - combined intent must split
                   the two amounts unambiguously: capital here, equipment below. */}
-              <label style={components.form.label}>How much funding are you seeking? - Capital portion only</label>
+              <label style={components.form.label}>{tr("How much funding are you seeking? - Capital portion only")}</label>
               <Input
                 id={getWizardFieldId("step1", "fundingAmount")}
                 inputMode="decimal"
@@ -1150,18 +1145,18 @@ export function Step1_KYC(): JSX.Element {
                 hasError={showErrors && fieldErrors.fundingAmount}
               />
               {showErrors && fieldErrors.fundingAmount && (
-                <div style={components.form.errorText}>Enter a funding amount.</div>
+                <div style={components.form.errorText}>{tr("Enter a funding amount.")}</div>
               )}
             </div>
                   <div data-error={showErrors && fieldErrors.equipmentAmount}>
-                    <label style={components.form.label}>Equipment amount - Equipment Total only</label>
+                    <label style={components.form.label}>{tr("Equipment amount - Equipment Total only")}</label>
                     <Input id={getWizardFieldId("step1", "equipmentAmount")} inputMode="decimal" value={app.kyc.equipmentAmount || ""} onChange={(e) => { const nextKyc = { ...app.kyc, equipmentAmount: formatCurrencyOnInput(e.target.value, countryCode) }; update({ kyc: nextKyc }); }} onBlur={() => { if (!app.kyc.equipmentAmount) return; const nextKyc = { ...app.kyc, equipmentAmount: formatCurrencyValue(app.kyc.equipmentAmount, countryCode) }; update({ kyc: nextKyc }); handleAutoAdvance("equipmentAmount", nextKyc); }} hasError={showErrors && fieldErrors.equipmentAmount} placeholder={countryCode === "CA" ? "CA$" : "$"} />
-                    {showErrors && fieldErrors.equipmentAmount && (<div style={components.form.errorText}>Please enter an equipment amount.</div>)}
+                    {showErrors && fieldErrors.equipmentAmount && (<div style={components.form.errorText}>{tr("Please enter an equipment amount.")}</div>)}
                   </div>
                 </>);
               }
               return (<>            <div data-error={showErrors && fieldErrors.fundingAmount}>
-              <label style={components.form.label}>How much funding are you seeking?</label>
+              <label style={components.form.label}>{tr("How much funding are you seeking?")}</label>
               <Input
                 id={getWizardFieldId("step1", "fundingAmount")}
                 inputMode="decimal"
@@ -1210,13 +1205,13 @@ export function Step1_KYC(): JSX.Element {
                 hasError={showErrors && fieldErrors.fundingAmount}
               />
               {showErrors && fieldErrors.fundingAmount && (
-                <div style={components.form.errorText}>Enter a funding amount.</div>
+                <div style={components.form.errorText}>{tr("Enter a funding amount.")}</div>
               )}
             </div></>);
             })()}
 
             <div data-error={showErrors && fieldErrors.businessLocation}>
-              <label style={components.form.label}>Business Location</label>
+              <label style={components.form.label}>{tr("Business Location")}</label>
               <Select
                 id={getWizardFieldId("step1", "businessLocation")}
                 value={app.kyc.businessLocation || ""}
@@ -1242,7 +1237,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.businessLocation}
               >
-                <option value="">Select…</option>
+                <option value="">{tr("Select…")}</option>
                 {BusinessLocationOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -1250,9 +1245,7 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.businessLocation && (
-                <div style={components.form.errorText}>
-                  Please choose Canada or the United States.
-                </div>
+                <div style={components.form.errorText}>{tr("Please choose Canada or the United States.")}</div>
               )}
             </div>
 
@@ -1261,9 +1254,7 @@ export function Step1_KYC(): JSX.Element {
               data-error={showErrors && fieldErrors.industry}
               style={{ display: onSbaStartupPath ? "none" : undefined }}
             >
-              <label style={{ display: "block", fontSize: "var(--ks-text-label)", fontWeight: 500, color: "#374151", marginBottom: 6 }}>
-                Industry *
-              </label>
+              <label style={{ display: "block", fontSize: "var(--ks-text-label)", fontWeight: 500, color: "#374151", marginBottom: 6 }}>{tr("Industry *")}</label>
               <select
                 id={getWizardFieldId("step1", "industry")}
                 value={app.kyc.industry || ""}
@@ -1291,34 +1282,34 @@ export function Step1_KYC(): JSX.Element {
                 {/* BF_CLIENT_v66_STEP1_INDUSTRIES — expanded to better
                     cover SMB lending demand. New entries are inserted in
                     alphabetical position; "Other" remains last. */}
-                <option value="">Select industry...</option>
-                <option>Agriculture</option>
+                <option value="">{tr("Select industry...")}</option>
+                <option>{tr("Agriculture")}</option>
                 <option>Auto Sales &amp; Repair</option>
-                <option>Construction</option>
-                <option>Education</option>
-                <option>Energy</option>
-                <option>Healthcare</option>
+                <option>{tr("Construction")}</option>
+                <option>{tr("Education")}</option>
+                <option>{tr("Energy")}</option>
+                <option>{tr("Healthcare")}</option>
                 <option>Hospitality &amp; Lodging</option>
                 <option>Logistics &amp; Trucking</option>
-                <option>Manufacturing</option>
+                <option>{tr("Manufacturing")}</option>
                 <option>{MEDIA_INDUSTRY}</option>
-                <option>Personal Services</option>
-                <option>Professional Services</option>
-                <option>Real Estate</option>
-                <option>Restaurant/Food Service</option>
-                <option>Retail</option>
-                <option>Technology</option>
-                <option>Transportation</option>
+                <option>{tr("Personal Services")}</option>
+                <option>{tr("Professional Services")}</option>
+                <option>{tr("Real Estate")}</option>
+                <option>{tr("Restaurant/Food Service")}</option>
+                <option>{tr("Retail")}</option>
+                <option>{tr("Technology")}</option>
+                <option>{tr("Transportation")}</option>
                 <option>Wholesale &amp; Distribution</option>
-                <option>Other</option>
+                <option>{tr("Other")}</option>
               </select>
               {showErrors && fieldErrors.industry && (
-                <div style={components.form.errorText}>Select your industry.</div>
+                <div style={components.form.errorText}>{tr("Select your industry.")}</div>
               )}
             </div>
 
             <div data-error={showErrors && fieldErrors.purposeOfFunds}>
-              <label style={components.form.label}>Purpose of funds</label>
+              <label style={components.form.label}>{tr("Purpose of funds")}</label>
               <Select
                 id={getWizardFieldId("step1", "purposeOfFunds")}
                 value={app.kyc.purposeOfFunds || ""}
@@ -1332,7 +1323,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.purposeOfFunds}
               >
-                <option value="">Select…</option>
+                <option value="">{tr("Select…")}</option>
                 {visiblePurposeOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -1340,7 +1331,7 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.purposeOfFunds && (
-                <div style={components.form.errorText}>Select a purpose of funds.</div>
+                <div style={components.form.errorText}>{tr("Select a purpose of funds.")}</div>
               )}
             </div>
 
@@ -1352,9 +1343,7 @@ export function Step1_KYC(): JSX.Element {
               data-error={showErrors && fieldErrors.monthlyRevenue}
               style={{ display: hideForPath ? "none" : undefined }}
             >
-              <label style={components.form.label}>
-                Avg monthly revenue (last 3 months)
-              </label>
+              <label style={components.form.label}>{tr("Avg monthly revenue (last 3 months)")}</label>
               <Select
                 id={getWizardFieldId("step1", "monthlyRevenue")}
                 value={app.kyc.monthlyRevenue || ""}
@@ -1378,7 +1367,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.monthlyRevenue}
               >
-                <option value="">Average monthly revenue</option>
+                <option value="">{tr("Average monthly revenue")}</option>
                 {MonthlyRevenueOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -1386,22 +1375,20 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.monthlyRevenue && (
-                <div style={components.form.errorText}>Select monthly revenue.</div>
+                <div style={components.form.errorText}>{tr("Select monthly revenue.")}</div>
               )}
             </div>
 
             {/* BF_CLIENT_STEP1_SPLIT_v169 - optional lender-routing questions */}
             <div style={{ gridColumn: "1 / -1", display: hideForPath ? "none" : undefined }}>
-              <div style={{ ...components.form.label, fontWeight: 700, marginBottom: 0 }}>
-                Optional, but they help us get your application in front of the right lenders.
-              </div>
+              <div style={{ ...components.form.label, fontWeight: 700, marginBottom: 0 }}>{tr("Optional, but they help us get your application in front of the right lenders.")}</div>
             </div>
             {/* BF_CLIENT_SBA_REDUCED_v191 - retain answers when the path changes */}
             <div
               data-error={showErrors && fieldErrors.salesHistory}
               style={{ display: hideForPath ? "none" : undefined }}
             >
-              <label style={components.form.label}>Years of sales history</label>
+              <label style={components.form.label}>{tr("Years of sales history")}</label>
               <Select
                 id={getWizardFieldId("step1", "salesHistory")}
                 value={app.kyc.yearsInBusiness || app.kyc.salesHistory || ""}
@@ -1416,7 +1403,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.salesHistory}
               >
-                <option value="">Years in business</option>
+                <option value="">{tr("Years in business")}</option>
                 {visibleSalesHistoryOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -1424,13 +1411,13 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.salesHistory && (
-                <div style={components.form.errorText}>Select sales history.</div>
+                <div style={components.form.errorText}>{tr("Select sales history.")}</div>
               )}
             </div>
             {!isStartupPathKyc(app.kyc) && !onMediaPath && (
               <>
             <div data-error={showErrors && fieldErrors.revenueLast12Months}>
-              <label style={components.form.label}>Revenue last 12 months</label>
+              <label style={components.form.label}>{tr("Revenue last 12 months")}</label>
               <Select
                 id={getWizardFieldId("step1", "revenueLast12Months")}
                 value={app.kyc.annualRevenue || app.kyc.revenueLast12Months || ""}
@@ -1445,7 +1432,7 @@ export function Step1_KYC(): JSX.Element {
                 }}
                 hasError={showErrors && fieldErrors.revenueLast12Months}
               >
-                <option value="">Annual revenue</option>
+                <option value="">{tr("Annual revenue")}</option>
                 {RevenueOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -1453,7 +1440,7 @@ export function Step1_KYC(): JSX.Element {
                 ))}
               </Select>
               {showErrors && fieldErrors.revenueLast12Months && (
-                <div style={components.form.errorText}>Select a revenue range.</div>
+                <div style={components.form.errorText}>{tr("Select a revenue range.")}</div>
               )}
             </div>
             {/* BF_CLIENT_STEP1_CA_REVENUE_REQUIRED_v171 - avg monthly revenue moved
@@ -1465,7 +1452,7 @@ export function Step1_KYC(): JSX.Element {
                 data-error={showErrors && fieldErrors.accountsReceivable}
                 style={{ display: hideForPath ? "none" : undefined }}
               >
-                <label style={components.form.label}>Current AR balance</label>
+                <label style={components.form.label}>{tr("Current AR balance")}</label>
                 <Select
                   id={getWizardFieldId("step1", "accountsReceivable")}
                   value={app.kyc.arBalance || app.kyc.accountsReceivable || ""}
@@ -1489,7 +1476,7 @@ export function Step1_KYC(): JSX.Element {
                   }}
                   hasError={showErrors && fieldErrors.accountsReceivable}
                 >
-                  <option value="">Account Receivables</option>
+                  <option value="">{tr("Account Receivables")}</option>
                   {AccountsReceivableOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
@@ -1497,9 +1484,7 @@ export function Step1_KYC(): JSX.Element {
                   ))}
                 </Select>
                 {showErrors && fieldErrors.accountsReceivable && (
-                  <div style={components.form.errorText}>
-                    Select an AR balance.
-                  </div>
+                  <div style={components.form.errorText}>{tr("Select an AR balance.")}</div>
                 )}
               </div>
 
@@ -1508,7 +1493,7 @@ export function Step1_KYC(): JSX.Element {
                 data-error={showErrors && fieldErrors.fixedAssets}
                 style={{ display: hideForPath ? "none" : undefined }}
               >
-                <label style={components.form.label}>Fixed assets value for loan security</label>
+                <label style={components.form.label}>{tr("Fixed assets value for loan security")}</label>
                 <Select
                   id={getWizardFieldId("step1", "fixedAssets")}
                   value={app.kyc.availableCollateral || app.kyc.fixedAssets || ""}
@@ -1523,7 +1508,7 @@ export function Step1_KYC(): JSX.Element {
                   }}
                   hasError={showErrors && fieldErrors.fixedAssets}
                 >
-                  <option value="">Available collateral</option>
+                  <option value="">{tr("Available collateral")}</option>
                   {FixedAssetsOptions.map((option) => (
                     <option key={option} value={option}>
                       {option}
@@ -1531,9 +1516,7 @@ export function Step1_KYC(): JSX.Element {
                   ))}
                 </Select>
                 {showErrors && fieldErrors.fixedAssets && (
-                  <div style={components.form.errorText}>
-                    Select a collateral range.
-                  </div>
+                  <div style={components.form.errorText}>{tr("Select a collateral range.")}</div>
                 )}
               </div>
           </div>
@@ -1555,10 +1538,7 @@ export function Step1_KYC(): JSX.Element {
           >
             {blockedByRevenueFloor ? (
               <>
-                <strong>We cannot match this one.</strong> Our Canadian lender panel
-                needs at least $10,000 in average monthly revenue. Change the answer
-                if it was a mistake, or call us on (866) 631-8939.
-              </>
+                <strong>{tr("We cannot match this one.")}</strong>{" "}{tr("Our Canadian lender panel needs at least $10,000 in average monthly revenue. Change the answer if it was a mistake, or call us on (866) 631-8939.")}</>
             ) : (
               <>
                 <strong>
@@ -1595,7 +1575,7 @@ export function Step1_KYC(): JSX.Element {
             aria-busy={starting}
             data-testid="step1-continue"
           >
-            {starting ? "Starting your application..." : "Continue →"}
+            {starting ? tr("Starting your application...") : tr("Continue →")}
           </Button>
         </div>
       </div>
@@ -1618,15 +1598,9 @@ export function Step1_KYC(): JSX.Element {
           onClick={() => setShowLocationModal(false)}
         >
           <div className="wizard-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>We can't fund this one</h3>
-            <p>
-              We fund businesses registered in Canada and the United States. If your
-              business is registered in either country, change the location above and
-              carry on.
-            </p>
-            <Button type="button" onClick={() => setShowLocationModal(false)}>
-              Back to the form
-            </Button>
+            <h3>{tr("We can't fund this one")}</h3>
+            <p>{tr("We fund businesses registered in Canada and the United States. If your business is registered in either country, change the location above and carry on.")}</p>
+            <Button type="button" onClick={() => setShowLocationModal(false)}>{tr("Back to the form")}</Button>
           </div>
         </div>
       )}
@@ -1638,23 +1612,15 @@ export function Step1_KYC(): JSX.Element {
           onClick={() => setShowMinRevenueModal(false)}
         >
           <div className="wizard-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Not a fit for our Canadian lenders right now</h3>
-            <p>
-              Our Canadian lender panel needs at least $10,000 in average monthly
-              revenue. That is a lender requirement, not a judgement on the business -
-              come back to us once revenue is above that and we will take another look.
-            </p>
+            <h3>{tr("Not a fit for our Canadian lenders right now")}</h3>
+            <p>{tr("Our Canadian lender panel needs at least $10,000 in average monthly revenue. That is a lender requirement, not a judgement on the business - come back to us once revenue is above that and we will take another look.")}</p>
             {/* BF_CLIENT_UNDER_10K_WAITLIST_v722 */}
             <Under10kWaitlist />
             <p>
               If you think we have this wrong, or the last three months are not
               representative, call us on{" "}
-              <a href="tel:+18666318939">(866) 631-8939</a> and we will look at it
-              properly.
-            </p>
-            <Button type="button" onClick={() => setShowMinRevenueModal(false)}>
-              Back to the form
-            </Button>
+              <a href="tel:+18666318939">(866) 631-8939</a>{" "}{tr("and we will look at it properly.")}</p>
+            <Button type="button" onClick={() => setShowMinRevenueModal(false)}>{tr("Back to the form")}</Button>
           </div>
         </div>
       )}

@@ -2,6 +2,8 @@ import PhoneOTPInline from "@/components/PhoneOTPInline";
 import { useLeaveIfSignedIn } from "@/native/useLeaveIfSignedIn"; // BF_CLIENT_LOCK_ORDER_v364
 import LandingHeader from "@/components/landing/LandingHeader";
 import LandingFooter from "@/components/landing/LandingFooter";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
+import LanguagePicker from "@/i18n/LanguagePicker";
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BRAND_v167 - copy and palette aligned with BF-Website. The previous
@@ -22,18 +24,13 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-boreal-gold">
-              Start your application
-            </p>
+            <div className="mb-6"><LanguagePicker tone="dark" /></div>{/* KS_CLIENT_LANGUAGES_v1 - first thing a new client chooses */}
+            <p className="text-[13px] font-semibold uppercase tracking-[.14em] text-boreal-gold">{tr("Start your application")}</p>
             <h1 className="mt-4 font-display text-4xl font-bold leading-[1.12] md:text-5xl">
               {/* BF_CLIENT_v806_TFV - Boreal acts for the applicant; no lead-matching wording (Twilio 30468). */}
-              Business financing, handled by your {brandName()} advisor.
+              {tr("Business financing, handled by your {brand} advisor.", { brand: brandName() })}
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-              Tell us about your business once. Your advisor prepares your file and
-              arranges financing on your behalf. Enter your mobile number to
-              begin or to pick up where you left off.
-            </p>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">{tr("Tell us about your business once. Your advisor prepares your file and arranges financing on your behalf. Enter your mobile number to begin or to pick up where you left off.")}</p>
           </div>
 
           <div
@@ -44,7 +41,7 @@ export default function LandingPage() {
           </div>
 
           <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-x-7 gap-y-2 text-sm text-white/70">
-            {REASSURANCE.map((item) => (
+            {REASSURANCE.map((english) => tr(english)).map((item) => ( // KS_CLIENT_LANGUAGES_v1
               <li key={item}>{item}</li>
             ))}
           </ul>

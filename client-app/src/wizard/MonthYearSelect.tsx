@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Select } from "../components/ui/Select";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 // BF_CLIENT_BLOCK_v867_SAFARI_MONTH_PICKER
 // <input type="month"> is unsupported in Safari / iOS — it renders as a blank
 // text box with no picker, so Accord LOC applicants could not enter "In Business
@@ -76,7 +77,7 @@ export function MonthYearSelect({
     // BF_CLIENT_AUDIT_FIX_v8 -- fiscal year-end is a recurring month; no year component
     return (
       <Select id={id ? `${id}-month` : undefined} aria-label={ariaLabel} value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="">Month</option>
+        <option value="">{tr("Month")}</option>
         {MONTHS.map(([, label]) => (
           <option key={label} value={label}>{label}</option>
         ))}
@@ -96,7 +97,7 @@ export function MonthYearSelect({
           onChange(composeYearMonth(year, next));
         }}
       >
-        <option value="">Month</option>
+        <option value="">{tr("Month")}</option>
         {MONTHS.map(([v, label]) => (
           <option key={v} value={v}>
             {label}
@@ -113,7 +114,7 @@ export function MonthYearSelect({
           onChange(composeYearMonth(next, month));
         }}
       >
-        <option value="">Year</option>
+        <option value="">{tr("Year")}</option>
         {years.map((y) => (
           <option key={y} value={y}>
             {y}

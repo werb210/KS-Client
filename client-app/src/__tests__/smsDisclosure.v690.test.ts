@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 // BF_CLIENT_v809_SMS_UPDATES_CONSENT - the note now covers only the sign-in code; texts about the application need the
 // separate, unticked "Text me updates" box (behaviour tested in smsUpdatesConsent.v809.test.tsx).
-const DISCLOSURE = "We&apos;ll text a one-time sign-in code to this number.";
+const DISCLOSURE = "We'll text a one-time sign-in code to this number."; // KS_CLIENT_LANGUAGES_v1 - now inside tr("...")
 
 describe("text-message disclosure and simpler Step 6", () => {
   it("shows the disclosure where the mobile number is entered, on both sign-in screens", () => {

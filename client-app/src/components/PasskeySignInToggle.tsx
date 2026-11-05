@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { createPasskey, hasPasskey, PasskeyError, passkeysSupported } from "@/auth/passkeys";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export default function PasskeySignInToggle() {
   const [busy, setBusy] = useState(false);
   const [created, setCreated] = useState(false);
@@ -32,9 +33,9 @@ export default function PasskeySignInToggle() {
 
   return (
     <div data-testid="passkey-setting" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-      <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#0f172a", fontWeight: 600 }}>Passkey sign-in</span>
+      <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#0f172a", fontWeight: 600 }}>{tr("Passkey sign-in")}</span>
       {created ? (
-        <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#15803d", fontWeight: 600 }}>Ready</span>
+        <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#15803d", fontWeight: 600 }}>{tr("Ready")}</span>
       ) : (
         <button
           type="button"
@@ -42,7 +43,7 @@ export default function PasskeySignInToggle() {
           onClick={() => void turnOn()}
           style={{ padding: "8px 14px", borderRadius: 10, border: "1px solid #1e3a5f", background: busy ? "#94a3b8" : "#1e3a5f", color: "#fff", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}
         >
-          {busy ? "Creating…" : "Create a passkey"}
+          {busy ? tr("Creating…") : tr("Create a passkey")}
         </button>
       )}
       {error && <span style={{ fontSize: "var(--ks-text-label)", color: "#b91c1c", width: "100%" }}>{error}</span>}

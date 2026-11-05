@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Props = {
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -21,7 +22,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? <div>Something went wrong</div>;
+      return this.props.fallback ?? <div>{tr("Something went wrong")}</div>;
     }
 
     return this.props.children;

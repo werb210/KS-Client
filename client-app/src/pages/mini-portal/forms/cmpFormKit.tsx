@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useRef, type InputHTMLAttributes } from "react";
 import "./cmpForms.css";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
 /** Money field: decimal keypad on phones and a "$" in front of the value. */
@@ -328,18 +329,18 @@ export function AddressBlock({ idPrefix, legend, value, onChange, onBlur, testId
     <fieldset className="cmpf-address" data-testid={testId}>
       {legend && <legend className="cmpf-label cmpf-address-legend">{legend}</legend>}
       <div className="cmpf-address-street">
-        <label className="cmpf-label" htmlFor={id("street")}>Street</label>
+        <label className="cmpf-label" htmlFor={id("street")}>{tr("Street")}</label>
         <input id={id("street")} className="cmpf-input" autoComplete="address-line1" value={value.street} onChange={set("street")} onBlur={onBlur} />
       </div>
       <div className="cmpf-address-row">
         <div>
-          <label className="cmpf-label" htmlFor={id("city")}>City</label>
+          <label className="cmpf-label" htmlFor={id("city")}>{tr("City")}</label>
           <input id={id("city")} className="cmpf-input" autoComplete="address-level2" value={value.city} onChange={set("city")} onBlur={onBlur} />
         </div>
         <div>
           <label className="cmpf-label" htmlFor={id("region")}>{regionLabel}</label>
           <select id={id("region")} className="cmpf-select" autoComplete="address-level1" value={value.region} onChange={set("region")} onBlur={onBlur}>
-            <option value="">Select...</option>
+            <option value="">{tr("Select...")}</option>
             {!knownRegion && <option value={value.region}>{value.region}</option>}
             {country === "US" ? group("United States", US_STATES) : group("Canada", CA_PROVINCES)}
             {country === "US" ? group("Canada", CA_PROVINCES) : group("United States", US_STATES)}
@@ -352,11 +353,11 @@ export function AddressBlock({ idPrefix, legend, value, onChange, onBlur, testId
           <input id={id("postal")} className="cmpf-input" inputMode="text" autoComplete="postal-code" autoCapitalize="characters" value={value.postal} onChange={set("postal")} onBlur={onBlur} />
         </div>
         <div>
-          <label className="cmpf-label" htmlFor={id("country")}>Country</label>
+          <label className="cmpf-label" htmlFor={id("country")}>{tr("Country")}</label>
           <select id={id("country")} className="cmpf-select" autoComplete="country" value={country} onChange={set("country")} onBlur={onBlur}>
-            <option value="">Select...</option>
-            <option value="CA">Canada</option>
-            <option value="US">United States</option>
+            <option value="">{tr("Select...")}</option>
+            <option value="CA">{tr("Canada")}</option>
+            <option value="US">{tr("United States")}</option>
           </select>
         </div>
       </div>

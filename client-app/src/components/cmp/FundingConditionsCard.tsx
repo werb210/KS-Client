@@ -6,6 +6,7 @@ import { apiCall } from "@/api/client";
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export type ClientCondition = { id: string; title: string; description: string | null; due_date: string | null; status: string; requires_document: boolean; submitted: boolean };
 
 export function conditionsHeading(list: ClientCondition[]): string {
@@ -49,21 +50,21 @@ export default function FundingConditionsCard({ applicationId }: { applicationId
   if (!list.length) return null;
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-funding-conditions">
-      <div className="cmpx-eyebrow">Before your funding</div>
+      <div className="cmpx-eyebrow">{tr("Before your funding")}</div>
       <h2 style={{ margin: "4px 0 8px", fontSize: 18 }}>{conditionsHeading(list)}</h2>
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
         {list.map((c) => (
           <li key={c.id} style={{ borderTop: "1px solid rgba(127,127,127,0.25)", paddingTop: 10 }}>
             <div style={{ fontWeight: 700 }}>{c.title}</div>
             {c.description ? <div style={{ fontSize: 14, marginTop: 2 }}>{c.description}</div> : null}
-            {c.due_date ? <div style={{ fontSize: 13, marginTop: 2 }}>Needed by {c.due_date}</div> : null}
-            {c.submitted ? <div className="cmpx-note" role="status">Sent - your advisor is reviewing it.</div> : c.requires_document ? (
+            {c.due_date ? <div style={{ fontSize: 13, marginTop: 2 }}>{tr("Needed by {due_date}", { due_date: c.due_date })}</div> : null}
+            {c.submitted ? <div className="cmpx-note" role="status">{tr("Sent - your advisor is reviewing it.")}</div> : c.requires_document ? (
               <label className="cmpx-btn cmpx-btn--block" style={{ marginTop: 8, cursor: busy ? "default" : "pointer" }}>
-                {busy === c.id ? "Sending..." : "Upload the document"}
+                {busy === c.id ? tr("Sending...") : tr("Upload the document")}
                 <input type="file" style={{ display: "none" }} disabled={Boolean(busy)} onChange={(e) => { const f = e.target.files?.[0]; if (f) void send(c, f); }} />
               </label>
             ) : (
-              <button type="button" className="cmpx-btn cmpx-btn--block" style={{ marginTop: 8 }} disabled={Boolean(busy)} onClick={() => void send(c)}>{busy === c.id ? "Sending..." : "Mark as done"}</button>
+              <button type="button" className="cmpx-btn cmpx-btn--block" style={{ marginTop: 8 }} disabled={Boolean(busy)} onClick={() => void send(c)}>{busy === c.id ? tr("Sending...") : tr("Mark as done")}</button>
             )}
           </li>
         ))}

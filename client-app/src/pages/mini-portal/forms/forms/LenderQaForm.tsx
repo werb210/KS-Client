@@ -11,6 +11,7 @@ import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 // no local draft on top.
 import "../cmpForms.css";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Question = {
   id: string;
   position: number;
@@ -111,7 +112,7 @@ export default function LenderQaForm({
           ),
         );
       } catch {
-        if (alive) setErr("Could not load the questions. Please try again.");
+        if (alive) setErr(tr("Could not load the questions. Please try again."));
       } finally {
         if (alive) setLoading(false);
       }
@@ -167,7 +168,7 @@ export default function LenderQaForm({
       return !hasText && !hasDoc;
     });
     if (missing) {
-      setErr("Please answer every question before submitting.");
+      setErr(tr("Please answer every question before submitting."));
       return;
     }
     setSubmitting(true);
@@ -184,7 +185,7 @@ export default function LenderQaForm({
       await apiCall(`${base}/sets/${setId}/answers/submit`, { method: "POST", body: {} });
       onComplete();
     } catch {
-      setErr("Submit failed. Please try again.");
+      setErr(tr("Submit failed. Please try again."));
     } finally {
       setSubmitting(false);
     }
@@ -193,8 +194,8 @@ export default function LenderQaForm({
   if (loading) {
     return (
       <div className="cmpf">
-        <h2 style={styles.h2}>Lender questions</h2>
-        <div style={styles.ok}>Loading...</div>
+        <h2 style={styles.h2}>{tr("Lender questions")}</h2>
+        <div style={styles.ok}>{tr("Loading...")}</div>
       </div>
     );
   }
@@ -202,15 +203,15 @@ export default function LenderQaForm({
   if (questions.length === 0) {
     return (
       <div className="cmpf">
-        <h2 style={styles.h2}>Lender questions</h2>
-        <div style={styles.intro}>There are no questions to answer right now.</div>
+        <h2 style={styles.h2}>{tr("Lender questions")}</h2>
+        <div style={styles.intro}>{tr("There are no questions to answer right now.")}</div>
       </div>
     );
   }
 
   return (
     <div className="cmpf">
-      <h2 style={styles.h2}>Lender questions</h2>
+      <h2 style={styles.h2}>{tr("Lender questions")}</h2>
       <div style={styles.intro}>
         Please answer the questions below. Your answers are saved as you type; press Submit when you are done.
       </div>
@@ -223,22 +224,20 @@ export default function LenderQaForm({
             {i + 1}. {q.prompt}
           </div>
           {q.review_status === "rejected" && q.reject_reason ? (
-            <div style={styles.returned}>Please update this answer: {q.reject_reason}</div>
+            <div style={styles.returned}>{tr("Please update this answer: {reject_reason}", { reject_reason: q.reject_reason })}</div>
           ) : null}
           <textarea
             aria-label={`Answer to question ${i + 1}`}
             style={styles.textarea}
             value={answers[q.id] ?? ""}
-            placeholder="Type your answer..."
+            placeholder={tr("Type your answer...")}
             onChange={(e) => setAnswers((p) => ({ ...p, [q.id]: e.target.value }))}
             onBlur={(e) => autosave(q.id, e.target.value)}
           />
           {q.request_document ? (
-            <div style={styles.docNote}>
-              A supporting document is also requested. Attach a PDF, Word, Excel, or image file (max 25MB).
-              <div style={styles.upRow}>
+            <div style={styles.docNote}>{tr("A supporting document is also requested. Attach a PDF, Word, Excel, or image file (max 25MB).")}<div style={styles.upRow}>
                 <label style={styles.upLabel}>
-                  {uploadingDoc[q.id] ? "Uploading..." : docNames[q.id] ? "Replace file" : "Choose file"}
+                  {uploadingDoc[q.id] ? "Uploading..." : docNames[q.id] ? tr("Replace file") : tr("Choose file")}
                   <input
                     type="file"
                     accept={QA_UPLOAD_ACCEPT}
@@ -267,7 +266,7 @@ export default function LenderQaForm({
           disabled={submitting}
           onClick={() => void submit()}
         >
-          {submitting ? "Submitting..." : "Submit answers"}
+          {submitting ? tr("Submitting...") : tr("Submit answers")}
         </button>
       </div>
     </div>

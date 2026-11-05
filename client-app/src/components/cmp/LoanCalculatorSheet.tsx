@@ -7,6 +7,7 @@ import {
 } from "@/lib/loanCalculator/amortization";
 import { downloadFile, scheduleCsv, schedulePdf } from "@/lib/loanCalculator/exports";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 const C = { text: "#0B1F3A", muted: "#51617D", border: "#CBD5E1", surface: "#FFFFFF", tint: "#F5F8FC", primary: "#0B1F3A", onPrimary: "#FFFFFF", errBg: "#FEF2F2", errText: "#7F1D1D", errBorder: "#FECACA" };
 
 const overlay: CSSProperties = { position: "fixed", inset: 0, zIndex: 1000, background: "rgba(2, 6, 23, 0.55)", display: "flex", alignItems: "flex-end", justifyContent: "center" };
@@ -37,25 +38,24 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
   const result = useMemo(() => (errors.length ? null : amortize(loan)), [errors, loan]);
 
   return (
-    <div style={overlay} role="dialog" aria-modal="true" aria-label="Loan calculator" onClick={onClose}>
+    <div style={overlay} role="dialog" aria-modal="true" aria-label={tr("Loan calculator")} onClick={onClose}>
       <div style={panel} onClick={(e) => e.stopPropagation()} data-testid="loan-calculator">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <h2 style={{ margin: 0, fontSize: 20, color: C.text }}>Loan calculator</h2>
-          <button type="button" style={btn} onClick={onClose}>Close</button>
+          <h2 style={{ margin: 0, fontSize: 20, color: C.text }}>{tr("Loan calculator")}</h2>
+          <button type="button" style={btn} onClick={onClose}>{tr("Close")}</button>
         </div>
-        <p style={{ margin: "0 0 12px", fontSize: "var(--ks-text-body-sm)", color: C.muted }}>An estimate only. Your lender's offer sets the actual rate and payments.</p>
+        <p style={{ margin: "0 0 12px", fontSize: "var(--ks-text-body-sm)", color: C.muted }}>{tr("An estimate only. Your lender's offer sets the actual rate and payments.")}</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
-          <label style={label}>Amount ($)<input style={input} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label="Amount" /></label>
-          <label style={label}>Annual rate (%)<input style={input} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} aria-label="Annual rate" /></label>
-          <label style={label}>Term (months)<input style={input} inputMode="numeric" value={term} onChange={(e) => setTerm(e.target.value)} aria-label="Term in months" /></label>
-          <label style={label}>Frequency
-            <select style={input} value={frequency} onChange={(e) => setFrequency(e.target.value as Frequency)} aria-label="Frequency">
-              {FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
+          <label style={label}>{tr("Amount ($)")}<input style={input} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label={tr("Amount")} /></label>
+          <label style={label}>{tr("Annual rate (%)")}<input style={input} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} aria-label={tr("Annual rate")} /></label>
+          <label style={label}>{tr("Term (months)")}<input style={input} inputMode="numeric" value={term} onChange={(e) => setTerm(e.target.value)} aria-label={tr("Term in months")} /></label>
+          <label style={label}>{tr("Frequency")}<select style={input} value={frequency} onChange={(e) => setFrequency(e.target.value as Frequency)} aria-label={tr("Frequency")}>
+              {FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{tr(f.label)}</option>)}
             </select>
           </label>
-          <label style={label}>Down payment ($, optional)<input style={input} inputMode="decimal" value={down} onChange={(e) => setDown(e.target.value)} aria-label="Down payment" /></label>
-          <label style={label}>Balloon / residual ($, optional)<input style={input} inputMode="decimal" value={balloon} onChange={(e) => setBalloon(e.target.value)} aria-label="Balloon" /></label>
+          <label style={label}>{tr("Down payment ($, optional)")}<input style={input} inputMode="decimal" value={down} onChange={(e) => setDown(e.target.value)} aria-label={tr("Down payment")} /></label>
+          <label style={label}>{tr("Balloon / residual ($, optional)")}<input style={input} inputMode="decimal" value={balloon} onChange={(e) => setBalloon(e.target.value)} aria-label={tr("Balloon")} /></label>
         </div>
 
         {errors.length > 0 && (
@@ -82,8 +82,8 @@ export default function LoanCalculatorSheet({ onClose, initialAmount }: { onClos
             {result.balloon ? <p style={{ fontSize: "var(--ks-text-label)", color: C.muted, margin: "8px 0 0" }}>The last payment includes the {money(result.balloon)} balloon.</p> : null}
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-              <button type="button" style={{ ...btn, background: C.primary, color: C.onPrimary, borderColor: C.primary }} onClick={() => downloadFile(schedulePdf(loan, result), "loan-schedule.pdf", "application/pdf")}>Download PDF</button>
-              <button type="button" style={btn} onClick={() => downloadFile(scheduleCsv(loan, result), "loan-schedule.csv", "text/csv;charset=utf-8")}>Download spreadsheet</button>
+              <button type="button" style={{ ...btn, background: C.primary, color: C.onPrimary, borderColor: C.primary }} onClick={() => downloadFile(schedulePdf(loan, result), "loan-schedule.pdf", "application/pdf")}>{tr("Download PDF")}</button>
+              <button type="button" style={btn} onClick={() => downloadFile(scheduleCsv(loan, result), "loan-schedule.csv", "text/csv;charset=utf-8")}>{tr("Download spreadsheet")}</button>
             </div>
 
             <div style={{ marginTop: 12, maxHeight: 320, overflow: "auto", border: `1px solid ${C.border}`, borderRadius: 10 }}>

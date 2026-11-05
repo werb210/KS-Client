@@ -6,6 +6,7 @@ import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api
 // targets, pinned Submit, localStorage draft.
 import { MoneyInput, mergeDraft, readDraft, useFormDraft } from "../cmpFormKit";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 const FORM_KEY = "sba_form_1919";
 
 const QUESTIONS: Array<{ key: string; text: string }> = [
@@ -79,7 +80,7 @@ export default function Sba1919Form({ applicationId, onComplete }: { application
       // list, which shows the form as Completed.
       onComplete();
     } catch {
-      setError("We could not save that. Please try again, or call us on (866) 631-8939.");
+      setError(tr("We could not save that. Please try again, or call us on (866) 631-8939."));
     } finally { setSaving(false); }
   }
 
@@ -88,28 +89,28 @@ export default function Sba1919Form({ applicationId, onComplete }: { application
 
   return (
     <div className="cmpf" style={{ maxWidth: 760 }}>
-      <h3 style={{ marginTop: 0, fontSize: 20, color: "#0B1F3A" }}>SBA Borrower Information (Form 1919)</h3>
-      <p className="cmpf-intro">A yes to any of these does not stop the loan - SBA asks for the detail in an attachment, and we will handle that with you. Answers save as you go.</p>
-      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "16px 0 8px" }}>Jobs</div>
+      <h3 style={{ marginTop: 0, fontSize: 20, color: "#0B1F3A" }}>{tr("SBA Borrower Information (Form 1919)")}</h3>
+      <p className="cmpf-intro">{tr("A yes to any of these does not stop the loan - SBA asks for the detail in an attachment, and we will handle that with you. Answers save as you go.")}</p>
+      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "16px 0 8px" }}>{tr("Jobs")}</div>
       {[{ key: "fte_retained", label: "FTE jobs saved or retained because of this loan (including owners)" }, { key: "fte_created", label: "New FTE jobs created because of this loan (including owners)" }].map((f) => (
         <div key={f.key} className="cmpf-row" style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
-          <label htmlFor={`sba1919-${f.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{f.label}</label>
+          <label htmlFor={`sba1919-${f.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{tr(f.label)}</label>
           <span className="cmpf-row-field" style={{ width: 120, flex: "none" }}>
             <input id={`sba1919-${f.key}`} className="cmpf-input" type="number" inputMode="numeric" min="0" value={data[f.key] ?? ""} onChange={(e) => set(f.key, e.target.value)} onBlur={persist} style={{ textAlign: "right" }} />
           </span>
         </div>
       ))}
-      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "20px 0 8px" }}>What the loan is for</div>
+      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "20px 0 8px" }}>{tr("What the loan is for")}</div>
       {PURPOSES.map((p) => (
         <div key={p.key} className="cmpf-row" style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
-          <label htmlFor={`sba1919-${p.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{p.label}</label>
+          <label htmlFor={`sba1919-${p.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{tr(p.label)}</label>
           <span className="cmpf-row-field" style={{ width: 170, flex: "none" }}>
             <MoneyInput id={`sba1919-${p.key}`} placeholder="0" value={data[p.key] ?? ""} onChange={(e) => set(p.key, e.target.value)} onBlur={persist} style={{ textAlign: "right" }} />
           </span>
         </div>
       ))}
-      <div style={{ display: "flex", justifyContent: "space-between", background: "#F5F8FC", borderRadius: 8, padding: 10, marginTop: 8 }}><span style={{ fontSize: "var(--ks-text-body-sm)" }}>Total</span><strong>{purposeTotal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}</strong></div>
-      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "20px 0 8px" }}>Eligibility questions</div>
+      <div style={{ display: "flex", justifyContent: "space-between", background: "#F5F8FC", borderRadius: 8, padding: 10, marginTop: 8 }}><span style={{ fontSize: "var(--ks-text-body-sm)" }}>{tr("Total")}</span><strong>{purposeTotal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}</strong></div>
+      <div style={{ fontWeight: 600, color: "#0B1F3A", margin: "20px 0 8px" }}>{tr("Eligibility questions")}</div>
       {QUESTIONS.map((q) => (
         <div key={q.key} style={{ padding: "10px 0", borderBottom: "1px solid #E4EAF2" }}>
           <div style={{ fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A", marginBottom: 6 }}>{q.text}</div>
@@ -124,28 +125,26 @@ export default function Sba1919Form({ applicationId, onComplete }: { application
               <label style={{ display: "block", fontSize: "var(--ks-text-label)", color: "#51617D", marginBottom: 4 }}>
                 5.a Estimated total export sales this loan will support
               </label>
-              <MoneyInput placeholder="0" aria-label="5.a Estimated total export sales"
+              <MoneyInput placeholder="0" aria-label={tr("5.a Estimated total export sales")}
                 value={data.q5_export_sales ?? ""}
                 onChange={(e) => set("q5_export_sales", e.target.value)} onBlur={persist} />
               <label style={{ display: "block", fontSize: "var(--ks-text-label)", color: "#51617D", margin: "10px 0 4px" }}>
                 5.b Principal countries of export - list at least one
               </label>
-              <input className="cmpf-input" placeholder="United States, Mexico" aria-label="5.b Principal countries of export"
+              <input className="cmpf-input" placeholder={tr("United States, Mexico")} aria-label={tr("5.b Principal countries of export")}
                 value={data.q5_exports_detail ?? ""}
                 onChange={(e) => set("q5_exports_detail", e.target.value)} onBlur={persist} />
-              <div style={{ fontSize: "var(--ks-text-help)", color: "#51617D", marginTop: 4 }}>
-                Separate countries with commas. The form has room for three.
-              </div>
+              <div style={{ fontSize: "var(--ks-text-help)", color: "#51617D", marginTop: 4 }}>{tr("Separate countries with commas. The form has room for three.")}</div>
             </div>
           )}
-          {data[q.key] === "yes" && q.key !== "q5_exports" && <textarea className="cmpf-textarea" rows={2} placeholder="Please give us the detail - SBA needs it as an attachment." value={data[`${q.key}_detail`] ?? ""} onChange={(e) => set(`${q.key}_detail`, e.target.value)} onBlur={persist} style={{ marginTop: 6 }} />}
+          {data[q.key] === "yes" && q.key !== "q5_exports" && <textarea className="cmpf-textarea" rows={2} placeholder={tr("Please give us the detail - SBA needs it as an attachment.")} value={data[`${q.key}_detail`] ?? ""} onChange={(e) => set(`${q.key}_detail`, e.target.value)} onBlur={persist} style={{ marginTop: 6 }} />}
         </div>
       ))}
       {error ? <p style={{ color: "#B42318", fontSize: "var(--ks-text-body-sm)" }}>{error}</p> : null}
-      {done ? <p style={{ color: "#067647", fontSize: "var(--ks-text-body-sm)" }}>Saved. Reopen any time to change an answer.</p> : null}
+      {done ? <p style={{ color: "#067647", fontSize: "var(--ks-text-body-sm)" }}>{tr("Saved. Reopen any time to change an answer.")}</p> : null}
       <div className="cmpf-actions">
-        <button type="button" className="cmpf-primary" onClick={handleSubmit} disabled={saving}>{saving ? "Saving..." : "Submit"}</button>
-        <button type="button" className="cmpf-secondary" onClick={() => onComplete()}>Done</button>
+        <button type="button" className="cmpf-primary" onClick={handleSubmit} disabled={saving}>{saving ? tr("Saving...") : tr("Submit")}</button>
+        <button type="button" className="cmpf-secondary" onClick={() => onComplete()}>{tr("Done")}</button>
       </div>
     </div>
   );

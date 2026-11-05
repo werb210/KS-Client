@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { apiCall } from "@/api/client";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type HeldApp = { id: string; pipeline_state?: string | null; business_name?: string | null; product_category?: string | null; requested_amount?: number | string | null };
 
 type Props = {
@@ -36,7 +37,7 @@ export default function ReactivateHeldFiles({ apps, onReactivated, reactivate = 
       await reactivate(id);
       onReactivated(id);
     } catch {
-      setError("We couldn't reactivate that file. Please try again or message us.");
+      setError(tr("We couldn't reactivate that file. Please try again or message us."));
     } finally {
       setBusy(null);
     }
@@ -52,7 +53,7 @@ export default function ReactivateHeldFiles({ apps, onReactivated, reactivate = 
         >
           <div style={{ flex: 1, minWidth: 200, fontSize: "var(--ks-text-body-sm)" }}>
             <div style={{ fontWeight: 700 }}>{describe(a)} is on hold.</div>
-            <div>Ready to go again? Reactivate it and our team will review it.</div>
+            <div>{tr("Ready to go again? Reactivate it and our team will review it.")}</div>
           </div>
           <button
             type="button"
@@ -60,7 +61,7 @@ export default function ReactivateHeldFiles({ apps, onReactivated, reactivate = 
             onClick={() => void go(String(a.id))}
             style={{ padding: "8px 16px", fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#fff", background: "#1d4ed8", border: "none", borderRadius: 6, cursor: busy ? "default" : "pointer", opacity: busy && busy !== a.id ? 0.6 : 1 }}
           >
-            {busy === a.id ? "Reactivating\u2026" : "Reactivate this file"}
+            {busy === a.id ? tr("Reactivating\\u2026") : tr("Reactivate this file")}
           </button>
         </div>
       ))}

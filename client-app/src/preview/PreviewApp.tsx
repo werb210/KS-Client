@@ -9,6 +9,7 @@ import ErrorBoundary from "../app/ErrorBoundary";
 import FatalErrorScreen from "../app/FatalErrorScreen";
 import { PREVIEW_BANNER_TEXT } from "./mode";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export function PreviewBanner({ onRestart }: { onRestart?: () => void }) {
   return (
     <div
@@ -52,9 +53,7 @@ export function PreviewBanner({ onRestart }: { onRestart?: () => void }) {
             font: "600 12px/1.3 system-ui, -apple-system, sans-serif",
             cursor: "pointer",
           }}
-        >
-          Start again
-        </button>
+        >{tr("Start again")}</button>
       ) : null}
     </div>
   );

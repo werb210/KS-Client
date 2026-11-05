@@ -8,6 +8,7 @@
 // localStorage draft.
 import { useEffect, useState } from "react";
 import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { MoneyInput, mergeDraft, readDraft, useFormDraft, visibleCount } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
 
@@ -119,7 +120,7 @@ export default function EquipmentCollateralForm({
     }
   };
 
-  if (!loaded) return <div>Loading…</div>;
+  if (!loaded) return <div>{tr("Loading…")}</div>;
 
   const cols: Array<{ key: keyof EquipRow; label: string }> = [
     { key: "year", label: "Year" },
@@ -146,7 +147,7 @@ export default function EquipmentCollateralForm({
     };
     return (
       <div key={c.key}>
-        <label className="cmpf-label" htmlFor={id}>{c.label}</label>
+        <label className="cmpf-label" htmlFor={id}>{tr(c.label)}</label>
         {MONEY_COLS.has(c.key) ? <MoneyInput {...common} /> : (
           <input className="cmpf-input" inputMode={c.key === "year" ? "numeric" : undefined} {...common} />
         )}
@@ -156,13 +157,13 @@ export default function EquipmentCollateralForm({
 
   return (
     <div className="cmpf" onBlur={() => persist(data)}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Equipment Collateral</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Equipment Collateral")}</h2>
       <p className="cmpf-intro">
         List the equipment offered as collateral. Include any existing lien and balance owing so the net value is clear.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Submitted")}</span>}
       </p>
 
-      <label className="cmpf-label" htmlFor="equip-business-name">Business name</label>
+      <label className="cmpf-label" htmlFor="equip-business-name">{tr("Business name")}</label>
       <input id="equip-business-name" className="cmpf-input" style={{ maxWidth: 420 }} value={data.business_name}
         onChange={(e) => setData((d) => ({ ...d, business_name: e.target.value }))} />
 
@@ -175,30 +176,30 @@ export default function EquipmentCollateralForm({
             </div>
             {shown > 1 && (
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-                <button type="button" className="cmpf-remove" aria-label={`Remove item ${i + 1}`} onClick={() => removeRow(i)}>Remove</button>
+                <button type="button" className="cmpf-remove" aria-label={`Remove item ${i + 1}`} onClick={() => removeRow(i)}>{tr("Remove")}</button>
               </div>
             )}
           </div>
         ))}
       </div>
 
-      <button type="button" className="cmpf-add" onClick={addRow}>+ Add equipment</button>
+      <button type="button" className="cmpf-add" onClick={addRow}>{tr("+ Add equipment")}</button>
 
       <div className="cmpf-totals">
-        <div>Total estimated value: <strong>{money(totals.value)}</strong></div>
-        <div>Total balance owing: <strong>{money(totals.balance)}</strong></div>
-        <div>Total payments: <strong>{money(totals.payment)}</strong></div>
-        <div style={{ marginTop: 4 }}>Net equity: <strong>{money(totals.value - totals.balance)}</strong></div>
+        <div>{tr("Total estimated value:")}{" "}<strong>{money(totals.value)}</strong></div>
+        <div>{tr("Total balance owing:")}{" "}<strong>{money(totals.balance)}</strong></div>
+        <div>{tr("Total payments:")}{" "}<strong>{money(totals.payment)}</strong></div>
+        <div style={{ marginTop: 4 }}>{tr("Net equity:")}{" "}<strong>{money(totals.value - totals.balance)}</strong></div>
       </div>
 
-      <label className="cmpf-label" htmlFor="equip-notes">Notes</label>
+      <label className="cmpf-label" htmlFor="equip-notes">{tr("Notes")}</label>
       <textarea id="equip-notes" className="cmpf-textarea" value={data.notes} onChange={(e) => setData((d) => ({ ...d, notes: e.target.value }))} />
 
       {error && <p className="cmpf-error">{error}</p>}
 
       <div className="cmpf-actions">
         <button type="button" className="cmpf-primary" disabled={submitting} onClick={() => void handleSubmit()}>
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? tr("Submitting...") : tr("Submit")}
         </button>
       </div>
     </div>

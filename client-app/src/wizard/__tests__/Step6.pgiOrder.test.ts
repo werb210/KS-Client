@@ -16,7 +16,7 @@ describe("BF_CLIENT_WIZARD_STEP6_PGI_v61 — Step 6 section order", () => {
     // clause popups; the old checkbox-label markers no longer exist. Assert
     // the durable section order: PGI -> Terms heading -> signature -> submit.
     const pgi = src.indexOf("<PgiSection app={app} update={update} />");
-    const terms = src.indexOf("Terms & Conditions</h2>");
+    const terms = src.indexOf('{tr("Terms & Conditions")}</h2>'); // KS_CLIENT_LANGUAGES_v1
     const sig = src.indexOf("Typed signature");
     const submit = src.indexOf("Submit Application");
     expect(pgi).toBeGreaterThan(-1);

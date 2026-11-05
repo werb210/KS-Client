@@ -2,6 +2,7 @@
 // description and whether it is needed or done. Plus the branded call button (item 21).
 import { Icon } from "./icons";
 import "./cmp.css";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 export type CallState = "idle" | "connecting" | "ringing" | "connected" | "ended" | "failed";
@@ -26,19 +27,19 @@ export function CallControl({ state, error, onStart, onEnd, onReset, label = `Ca
   if (state === "connecting" || state === "ringing") {
     return (
       <div className="cmpx-callstate" role="status">
-        <span>{state === "connecting" ? "Connecting..." : "Ringing your advisor..."}</span>
-        <button type="button" className="cmpx-link" onClick={onEnd}>Cancel</button>
+        <span>{state === "connecting" ? tr("Connecting...") : tr("Ringing your advisor...")}</span>
+        <button type="button" className="cmpx-link" onClick={onEnd}>{tr("Cancel")}</button>
       </div>
     );
   }
   if (state === "connected") {
-    return <button type="button" className="cmpx-call cmpx-call--end" onClick={onEnd}><Icon name="phone" />Hang up</button>;
+    return <button type="button" className="cmpx-call cmpx-call--end" onClick={onEnd}><Icon name="phone" />{tr("Hang up")}</button>;
   }
   if (state === "failed") {
     return (
       <div className="cmpx-callstate" role="alert" style={{ background: "#FEF2F2", borderColor: "#FECACA", color: "#7F1D1D" }}>
         <span>{error ?? "The call didn't connect."}</span>
-        <button type="button" className="cmpx-link" style={{ color: "#7F1D1D" }} onClick={onReset}>Try again</button>
+        <button type="button" className="cmpx-link" style={{ color: "#7F1D1D" }} onClick={onReset}>{tr("Try again")}</button>
       </div>
     );
   }
@@ -71,15 +72,15 @@ export default function CmpMore(p: {
   return (
     <section className="cmp-phone-only" data-cmp-tab="more" data-testid="cmp-more">
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Documents</h2>
+        <h2 className="cmpx-group__title">{tr("Documents")}</h2>
         <div className="cmpx-list">
-          <Row icon="upload" title="Upload documents" desc="Scan with your camera or choose a file." onClick={p.onUpload} testId="cmp-more-upload"
-            right={p.docsStatus ? <span className={"cmpx-pill cmpx-pill--" + p.docsStatus}>{p.docsStatus === "needed" ? "Needed" : "Up to date"}</span> : null} />
+          <Row icon="upload" title={tr("Upload documents")} desc="Scan with your camera or choose a file." onClick={p.onUpload} testId="cmp-more-upload"
+            right={p.docsStatus ? <span className={"cmpx-pill cmpx-pill--" + p.docsStatus}>{p.docsStatus === "needed" ? tr("Needed") : tr("Up to date")}</span> : null} />
         </div>
       </div>
       {p.forms.length > 0 ? (
         <div className="cmpx-group">
-          <h2 className="cmpx-group__title">Forms</h2>
+          <h2 className="cmpx-group__title">{tr("Forms")}</h2>
           <div className="cmpx-list">
             {p.forms.map((f) => (
               <Row key={f.id} icon={FORM_INFO[f.id]?.icon ?? "doc"} title={f.label} desc={FORM_INFO[f.id]?.desc} onClick={() => p.onForm(f.id)} testId={"cmp-more-form-" + f.id}
@@ -90,16 +91,16 @@ export default function CmpMore(p: {
       ) : null}
       {/* BF_CLIENT_v807_MORE - Call, Book a call and Ask Maya are on Home (advisor card) and in Chat; not repeated here. */}
       <div className="cmpx-group">
-        <h2 className="cmpx-group__title">Applications</h2>
+        <h2 className="cmpx-group__title">{tr("Applications")}</h2>
         <div className="cmpx-list">
-          <Row icon="plus" title="Start a new application" desc="Apply for more funding or another product." onClick={p.onNewApplication} testId="cmp-more-new" />
+          <Row icon="plus" title={tr("Start a new application")} desc="Apply for more funding or another product." onClick={p.onNewApplication} testId="cmp-more-new" />
         </div>
       </div>
       {p.onCalculator ? (
         <div className="cmpx-group">
-          <h2 className="cmpx-group__title">Tools</h2>
+          <h2 className="cmpx-group__title">{tr("Tools")}</h2>
           <div className="cmpx-list">
-            <Row icon="calculator" title="Loan calculator" desc="Payments, interest and a full schedule for any amount." onClick={p.onCalculator} testId="cmp-more-calculator" />
+            <Row icon="calculator" title={tr("Loan calculator")} desc="Payments, interest and a full schedule for any amount." onClick={p.onCalculator} testId="cmp-more-calculator" />
           </div>
         </div>
       ) : null}

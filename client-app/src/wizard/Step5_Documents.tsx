@@ -52,6 +52,7 @@ import AccountantReferralModal, {
 } from "@/components/AccountantReferralModal";
 import { Capacitor } from "@capacitor/core";
 import { scanDocumentAsPdfWithQuality } from "../native/documentScanner";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { duplicateMessage, findUploadedDuplicate, fingerprintFile, isServerDuplicate, SERVER_DUPLICATE_MESSAGE } from "../lib/documentFingerprint"; // BF_CLIENT_DOCUMENT_DUPLICATE_CHECK_v258
 import { duplicateFromBody } from "../lib/duplicateUpload"; // BF_CLIENT_v848_DUPLICATE_UX
 
@@ -146,7 +147,7 @@ const RequirementRow = memo(function RequirementRow({
           <Checkbox checked={docStatus !== "missing"} readOnly />
         </label>
         <div style={{ ...components.form.helperText, fontSize: "var(--ks-text-help)" }}>
-          {entry.required ? "Required" : "Optional"} · {docStatus === "missing" ? "Missing" : "Uploaded"}
+          {entry.required ? tr("Required") : tr("Optional")} · {docStatus === "missing" ? tr("Missing") : tr("Uploaded")}
         </div>
         <Button
           type="button"
@@ -169,11 +170,9 @@ const RequirementRow = memo(function RequirementRow({
             onClick={() => onScan(docType)}
             style={{ width: "100%" }}
             aria-label={`Scan ${formatDocumentLabel(docType)}`}
-          >
-            Scan
-          </Button>
+          >{tr("Scan")}</Button>
         ) : null}
-        {isUploading ? <div style={components.form.helperText}>Upload progress: {progress}%</div> : null}
+        {isUploading ? <div style={components.form.helperText}>{tr("Upload progress: {progress}%", { progress: progress })}</div> : null}
         {app.documents[docType] && (() => {
           const files = ((app.documents[docType] as any)?.files) as Array<{ name: string }> | undefined;
           const list = files && files.length ? files : [{ name: app.documents[docType].name }];
@@ -187,7 +186,7 @@ const RequirementRow = memo(function RequirementRow({
           );
         })()}
         {docError && <div style={components.form.errorText}>{docError}</div>}
-        {!docError && submitAttempted && docStatus === "missing" && entry.required && <div style={components.form.errorText}>This document is required.</div>}
+        {!docError && submitAttempted && docStatus === "missing" && entry.required && <div style={components.form.errorText}>{tr("This document is required.")}</div>}
         {docStatus === "rejected" && <div style={components.form.errorText}>{getRejectionMessage(app.documents[docType])}</div>}
         {/* BF_CLIENT_DOC_QUALITY_v143 — advisory, never blocks submission. */}
         {docNotice && <div style={components.form.helperText} role="status">{docNotice}</div>}
@@ -220,9 +219,7 @@ function OptionSeparator() {
           textTransform: "uppercase",
           color: tokens.colors.textSecondary,
         }}
-      >
-        Or
-      </span>
+      >{tr("Or")}</span>
     </div>
   );
 }
@@ -953,13 +950,13 @@ function Step5DocumentsBody() {
   // BF_CLIENT_BLOCK_v_WIZARD_DIRECTION_A_FINISH_v1 — removed duplicate shell/heading.
   return (
     <WizardLayout>
-      <StepHeader step={5} title="Required Documents" subtitle="Add the files below. You can also finish these later from your portal." />
+      <StepHeader step={5} title={tr("Required Documents")} subtitle="Add the files below. You can also finish these later from your portal." />
 
       <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
         {isLoading && (
           <div style={{ display: "flex", alignItems: "center", gap: tokens.spacing.sm }}>
             <Spinner />
-            <span style={components.form.helperText}>Loading document requirements…</span>
+            <span style={components.form.helperText}>{tr("Loading document requirements…")}</span>
           </div>
         )}
         {docError && (
@@ -978,11 +975,7 @@ function Step5DocumentsBody() {
                 lineHeight: 1.6,
                 color: tokens.colors.textSecondary,
               }}
-            >
-              You have three options. You can supply documents now, supply them
-              later and finalize the application now, or have your accountant
-              upload the required documents.
-            </p>
+            >{tr("You have three options. You can supply documents now, supply them later and finalize the application now, or have your accountant upload the required documents.")}</p>
             {/* BF_CLIENT_BLOCK_v470_STEP5_SIDE_BY_SIDE - three options in one row. Supply
                 later goes straight to Step 6; the accountant option opens its form
                 and, once sent, also goes straight to Step 6. */}
@@ -1008,9 +1001,7 @@ function Step5DocumentsBody() {
                 onClick={() => setDocChoice("now")}
                 disabled={isLoading}
                 style={{ flex: "1 1 220px", maxWidth: "320px", minHeight: "64px", fontWeight: 600, border: `2px solid ${tokens.colors.primary}` }}
-              >
-                Upload my documents now
-              </Button>
+              >{tr("Upload my documents now")}</Button>
               <OptionSeparator />
               <Button
                 variant="secondary"
@@ -1018,9 +1009,7 @@ function Step5DocumentsBody() {
                 onClick={() => { void uploadLater(); }}
                 disabled={isLoading || hasUploadsInFlight}
                 style={{ flex: "1 1 220px", maxWidth: "320px", minHeight: "64px", fontWeight: 600, border: `2px solid ${tokens.colors.primary}` }}
-              >
-                I will supply all required documents at a later time
-              </Button>
+              >{tr("I will supply all required documents at a later time")}</Button>
               <OptionSeparator />
               {/* BF_CLIENT_STEP5_ACCOUNTANT_v1 */}
               <Button
@@ -1029,9 +1018,7 @@ function Step5DocumentsBody() {
                 onClick={() => setAccountantOpen(true)}
                 disabled={isLoading}
                 style={{ flex: "1 1 220px", maxWidth: "320px", minHeight: "64px", fontWeight: 600, border: `2px solid ${tokens.colors.primary}` }}
-              >
-                Have my accountant upload the documents
-              </Button>
+              >{tr("Have my accountant upload the documents")}</Button>
             </div>
             </div>
           </>
@@ -1039,19 +1026,13 @@ function Step5DocumentsBody() {
 
         {missingRequiredDocs.length > 0 && docChoice === "later" && (
           <div data-testid="step5-later" style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.md, alignItems: "center", textAlign: "center" }}>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: tokens.colors.textSecondary }}>
-              Your application will be finalized now without the documents. You can
-              upload them any time from your client portal, and we will remind you
-              which ones are still needed.
-            </p>
+            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: tokens.colors.textSecondary }}>{tr("Your application will be finalized now without the documents. You can upload them any time from your client portal, and we will remind you which ones are still needed.")}</p>
             <Button
               data-testid="step5-finalize-later"
               onClick={uploadLater}
               disabled={isLoading || hasUploadsInFlight}
               style={{ width: "100%", maxWidth: "420px", minHeight: "48px", fontWeight: 600 }}
-            >
-              Finalize my application
-            </Button>
+            >{tr("Finalize my application")}</Button>
           </div>
         )}
 
@@ -1061,9 +1042,7 @@ function Step5DocumentsBody() {
             data-testid="step5-change-option"
             onClick={() => setDocChoice(null)}
             style={{ alignSelf: "center", background: "none", border: "none", padding: 0, cursor: "pointer", color: tokens.colors.primary, textDecoration: "underline", fontSize: "var(--ks-text-body-sm)" }}
-          >
-            Choose a different option
-          </button>
+          >{tr("Choose a different option")}</button>
         )}
 
         <AccountantReferralModal
@@ -1082,9 +1061,7 @@ function Step5DocumentsBody() {
             data-error={true}
             style={{ background: "rgba(245, 158, 11, 0.12)" }}
           >
-            <div style={{ fontWeight: 600, marginBottom: tokens.spacing.xs }}>
-              Missing required documents:
-            </div>
+            <div style={{ fontWeight: 600, marginBottom: tokens.spacing.xs }}>{tr("Missing required documents:")}</div>
             <DocumentUploadList
               documents={missingRequiredDocs.map(formatDocumentLabel)}
             />
@@ -1120,7 +1097,7 @@ function Step5DocumentsBody() {
           {/* BF_CLIENT_BLOCK_v819_STEP5_OTHER — optional catch-all upload. Never required (does not
               gate Continue) and never OCR'd server-side; flows to the lender package once staff accept it. */}
           <div style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.sm }}>
-            <div style={{ fontWeight: 600, color: tokens.colors.textSecondary }}>Other (optional)</div>
+            <div style={{ fontWeight: 600, color: tokens.colors.textSecondary }}>{tr("Other (optional)")}</div>
             <RequirementRow
               key="other"
               entry={OTHER_DOCUMENT_ENTRY}
@@ -1146,17 +1123,13 @@ function Step5DocumentsBody() {
             variant="secondary"
             style={{ width: "100%", maxWidth: "160px" }}
             onClick={() => navigate("/apply/step-4")}
-          >
-            Back
-          </Button>
+          >{tr("Back")}</Button>
           {(missingRequiredDocs.length === 0 || docChoice === "now") && (
           <Button
             style={{ width: "100%", maxWidth: "220px" }}
             onClick={next}
             disabled={!canContinue}
-          >
-            Continue
-          </Button>
+          >{tr("Continue")}</Button>
           )}
           {/* BF_CLIENT_WIZARD_STEP5_DEFER_BTN_v59 — the old "Supply
             Documents Later" button that lived here was moved up to

@@ -8,6 +8,7 @@ import { brandName } from "@/config/brand";
 import type { ApplicationData, PgiDetails } from "../types/application";
 import { PGI_LOAN_TYPES, PGI_PARTNER_NAME } from "./pgi";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Props = { app: ApplicationData; update: (patch: Partial<ApplicationData>) => void };
 
 export function PgiSection({ app, update }: Props) {
@@ -34,10 +35,8 @@ export function PgiSection({ app, update }: Props) {
   );
   return (
     <div data-testid="step6-pgi-section">
-      <h2 style={components.form.sectionTitle}>Personal Guarantee Insurance (PGI)</h2>
-      <p style={{ ...components.form.helperText, marginTop: tokens.spacing.xs }}>
-        Most lenders ask for a personal guarantee - you are personally responsible if the business cannot repay. Personal Guarantee Insurance protects you if that happens.
-      </p>
+      <h2 style={components.form.sectionTitle}>{tr("Personal Guarantee Insurance (PGI)")}</h2>
+      <p style={{ ...components.form.helperText, marginTop: tokens.spacing.xs }}>{tr("Most lenders ask for a personal guarantee - you are personally responsible if the business cannot repay. Personal Guarantee Insurance protects you if that happens.")}</p>
       <div style={{ ...layout.stackTight, marginTop: tokens.spacing.sm }}>
         {([
           ["yes", "Yes, send me PGI details with my offers"],
@@ -61,9 +60,7 @@ export function PgiSection({ app, update }: Props) {
       </div>
       {app.pgiOptIn === "yes" && (
         <div data-testid="step6-pgi-details" style={{ ...layout.stackTight, marginTop: tokens.spacing.md, padding: tokens.spacing.md, borderRadius: tokens.radii.md, border: `1px solid ${tokens.colors.border}`, background: tokens.colors.surface }}>
-          <p style={{ ...components.form.helperText, margin: 0, color: tokens.colors.textPrimary }}>
-            {brandName()} arranges PGI through its insurance partner, {PGI_PARTNER_NAME}. These details help the insurer quote faster. They are all optional - you can skip them and finish later on the insurer's form.
-          </p>
+          <p style={{ ...components.form.helperText, margin: 0, color: tokens.colors.textPrimary }}>{tr("{brand} arranges PGI through its insurance partner, {PGI_PARTNER_NAME}. These details help the insurer quote faster. They are all optional - you can skip them and finish later on the insurer's form.", { brand: brandName(), PGI_PARTNER_NAME: PGI_PARTNER_NAME })}</p>
           {field("loan_type", "Type of loan", (
             <select
               id="pgi-loan_type"
@@ -72,7 +69,7 @@ export function PgiSection({ app, update }: Props) {
               onChange={(e) => set("loan_type", e.target.value)}
               style={{ ...components.inputs.base }}
             >
-              <option value="">Not sure</option>
+              <option value="">{tr("Not sure")}</option>
               {PGI_LOAN_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           ), "PGI covers commercial mortgages and other secured loans.")}
@@ -86,14 +83,12 @@ export function PgiSection({ app, update }: Props) {
             <Input id="pgi-guarantor_dob" type="date" value={details.guarantor_dob ?? ""} onChange={(e) => set("guarantor_dob", e.target.value)} />
           ))}
           {field("residential_address", "Your home address", (
-            <Input id="pgi-residential_address" value={details.residential_address ?? ""} onChange={(e) => set("residential_address", e.target.value)} placeholder="Street, city, province, postal code" />
+            <Input id="pgi-residential_address" value={details.residential_address ?? ""} onChange={(e) => set("residential_address", e.target.value)} placeholder={tr("Street, city, province, postal code")} />
           ))}
         </div>
       )}
       <details style={{ marginTop: tokens.spacing.sm }}>
-        <summary style={{ cursor: "pointer", color: tokens.colors.textSecondary, fontSize: tokens.typography.body.fontSize }}>
-          Learn more about PGI
-        </summary>
+        <summary style={{ cursor: "pointer", color: tokens.colors.textSecondary, fontSize: tokens.typography.body.fontSize }}>{tr("Learn more about PGI")}</summary>
         <p style={{ ...components.form.helperText, marginTop: tokens.spacing.xs }}>
           PGI is optional insurance that covers your personal guarantee if your business defaults on the loan. The insurer sets the price and the cover; you can still say no when you see the quote. Choosing PGI never holds up your loan application.
         </p>

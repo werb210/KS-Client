@@ -37,7 +37,7 @@ describe("v323 — DocPicker error surfacing (D)", () => {
 
 describe("v323 — Mobile header (A)", () => {
   it("LandingHeader has a hamburger button", () => {
-    expect(mobileHeader).toMatch(/aria-label="Toggle navigation menu"/);
+    expect(mobileHeader).toMatch(/aria-label=\{tr\("Toggle navigation menu"\)\}/); // KS_CLIENT_LANGUAGES_v1
   });
   it("44x44px touch target on hamburger", () => {
     expect(mobileHeader).toMatch(/h-11 w-11/);

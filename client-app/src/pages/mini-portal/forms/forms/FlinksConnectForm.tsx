@@ -11,6 +11,7 @@
 // render swaps — see the EMBED seam marked below.
 import { useEffect, useState } from "react";
 import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { readDraft, useFormDraft } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
 
@@ -83,27 +84,25 @@ export default function FlinksConnectForm({
 
   return (
     <div className="cmpf">
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Connect Your Bank (View-Only)</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Connect Your Bank (View-Only)")}</h2>
       <p className="cmpf-intro">
         Underwriting requires a secure, view-only connection to your business bank account. This is
         read-only - it cannot move money or make changes. The connection is provided by Flinks.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Confirmed</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Confirmed")}</span>}
       </p>
 
       {/* BF_CLIENT_v805_FORMS - no "tab" wording: in the app this is not a tab. */}
       <ol className="cmpf-steps">
-        <li>Tap <strong>Connect Bank</strong> below. A secure Flinks window opens.</li>
-        <li>Choose your bank, sign in, and select the account(s) to share (view-only).</li>
-        <li>When you see the success screen, come back here and confirm below.</li>
+        <li>{tr("Tap")}{" "}<strong>{tr("Connect Bank")}</strong>{" "}{tr("below. A secure Flinks window opens.")}</li>
+        <li>{tr("Choose your bank, sign in, and select the account(s) to share (view-only).")}</li>
+        <li>{tr("When you see the success screen, come back here and confirm below.")}</li>
       </ol>
 
       {/* EMBED seam — when Accord whitelists our domain + emits events to our
           origin, replace this button with an <iframe src={FLINKS_URL}/> and a
           window "message" listener that sets confirmed=true on the success
           event, then calls handleSubmit() automatically. */}
-      <button type="button" className="cmpf-cta" onClick={openFlinks}>
-        Connect Bank
-      </button>
+      <button type="button" className="cmpf-cta" onClick={openFlinks}>{tr("Connect Bank")}</button>
 
       {error && <p className="cmpf-error">{error}</p>}
 
@@ -114,7 +113,7 @@ export default function FlinksConnectForm({
           disabled={!opened}
           onChange={(e) => setConfirmed(e.target.checked)}
         />
-        <span>I have connected my business bank account (view-only) through Flinks.</span>
+        <span>{tr("I have connected my business bank account (view-only) through Flinks.")}</span>
       </label>
 
       <div className="cmpf-actions">
@@ -124,7 +123,7 @@ export default function FlinksConnectForm({
           disabled={submitting || !confirmed}
           onClick={() => void handleSubmit()}
         >
-          {submitting ? "Submitting..." : "Confirm Connection"}
+          {submitting ? tr("Submitting...") : tr("Confirm Connection")}
         </button>
       </div>
     </div>

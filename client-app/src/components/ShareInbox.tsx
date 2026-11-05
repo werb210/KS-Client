@@ -4,6 +4,7 @@ import { apiCall } from "@/api/client";
 import { getToken } from "@/auth/token";
 import { enqueueUploadFromFile, processQueue } from "@/lib/uploadQueue";
 import { SHARED_EVENT, takePendingShared } from "@/native/sharedFiles";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type App = { id: string; business_name?: string | null; product_category?: string | null };
 type Item = { key: string; kind: string; label: string };
 export type ShareDeps = {
@@ -72,35 +73,33 @@ export default function ShareInbox({ deps = defaultDeps }: { deps?: ShareDeps })
   return (
     <div style={box} role="dialog" aria-modal="true" data-testid="share-inbox">
       <div style={card}>
-        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>Add to your application</div>
+        <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>{tr("Add to your application")}</div>
         <div style={{ fontSize: "var(--ks-text-label)", color: "#475569", marginBottom: 14 }}>{names}</div>
         {!signedIn ? (
           <>
-            <p style={{ fontSize: "var(--ks-text-body-sm)" }}>Sign in first, then tap Continue.</p>
-            <button type="button" onClick={() => setSignedIn(deps.signedIn())}>Continue</button>
+            <p style={{ fontSize: "var(--ks-text-body-sm)" }}>{tr("Sign in first, then tap Continue.")}</p>
+            <button type="button" onClick={() => setSignedIn(deps.signedIn())}>{tr("Continue")}</button>
           </>
         ) : state === "sent" ? (
-          <p style={{ fontSize: 15, fontWeight: 600, color: "#15803d" }}>Sent. We'll let you know if anything else is needed.</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: "#15803d" }}>{tr("Sent. We'll let you know if anything else is needed.")}</p>
         ) : (
           <>
             {apps.length > 1 ? (
-              <label style={{ display: "block", fontSize: "var(--ks-text-label)", marginBottom: 10 }}>Application
-                <select value={appId} onChange={(e) => setAppId(e.target.value)} style={sel}>
+              <label style={{ display: "block", fontSize: "var(--ks-text-label)", marginBottom: 10 }}>{tr("Application")}<select value={appId} onChange={(e) => setAppId(e.target.value)} style={sel}>
                   {apps.map((a) => <option key={a.id} value={a.id}>{[a.business_name, a.product_category].filter(Boolean).join(" \u00b7 ") || a.id.slice(-8)}</option>)}
                 </select>
               </label>
             ) : null}
-            <label style={{ display: "block", fontSize: "var(--ks-text-label)", marginBottom: 14 }}>What is this?
-              <select aria-label="What is this?" value={docType} onChange={(e) => setDocType(e.target.value)} style={sel}>
-                {items.map((i) => <option key={i.key} value={i.key.replace(/^upload:/, "")}>{i.label}</option>)}
-                <option value={OTHER}>Something else</option>
+            <label style={{ display: "block", fontSize: "var(--ks-text-label)", marginBottom: 14 }}>{tr("What is this?")}<select aria-label={tr("What is this?")} value={docType} onChange={(e) => setDocType(e.target.value)} style={sel}>
+                {items.map((i) => <option key={i.key} value={i.key.replace(/^upload:/, "")}>{tr(i.label)}</option>)}
+                <option value={OTHER}>{tr("Something else")}</option>
               </select>
             </label>
-            {state === "error" ? <p role="alert" style={{ color: "#b91c1c", fontSize: "var(--ks-text-label)" }}>That didn't send. Please try again.</p> : null}
+            {state === "error" ? <p role="alert" style={{ color: "#b91c1c", fontSize: "var(--ks-text-label)" }}>{tr("That didn't send. Please try again.")}</p> : null}
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button type="button" onClick={close}>Cancel</button>
+              <button type="button" onClick={close}>{tr("Cancel")}</button>
               <button type="button" disabled={state === "sending" || !appId} onClick={() => void send()} style={{ fontWeight: 700 }}>
-                {state === "sending" ? "Sending\u2026" : "Send"}
+                {state === "sending" ? tr("Sending\\u2026") : tr("Send")}
               </button>
             </div>
           </>

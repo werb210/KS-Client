@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiCall } from "../api/client";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type ActionItem = {
   key: string;
   kind: "document" | "form" | "action";
@@ -49,7 +50,7 @@ function GroupedList({ title, items, onAction, testId }: { title: string; items:
         <div key={item.key} className="cmpx-todo__item">
           <span className="cmpx-todo__label">
             {item.label}
-            {item.urgent && item.kind === "document" ? <span className="cmpx-todo__warn">Needs re-uploading - the last one was not accepted</span> : null}
+            {item.urgent && item.kind === "document" ? <span className="cmpx-todo__warn">{tr("Needs re-uploading - the last one was not accepted")}</span> : null}
           </span>
           {onAction ? <button type="button" className="cmpx-todo__btn" onClick={() => onAction(item)}>{buttonLabel(item)}</button> : null}
         </div>
@@ -134,8 +135,8 @@ export default function ActionCenter({ applicationId, onAction, refreshKey, onDa
     if (!failed) return null;
     return (
       <div style={wrap} data-testid="action-center-failed">
-        <span style={{ color: "#b91c1c", fontWeight: 600 }}>We couldn't load your to-do list.</span>{" "}
-        <button type="button" onClick={() => void load()} style={{ marginLeft: 6, border: "1px solid #0B1F3A", background: "#fff", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>Try again</button>
+        <span style={{ color: "#b91c1c", fontWeight: 600 }}>{tr("We couldn't load your to-do list.")}</span>{" "}
+        <button type="button" onClick={() => void load()} style={{ marginLeft: 6, border: "1px solid #0B1F3A", background: "#fff", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>{tr("Try again")}</button>
       </div>
     );
   }
@@ -151,11 +152,11 @@ export default function ActionCenter({ applicationId, onAction, refreshKey, onDa
     return (
       <div style={wrap} data-testid="action-center">
         <div className="cmpx-todo__progress">
-          <h2 className="cmpx-todo__title">What you need to do</h2>
-          <span className="cmpx-todo__count" data-testid="action-center-progress">{data.completed.length} of {total} done</span>
+          <h2 className="cmpx-todo__title">{tr("What you need to do")}</h2>
+          <span className="cmpx-todo__count" data-testid="action-center-progress">{tr("{length} of {total} done", { length: data.completed.length, total: total })}</span>
         </div>
-        <GroupedList title="Documents" items={outstanding.filter((i) => i.kind === "document")} onAction={onAction} testId="action-center-docs" />
-        <GroupedList title="Forms" items={outstanding.filter((i) => i.kind !== "document")} onAction={onAction} testId="action-center-forms" />
+        <GroupedList title={tr("Documents")} items={outstanding.filter((i) => i.kind === "document")} onAction={onAction} testId="action-center-docs" />
+        <GroupedList title={tr("Forms")} items={outstanding.filter((i) => i.kind !== "document")} onAction={onAction} testId="action-center-forms" />
       </div>
     );
   }
@@ -163,7 +164,7 @@ export default function ActionCenter({ applicationId, onAction, refreshKey, onDa
   return (
     <div style={wrap} data-testid="action-center">
       <>
-          <div style={{ fontSize: 20, fontWeight: 600, color: "#111827" }}>What you need to do</div>
+          <div style={{ fontSize: 20, fontWeight: 600, color: "#111827" }}>{tr("What you need to do")}</div>
           <div style={{ fontSize: "var(--ks-text-body-sm)", color: "#6b7280", marginTop: 4, marginBottom: 16 }}>
             {outstanding.length} item{outstanding.length === 1 ? "" : "s"} remaining
           </div>
@@ -190,11 +191,9 @@ export default function ActionCenter({ applicationId, onAction, refreshKey, onDa
                 {i + 1}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, color: "#111827" }}>{item.label}</div>
+                <div style={{ fontSize: 15, color: "#111827" }}>{tr(item.label)}</div>
                 {item.urgent && item.kind === "document" && (
-                  <div style={{ fontSize: "var(--ks-text-label)", color: "#b91c1c", marginTop: 2 }}>
-                    Needs re-uploading — the last one was not accepted
-                  </div>
+                  <div style={{ fontSize: "var(--ks-text-label)", color: "#b91c1c", marginTop: 2 }}>{tr("Needs re-uploading — the last one was not accepted")}</div>
                 )}
               </div>
               {onAction && (
@@ -207,7 +206,7 @@ export default function ActionCenter({ applicationId, onAction, refreshKey, onDa
                     flexShrink: 0,
                   }}
                 >
-                  {item.kind === "document" ? "Upload" : item.key === "sign" ? "Sign" : item.kind === "form" ? "Fill in" : "Open"}
+                  {item.kind === "document" ? "Upload" : item.key === "sign" ? "Sign" : item.kind === "form" ? tr("Fill in") : tr("Open")}
                 </button>
               )}
             </div>

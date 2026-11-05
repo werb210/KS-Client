@@ -7,6 +7,7 @@ import { MonthYearSelect } from "@/wizard/MonthYearSelect";
 // later", so it gets no local draft on top.
 import { MoneyInput } from "../cmpFormKit";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export type ProductQuestion = {
   id: string; key: string; label: string;
   type: "text" | "yesno" | "money" | "month" | "yearmonth" | "number" | "select";
@@ -77,7 +78,7 @@ export default function ProductQuestionsForm({ applicationId, onComplete }: { ap
       setData(r);
       setAnswers(Object.fromEntries((r?.questions ?? []).map((q) => [q.id, q.value ?? ""])));
     } catch {
-      setError("We couldn't load your questions. Please try again in a moment.");
+      setError(tr("We couldn't load your questions. Please try again in a moment."));
     }
   }, [base]);
 
@@ -104,14 +105,14 @@ export default function ProductQuestionsForm({ applicationId, onComplete }: { ap
     } catch {
       if (submit) {
         await load();
-        setError("Some answers still need attention. Please check the highlighted questions.");
-      } else setError("We couldn't save your answers. Please try again.");
+        setError(tr("Some answers still need attention. Please check the highlighted questions."));
+      } else setError(tr("We couldn't save your answers. Please try again."));
     } finally { setBusy(false); }
   };
 
-  if (done) return <div className="cmpf"><h2 style={s.h2}>Thank you</h2><div style={s.done} data-testid="product-questions-done">Your answers are in. We'll send your application to lenders next.</div><div className="cmpf-actions"><button type="button" className="cmpf-primary" onClick={onComplete}>Close</button></div></div>;
+  if (done) return <div className="cmpf"><h2 style={s.h2}>{tr("Thank you")}</h2><div style={s.done} data-testid="product-questions-done">{tr("Your answers are in. We'll send your application to lenders next.")}</div><div className="cmpf-actions"><button type="button" className="cmpf-primary" onClick={onComplete}>{tr("Close")}</button></div></div>;
   if (!data) return <div>{error ?? "Loading your questions…"}</div>;
-  if (!data.set || data.questions.length === 0) return <div className="cmpf"><h2 style={s.h2}>Nothing to answer</h2><p style={s.intro}>There are no extra questions for your application right now.</p><div className="cmpf-actions"><button type="button" className="cmpf-primary" onClick={onComplete}>Close</button></div></div>;
+  if (!data.set || data.questions.length === 0) return <div className="cmpf"><h2 style={s.h2}>{tr("Nothing to answer")}</h2><p style={s.intro}>{tr("There are no extra questions for your application right now.")}</p><div className="cmpf-actions"><button type="button" className="cmpf-primary" onClick={onComplete}>{tr("Close")}</button></div></div>;
 
   const set = (id: string, value: string) => {
     setAnswers((a) => ({ ...a, [id]: value }));
@@ -122,7 +123,7 @@ export default function ProductQuestionsForm({ applicationId, onComplete }: { ap
     const style = { ...s.input, ...(highlight.has(q.id) ? s.missing : {}) };
     let control;
     if (q.type === "yesno") control = <div role="radiogroup" aria-label={q.label} style={{ display: "flex", gap: 8 }}>{["Yes", "No"].map((o) => <button key={o} type="button" role="radio" aria-checked={value === o} style={{ ...s.yn(value === o), ...(highlight.has(q.id) && !value ? { border: "1px solid #dc2626" } : {}) }} onClick={() => set(q.id, o)}>{o}</button>)}</div>;
-    else if (q.type === "select") control = <select aria-label={q.label} className="cmpf-select" value={value} onChange={(e) => set(q.id, e.target.value)} style={highlight.has(q.id) ? s.missing : undefined}><option value="">Select...</option>{(q.options ?? []).map((o) => <option key={o} value={o}>{o}</option>)}</select>;
+    else if (q.type === "select") control = <select aria-label={q.label} className="cmpf-select" value={value} onChange={(e) => set(q.id, e.target.value)} style={highlight.has(q.id) ? s.missing : undefined}><option value="">{tr("Select...")}</option>{(q.options ?? []).map((o) => <option key={o} value={o}>{o}</option>)}</select>;
     else if (q.type === "month" || q.type === "yearmonth") control = <MonthYearSelect ariaLabel={q.label} value={value} onChange={(v) => set(q.id, v)} monthOnly={q.type === "month"} yearsBack={q.type === "yearmonth" ? 80 : 5} yearsForward={q.type === "month" ? 5 : 0} />;
     else if (q.type === "money") control = <MoneyInput aria-label={q.label} value={value} onChange={(e) => set(q.id, e.target.value)} style={highlight.has(q.id) ? s.missing : undefined} />;
     else control = <input aria-label={q.label} inputMode={q.type === "number" ? "decimal" : undefined} value={value} onChange={(e) => set(q.id, e.target.value)} style={style} />;
@@ -130,10 +131,10 @@ export default function ProductQuestionsForm({ applicationId, onComplete }: { ap
   };
 
   return <div className="cmpf" data-testid="product-questions-form">
-    <h2 style={s.h2}>{data.setLabel} questions</h2>
-    <p style={s.intro}>A few more details are needed before we can send your {data.setLabel} application to lenders. Questions marked * are required.</p>
+    <h2 style={s.h2}>{tr("{setLabel} questions", { setLabel: data.setLabel })}</h2>
+    <p style={s.intro}>{tr("A few more details are needed before we can send your {setLabel} application to lenders. Questions marked * are required.", { setLabel: data.setLabel })}</p>
     {groups.map((g) => <section key={g.title} style={s.group}><div style={s.groupTitle}>{g.title}</div>{g.items.map(field)}</section>)}
     {error && <div role="alert" style={s.error}>{error}</div>}
-    <div className="cmpf-actions" style={{ justifyContent: "flex-end" }}><button type="button" className="cmpf-secondary" disabled={busy} onClick={() => void save(false)}>Save and finish later</button><button type="button" className="cmpf-primary" disabled={busy} onClick={() => void save(true)}>{busy ? "Sending..." : "Submit answers"}</button></div>
+    <div className="cmpf-actions" style={{ justifyContent: "flex-end" }}><button type="button" className="cmpf-secondary" disabled={busy} onClick={() => void save(false)}>{tr("Save and finish later")}</button><button type="button" className="cmpf-primary" disabled={busy} onClick={() => void save(true)}>{busy ? tr("Sending...") : tr("Submit answers")}</button></div>
   </div>;
 }

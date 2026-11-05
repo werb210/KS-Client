@@ -6,6 +6,7 @@ import { isStartupPathKyc } from "@/wizard/wizardSchema";
 import { useIsPhoneWidth } from "@/components/CmpPhone"; // BF_CLIENT_v802_WIZARD_PHONE
 import { Icon } from "@/components/cmp/icons"; // BF_CLIENT_v805_PHONE_FIXES
 import "@/components/cmp/cmp.css";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_BLOCK_v_WIZARD_DIRECTION_A_DESIGN_v1 — Direction A "Refined Cards":
@@ -103,7 +104,7 @@ export function StepHeader({ step, title, subtitle, totalSteps = 6 }: StepHeader
           })}
         </div>
 
-        <div style={{ ...components.form.eyebrow, marginBottom: tokens.spacing.xs }}>Step {step} of {totalSteps}</div>
+        <div style={{ ...components.form.eyebrow, marginBottom: tokens.spacing.xs }}>{tr("Step {step} of {totalSteps}", { step: step, totalSteps: totalSteps })}</div>
         <h1 style={{ ...components.form.title, marginBottom: subtitle ? 6 : 0 }}>{title}</h1>
         {subtitle && (
           <p style={{ margin: 0, marginBottom: tokens.spacing.md, color: tokens.colors.textSecondary, fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5 }}>{subtitle}</p>
