@@ -11,6 +11,7 @@ import "@/styles/container.css"; // BF_CLIENT_CHROME_v170
 import BrandLogo from "@/components/BrandLogo"; // KS_CLIENT_v4_BRANDING
 import { brandName } from "@/config/brand";
 import { isNativeApp } from "@/lib/platform";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 const NAV_ITEMS = [
@@ -106,9 +107,7 @@ export default function LandingHeader() {
             href="#apply-otp"
             className="rounded-full bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-500"
             data-testid="landing-cta-apply"
-          >
-            Apply Now
-          </a>
+          >{tr("Apply Now")}</a>
         </nav>
 
         <button
@@ -116,7 +115,7 @@ export default function LandingHeader() {
           aria-expanded={open}
           className="flex h-11 w-11 items-center justify-center rounded-md text-white md:hidden"
           onClick={() => setOpen((prev) => !prev)}
-          aria-label="Toggle navigation menu"
+          aria-label={tr("Toggle navigation menu")}
           data-testid="landing-mobile-toggle"
         >
           <MenuIcon open={open} />
@@ -128,21 +127,21 @@ export default function LandingHeader() {
           the header the containing block for position: fixed children, so the full-screen
           menu was squeezed into the 80px header and hidden behind the page. */}
       {open && typeof document !== "undefined" ? createPortal(
-        <div className="fixed inset-0 z-[1000] md:hidden" role="dialog" aria-modal="true" aria-label="Menu" data-testid="landing-mobile-menu">
+        <div className="fixed inset-0 z-[1000] md:hidden" role="dialog" aria-modal="true" aria-label={tr("Menu")} data-testid="landing-mobile-menu">
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={tr("Close menu")}
             className="absolute inset-0 bg-black/55"
             onClick={() => setOpen(false)}
           />
           <div className="absolute right-0 top-0 h-full w-[min(88vw,360px)] overflow-auto border-l border-white/10 bg-[#081325] p-6">
             <div className="mb-6 flex items-center justify-between">
-              <span className="text-lg font-semibold text-white">Menu</span>
+              <span className="text-lg font-semibold text-white">{tr("Menu")}</span>
               <button
                 type="button"
                 className="rounded-md p-2 text-white"
                 onClick={() => setOpen(false)}
-                aria-label="Close mobile navigation"
+                aria-label={tr("Close mobile navigation")}
               >
                 <MenuIcon open={true} />
               </button>
@@ -162,9 +161,7 @@ export default function LandingHeader() {
                 href="#apply-otp"
                 className="mt-2 inline-flex justify-center rounded-full bg-blue-600 px-5 py-3 font-medium text-white"
                 onClick={() => setOpen(false)}
-              >
-                Apply Now
-              </a>
+              >{tr("Apply Now")}</a>
             </nav>
           </div>
         </div>,

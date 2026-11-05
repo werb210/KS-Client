@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiCall } from "../api/client";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Session = { status: string; url?: string; signerName?: string | null; reason?: string };
 
 type Props = {
@@ -62,24 +63,24 @@ export default function FeeAgreementSignModal({ applicationId, open, onClose, on
   const close = () => { onClose(); void confirm(); };
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Sign your fee agreement" onClick={(e) => { if (e.target === e.currentTarget) close(); }}
+    <div role="dialog" aria-modal="true" aria-label={tr("Sign your fee agreement")} onClick={(e) => { if (e.target === e.currentTarget) close(); }}
       style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16 }}>
       <div style={{ background: "#fff", color: "#0b1320", borderRadius: 12, maxWidth: 900, width: "100%", height: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 10px 40px rgba(0,0,0,0.4)" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #e5e7eb" }}>
-          <div style={{ fontSize: 18, fontWeight: 600 }}>Sign Your Fee Agreement</div>
-          <button type="button" onClick={close} aria-label="Close" style={{ background: "transparent", border: 0, fontSize: 24, cursor: "pointer", color: "#334155", lineHeight: 1 }}>&times;</button>
+          <div style={{ fontSize: 18, fontWeight: 600 }}>{tr("Sign Your Fee Agreement")}</div>
+          <button type="button" onClick={close} aria-label={tr("Close")} style={{ background: "transparent", border: 0, fontSize: 24, cursor: "pointer", color: "#334155", lineHeight: 1 }}>&times;</button>
         </div>
         <div style={{ flex: 1, minHeight: 0 }}>
-          {loading && <div style={{ padding: 24 }}>Loading...</div>}
+          {loading && <div style={{ padding: 24 }}>{tr("Loading...")}</div>}
           {session?.status === "ready" && session.url && (
-            <iframe title="Sign your fee agreement" src={session.url} style={{ border: 0, width: "100%", height: "100%" }} />
+            <iframe title={tr("Sign your fee agreement")} src={session.url} style={{ border: 0, width: "100%", height: "100%" }} />
           )}
-          {session?.status === "signed" && <div style={{ padding: 24 }}>Your fee agreement is signed. Thank you!</div>}
+          {session?.status === "signed" && <div style={{ padding: 24 }}>{tr("Your fee agreement is signed. Thank you!")}</div>}
           {session?.status === "other_signer" && (
             <div style={{ padding: 24 }}>This agreement is signed by {session.signerName || "a director of your company"}. We have emailed them a link to sign.</div>
           )}
-          {session?.status === "none" && <div style={{ padding: 24 }}>There is no fee agreement to sign on this application.</div>}
-          {session?.status === "stub" && <div style={{ padding: 24 }}>Signing isn't enabled in this environment yet.</div>}
+          {session?.status === "none" && <div style={{ padding: 24 }}>{tr("There is no fee agreement to sign on this application.")}</div>}
+          {session?.status === "stub" && <div style={{ padding: 24 }}>{tr("Signing isn't enabled in this environment yet.")}</div>}
           {/* BF_CLIENT_FEE_REASON_v724 - say why, so the client (and staff on the phone) know what to fix. */}
           {session?.status === "error" && <div style={{ padding: 24 }}>We couldn't load your agreement. Please try again shortly, or call us at (866) 631-8939.{session.reason ? <div style={{ marginTop: 10, fontSize: "var(--ks-text-label)", color: "#51617D" }}>Reason: {feeReasonText(session.reason)}</div> : null}</div>}
         </div>

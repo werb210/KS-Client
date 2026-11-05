@@ -54,6 +54,7 @@ import ReportProblemSheet from "../components/cmp/ReportProblemSheet"; // BF_CLI
 import BookCallSheet from "../components/cmp/BookCallSheet";
 import { STAGE_STEPS, FUNDED_STEP, isFundedState, loadAdvisor, type Advisor } from "../components/cmp/cmpData";
 import { phoneFromToken } from "@/native/deviceSignIn";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
 import { SERVER_URL, WEBSITE_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
@@ -1003,10 +1004,10 @@ export default function MiniPortalPage() {
         <AccountBar />
         <div className="mp-root">
           <div data-testid="mp-app-gone" style={{ maxWidth: 520, margin: "32px auto", padding: 24, border: "1px solid #E4EAF2", borderRadius: 16, background: "#fff", textAlign: "center" }}>
-            <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#0B1F3A" }}>We can't find this application</h2>
-            <p style={{ margin: "0 0 16px", fontSize: 15, color: "#51617D" }}>It may have been closed or removed. If you have another application, choose it from the menu at the top.</p>
+            <h2 style={{ margin: "0 0 8px", fontSize: 20, color: "#0B1F3A" }}>{tr("We can't find this application")}</h2>
+            <p style={{ margin: "0 0 16px", fontSize: 15, color: "#51617D" }}>{tr("It may have been closed or removed. If you have another application, choose it from the menu at the top.")}</p>
             <button type="button" onClick={() => { startNewApplication(); navigate("/apply/step-1"); }}
-              style={{ minHeight: 48, padding: "0 20px", border: 0, borderRadius: 10, background: "#0B1F3A", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>Start a new application</button>
+              style={{ minHeight: 48, padding: "0 20px", border: 0, borderRadius: 10, background: "#0B1F3A", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>{tr("Start a new application")}</button>
           </div>
         </div>
       </>
@@ -1057,9 +1058,7 @@ export default function MiniPortalPage() {
               type="button"
               onClick={() => navigate(`/application/${encodeURIComponent(String(a.id))}?sign=1`)}
               style={{ padding: "8px 16px", fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", background: "#facc15", border: "none", borderRadius: 6, cursor: "pointer" }}
-            >
-              Sign now
-            </button>
+            >{tr("Sign now")}</button>
           </div>
         ))}
       {/* KS_CLIENT_v17_PARTNER_SIGNING - who this person is waiting for, or that they have signed */}
@@ -1071,7 +1070,7 @@ export default function MiniPortalPage() {
       {/* BF_CLIENT_BLOCK_v727_APP_SWITCHER_v1 — multiple application switcher */}
       {!isPhone && myApps.length > 1 && (
         <div style={{ margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <label htmlFor="mp-app-switch" style={{ fontSize: "var(--ks-text-label)", fontWeight: 600, color: "#475569" }}>Your applications</label>
+          <label htmlFor="mp-app-switch" style={{ fontSize: "var(--ks-text-label)", fontWeight: 600, color: "#475569" }}>{tr("Your applications")}</label>
           <select
             id="mp-app-switch"
             value={applicationId}
@@ -1101,11 +1100,11 @@ export default function MiniPortalPage() {
       {!isPhone ? (<>
       <header className="mp-app-header">
         <div className="mp-app-header__left">
-          <span className="mp-app-header__label">Application</span>
+          <span className="mp-app-header__label">{tr("Application")}</span>
           <span className="mp-app-header__id">{shortId || "—"}</span>
         </div>
         <div className="mp-app-header__right">
-          <span className="mp-app-header__stage-label">Stage</span>
+          <span className="mp-app-header__stage-label">{tr("Stage")}</span>
           <span className="mp-app-header__stage-value">{currentStageLabel}</span>
           {/* BF_CLIENT_BLOCK_v_ACCOUNT_DELETE_v1 — store-required account/data deletion */}
           <button
@@ -1113,16 +1112,14 @@ export default function MiniPortalPage() {
             className="mp-account-delete-link"
             onClick={() => { setDeleteErr(null); setDeleteStep(1); }}
             style={{ marginLeft: 16, background: "transparent", border: "none", color: "#6b7280", fontSize: "var(--ks-text-help)", textDecoration: "underline", cursor: "pointer", padding: 0 }}
-          >
-            Delete account
-          </button>
+          >{tr("Delete account")}</button>
         </div>
       </header>
-      <div className="mp-tracker" role="list" aria-label="Application progress">
+      <div className="mp-tracker" role="list" aria-label={tr("Application progress")}>
         {stageRow.map((s) => (
           <div key={s.key} role="listitem" className={`mp-stage ${s.completed ? "mp-stage--done" : ""} ${s.current ? "mp-stage--current" : ""}`}>
             <div className="mp-stage__bullet">{s.completed ? "✓" : ""}</div>
-            <div className="mp-stage__label">{s.label}</div>
+            <div className="mp-stage__label">{tr(s.label)}</div>
           </div>
         ))}
       </div>
@@ -1150,8 +1147,8 @@ export default function MiniPortalPage() {
       {/* BF_CLIENT_BOOK_CALL_v723 - book a 30-minute phone or Teams call with an advisor. */}
       {/* BF_CLIENT_v802_BOOK_IN_APP - opens the booking sheet here instead of the website. Phones book from the advisor card. */}
       {!isPhone ? <div data-testid="book-call" data-cmp-tab="home" style={{ margin: "0 0 16px", padding: "12px 16px", border: "1px solid #e5e7eb", borderRadius: 12, background: "#ffffff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <span style={{ color: "#0B1F3A", fontSize: 15 }}>Want to talk it through? Book a 30-minute call with an advisor.</span>
-        <button type="button" onClick={() => setBookOpen(true)} style={{ background: "#0B1F3A", color: "#ffffff", padding: "8px 16px", borderRadius: 8, fontWeight: 600, border: 0, cursor: "pointer", fontSize: 15 }}>Book a call</button>
+        <span style={{ color: "#0B1F3A", fontSize: 15 }}>{tr("Want to talk it through? Book a 30-minute call with an advisor.")}</span>
+        <button type="button" onClick={() => setBookOpen(true)} style={{ background: "#0B1F3A", color: "#ffffff", padding: "8px 16px", borderRadius: 8, fontWeight: 600, border: 0, cursor: "pointer", fontSize: 15 }}>{tr("Book a call")}</button>
       </div> : null}
       <div className={`mp-grid ${showOfferView ? "mp-grid--offers" : ""}`}>
         {/* BF_CLIENT_v802_ONE_THREAD - on a phone: one full-screen thread, Maya first, the advisor a tap away. */}
@@ -1167,7 +1164,7 @@ export default function MiniPortalPage() {
             sendToAdvisor={postToAdvisor} onCta={(a) => handleMessageCta(a)} inputRef={composerInputRef} bodyRef={threadBodyRef} />
         ) : (
         <section className="mp-thread-card" data-cmp-tab="chat">
-          <header className="mp-thread-card__header">Chat with {brandName()} Staff</header>
+          <header className="mp-thread-card__header">{tr("Chat with {brand} Staff", { brand: brandName() })}</header>
           <div className="mp-thread-card__body" ref={threadBodyRef}>
             {/* BF_CLIENT_TODO_ACTIONS_v637 - "Sign your application documents" is now a to-do item. */}
             {/* BF_CLIENT_ALL_RECEIVED_NOTE_v1 — positive confirmation once nothing is outstanding. */}
@@ -1179,11 +1176,9 @@ export default function MiniPortalPage() {
               // Only show it once staff have advanced the app past those stages.
               && stageIndex !== STAGE_BY_KEY.documents_required
               && stageIndex !== STAGE_BY_KEY.additional_steps_required ? (
-              <div data-testid="all-received-note" style={{ margin: "0 0 10px", padding: "10px 12px", background: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: 8, color: "#065f46", fontSize: "var(--ks-text-label)", fontWeight: 600 }}>
-                ✓ All required tasks and documents received — nothing outstanding right now.
-              </div>
+              <div data-testid="all-received-note" style={{ margin: "0 0 10px", padding: "10px 12px", background: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: 8, color: "#065f46", fontSize: "var(--ks-text-label)", fontWeight: 600 }}>{tr("✓ All required tasks and documents received — nothing outstanding right now.")}</div>
             ) : null}
-            {messages.length === 0 ? <div className="mp-thread-card__empty">Say hi to get started.</div> : messages.map((m) => {
+            {messages.length === 0 ? <div className="mp-thread-card__empty">{tr("Say hi to get started.")}</div> : messages.map((m) => {
               if (!hasOutstandingDocs && isDocUploadPrompt(m.ctaAction)) return null;
               // BF_CLIENT_BLOCK_v_STALE_TASK_PROMPT_GATE_v1
               if (pastAdditionalSteps && typeof m.body === "string" && /few quick steps to finish/i.test(m.body)) return null;
@@ -1215,9 +1210,7 @@ export default function MiniPortalPage() {
             })}
             {/* BF_CLIENT_BLOCK_v322_MINI_PORTAL_REALTIME_v1 — staff typing */}
             {staffTyping && (
-              <div style={{ fontSize: "var(--ks-text-help)", color: "#64748b", padding: "4px 0", fontStyle: "italic" }}>
-                Staff is typing…
-              </div>
+              <div style={{ fontSize: "var(--ks-text-help)", color: "#64748b", padding: "4px 0", fontStyle: "italic" }}>{tr("Staff is typing…")}</div>
             )}
           </div>
           {attachments.length > 0 && (
@@ -1248,7 +1241,7 @@ export default function MiniPortalPage() {
                       {o.amount ? `$${o.amount}` : "Offer"}
                     </span>
                     <span className="mp-offer-bubble__cta">
-                      {expired ? "Expired" : "View offer"}
+                      {expired ? tr("Expired") : tr("View offer")}
                     </span>
                   </button>
                 );
@@ -1257,7 +1250,7 @@ export default function MiniPortalPage() {
           )}
 
           <div className="mp-thread-card__composer" style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            <label style={{ cursor: "pointer", padding: "6px 8px", border: "1px solid #cbd6e2", borderRadius: 6, fontSize: "var(--ks-text-label)", background: "#fff" }} title="Attach a file (≤3MB)">
+            <label style={{ cursor: "pointer", padding: "6px 8px", border: "1px solid #cbd6e2", borderRadius: 6, fontSize: "var(--ks-text-label)", background: "#fff" }} title={tr("Attach a file (≤3MB)")}>
               📎
               <input
                 type="file"
@@ -1269,8 +1262,8 @@ export default function MiniPortalPage() {
                 }}
               />
             </label>
-            <input ref={composerInputRef} data-testid="mp-chat-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Send a message…" onKeyDown={(e) => { if (e.key === "Enter") void sendMessage(); }} style={{ flex: 1 }} />
-            <button onClick={() => void sendMessage()}>Send</button>
+            <input ref={composerInputRef} data-testid="mp-chat-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={tr("Send a message…")} onKeyDown={(e) => { if (e.key === "Enter") void sendMessage(); }} style={{ flex: 1 }} />
+            <button onClick={() => void sendMessage()}>{tr("Send")}</button>
           </div>
         </section>
         )}
@@ -1281,7 +1274,7 @@ export default function MiniPortalPage() {
         ) : (
         <aside className="mp-actions" data-cmp-tab="more">
             {/* BF_CLIENT_BLOCK_53_v1 -- 7-pill 2-col grid; no per-doc cards. */}
-            <header className="mp-actions__header">What's Next?</header>
+            <header className="mp-actions__header">{tr("What's Next?")}</header>
             <div className="mp-actions__chips">
               {ACTION_CHIPS
                 // BF_CLIENT_CMP_LAYOUT_v631 - always: Upload Documents, New Application, Personal Net
@@ -1294,13 +1287,9 @@ export default function MiniPortalPage() {
                 </button>
               ))}
               {/* BF_CLIENT_ASK_MAYA_v745 - Maya knows this client's applications, documents and details. */}
-              <button type="button" className="mp-chip mp-chip--action" data-testid="ask-maya" onClick={() => window.dispatchEvent(new CustomEvent("maya:open", { detail: { mode: "chat" } }))}>
-                Ask {assistantName()}
-              </button>
+              <button type="button" className="mp-chip mp-chip--action" data-testid="ask-maya" onClick={() => window.dispatchEvent(new CustomEvent("maya:open", { detail: { mode: "chat" } }))}>{tr("Ask {assistant}", { assistant: assistantName() })}</button>
               {/* KS_CLIENT_v13_LOAN_CALCULATOR */}
-              <button type="button" className="mp-chip mp-chip--action" data-testid="open-loan-calculator" onClick={() => setShowCalculator(true)}>
-                Loan calculator
-              </button>
+              <button type="button" className="mp-chip mp-chip--action" data-testid="open-loan-calculator" onClick={() => setShowCalculator(true)}>{tr("Loan calculator")}</button>
               {/* BF_CLIENT_BLOCK_v_HIDE_SIGNING_REASON_v1 — never surface the raw
                   signing-readiness status/reason (e.g. "lender_not_finalized") to the
                   client. Those are internal staff-workflow gates, not errors, and the
@@ -1330,16 +1319,16 @@ export default function MiniPortalPage() {
         )}
         {/* BF_CLIENT_OFFERS_MODAL_v1 - offers open in a full-width dialog so amounts are never clipped. */}
         {offersOpen && (
-          <div className="mp-offers-overlay" role="dialog" aria-modal="true" aria-label="Offers" onClick={() => setOffersOpen(false)}>
+          <div className="mp-offers-overlay" role="dialog" aria-modal="true" aria-label={tr("Offers")} onClick={() => setOffersOpen(false)}>
             <div className="mp-offers-dialog" onClick={(e) => e.stopPropagation()}>
               <header className="mp-offers-dialog__head">
-                <strong>Your offers</strong>
-                <button type="button" className="mp-offers-dialog__close" aria-label="Close" onClick={() => setOffersOpen(false)}>&times;</button>
+                <strong>{tr("Your offers")}</strong>
+                <button type="button" className="mp-offers-dialog__close" aria-label={tr("Close")} onClick={() => setOffersOpen(false)}>&times;</button>
               </header>
               {/* BF_CLIENT_v802_OFFERS_PHONE - on a phone two or more offers are compared in one table first. */}
               {isPhone && offers.length > 1 ? (
                 <table className="cmpx-compare" data-testid="offers-compare">
-                  <thead><tr><th scope="col">Lender</th><th scope="col">Amount</th><th scope="col">Rate</th><th scope="col">Term</th></tr></thead>
+                  <thead><tr><th scope="col">{tr("Lender")}</th><th scope="col">{tr("Amount")}</th><th scope="col">{tr("Rate")}</th><th scope="col">{tr("Term")}</th></tr></thead>
                   <tbody>{offers.map((o) => (
                     <tr key={o.id}><td>{o.lenderName}{o.recommended ? " *" : ""}</td><td>{o.amount ? "$" + o.amount : "\u2014"}</td><td>{o.rateOrFactor ?? "\u2014"}</td><td>{o.term ?? "\u2014"}</td></tr>
                   ))}</tbody>
@@ -1356,15 +1345,15 @@ export default function MiniPortalPage() {
                   const hours = safeHrs % 24;
                   return (
                     <article key={o.id} className={`mp-offer mp-offer--${exp}${expired ? " mp-offer--expired" : ""}`}>
-                      <header className="mp-offer__head"><strong>{o.lenderName}</strong>{o.recommended ? <span className="mp-offer__badge">Recommended</span> : null}</header>
+                      <header className="mp-offer__head"><strong>{o.lenderName}</strong>{o.recommended ? <span className="mp-offer__badge">{tr("Recommended")}</span> : null}</header>
                       <div className="mp-offer__amount">{o.amount ? `$${o.amount}` : "\u2014"}</div>
-                      <div className="mp-offer__subtitle">Offer Amount.</div>
+                      <div className="mp-offer__subtitle">{tr("Offer Amount.")}</div>
                       {isPhone ? (
                         <div className="mp-offer__keys">
-                          <div>{o.rateOrFactor?.includes("%") ? "Interest rate" : "Factor rate"}<strong>{o.rateOrFactor ?? "\u2014"}</strong></div>
-                          <div>Term<strong>{o.term ?? "\u2014"}</strong></div>
-                          <div>Payments<strong>{o.paymentFrequency ?? "\u2014"}</strong></div>
-                          <div>Expires<strong>{o.expiresAt ? (isOfferExpired(o.expiresAt) ? "Expired" : `${days}d ${hours}h`) : "\u2014"}</strong></div>
+                          <div>{o.rateOrFactor?.includes("%") ? tr("Interest rate") : tr("Factor rate")}<strong>{o.rateOrFactor ?? "\u2014"}</strong></div>
+                          <div>{tr("Term")}<strong>{o.term ?? "\u2014"}</strong></div>
+                          <div>{tr("Payments")}<strong>{o.paymentFrequency ?? "\u2014"}</strong></div>
+                          <div>{tr("Expires")}<strong>{o.expiresAt ? (isOfferExpired(o.expiresAt) ? "Expired" : `${days}d ${hours}h`) : "\u2014"}</strong></div>
                         </div>
                       ) : null}
                       <div className="mp-offer__meta">
@@ -1372,19 +1361,15 @@ export default function MiniPortalPage() {
                         <div className="mp-offer__meta-row">{o.term ?? "\u2014"} years | Term</div>
                         <div className="mp-offer__meta-row">{o.paymentFrequency ?? "\u2014"} payment</div>
                       </div>
-                      <div className="mp-offer__expires">Expires in {days} days, {hours} hours</div>
+                      <div className="mp-offer__expires">{tr("Expires in {days} days, {hours} hours", { days: days, hours: hours })}</div>
 
                       {/* BF_CLIENT_SIGNED_UPLOAD_PENDING_v5 - outside the
                           accept/pending branch, because signing and returning
                           happens AFTER acceptance, not instead of it. */}
-                      <div className="mp-signed-return">
-                        Download the term sheet, sign it, and send the signed copy back to us.
-                        <div className="mp-signed-return__actions">
-                          <button type="button" className="mp-btn mp-btn--ghost" onClick={() => void openTermSheet(o)}>
-                            Download term sheet
-                          </button>
+                      <div className="mp-signed-return">{tr("Download the term sheet, sign it, and send the signed copy back to us.")}<div className="mp-signed-return__actions">
+                          <button type="button" className="mp-btn mp-btn--ghost" onClick={() => void openTermSheet(o)}>{tr("Download term sheet")}</button>
                           <label className="mp-btn mp-btn--ghost" style={{ cursor: "pointer" }}>
-                            {signingOfferId === o.id ? "Sending…" : "Upload signed copy"}
+                            {signingOfferId === o.id ? tr("Sending…") : tr("Upload signed copy")}
                             <input
                               type="file"
                               accept="application/pdf,image/*"
@@ -1413,8 +1398,8 @@ export default function MiniPortalPage() {
                       ) : (
                         <div className="mp-offer__actions">
                           <button type="button" data-testid="view-pdf-link" className="mp-btn mp-btn--ghost" onClick={() => void openTermSheet(o)}>View PDF</button>
-                          <button type="button" data-testid="request-changes-btn" className="mp-btn mp-btn--secondary" disabled={offerBusy !== null} aria-busy={offerBusy?.id === o.id && offerBusy.action === "changes"} onClick={() => void requestChanges(o.id)}>{offerBusy?.id === o.id && offerBusy.action === "changes" ? "Sending..." : "Request Changes"}</button>
-                          <button type="button" data-testid="accept-offer-btn" className="mp-btn mp-btn--primary" disabled={offerBusy !== null} aria-busy={offerBusy?.id === o.id && offerBusy.action === "accept"} onClick={() => void acceptOffer(o.id)}>{offerBusy?.id === o.id && offerBusy.action === "accept" ? "Accepting..." : "Accept"}</button>
+                          <button type="button" data-testid="request-changes-btn" className="mp-btn mp-btn--secondary" disabled={offerBusy !== null} aria-busy={offerBusy?.id === o.id && offerBusy.action === "changes"} onClick={() => void requestChanges(o.id)}>{offerBusy?.id === o.id && offerBusy.action === "changes" ? tr("Sending...") : tr("Request Changes")}</button>
+                          <button type="button" data-testid="accept-offer-btn" className="mp-btn mp-btn--primary" disabled={offerBusy !== null} aria-busy={offerBusy?.id === o.id && offerBusy.action === "accept"} onClick={() => void acceptOffer(o.id)}>{offerBusy?.id === o.id && offerBusy.action === "accept" ? tr("Accepting...") : tr("Accept")}</button>
                         </div>
                       )}
                     </article>
@@ -1429,7 +1414,7 @@ export default function MiniPortalPage() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Application form"
+          aria-label={tr("Application form")}
           className="cmp-form-modal" /* BF_CLIENT_v805_PHONE_FIXES - full screen on a phone */
           onClick={(e) => { if (e.target === e.currentTarget) setOpenForm(null); }}
           style={{
@@ -1463,7 +1448,7 @@ export default function MiniPortalPage() {
               <button
                 type="button"
                 onClick={() => setOpenForm(null)}
-                aria-label="Close"
+                aria-label={tr("Close")}
                 style={{ background: "transparent", border: 0, fontSize: 24, cursor: "pointer", color: "#64748b", lineHeight: 1 }}
               >
                 ×
@@ -1554,22 +1539,22 @@ export default function MiniPortalPage() {
           style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16 }}>
           <div style={{ background: "#fff", color: "#0b1320", borderRadius: 12, maxWidth: 900, width: "100%", height: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 10px 40px rgba(0,0,0,0.4)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #e5e7eb" }}>
-              <div style={{ fontSize: 18, fontWeight: 600 }}>Sign Your Documents</div>
+              <div style={{ fontSize: 18, fontWeight: 600 }}>{tr("Sign Your Documents")}</div>
               {signSession?.status === "ready" && signSession.ownerLink ? ( /* KS_CLIENT_v17_PARTNER_SIGNING */
-                <a href={signSession.ownerLink} target="_blank" rel="noopener noreferrer" data-testid="cmp-sign-own-link" style={{ fontSize: 14, fontWeight: 600, color: "#1e3a8a", marginLeft: "auto", marginRight: 16 }}>Open in a new tab</a>
+                <a href={signSession.ownerLink} target="_blank" rel="noopener noreferrer" data-testid="cmp-sign-own-link" style={{ fontSize: 14, fontWeight: 600, color: "#1e3a8a", marginLeft: "auto", marginRight: 16 }}>{tr("Open in a new tab")}</a>
               ) : null}
-              <button type="button" onClick={() => { setShowSign(false); void markSigningComplete(); }} aria-label="Close" style={{ background: "transparent", border: 0, fontSize: 24, cursor: "pointer", color: "#64748b", lineHeight: 1 }}>×</button>
+              <button type="button" onClick={() => { setShowSign(false); void markSigningComplete(); }} aria-label={tr("Close")} style={{ background: "transparent", border: 0, fontSize: 24, cursor: "pointer", color: "#64748b", lineHeight: 1 }}>×</button>
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              {signLoading && !signSession && <div style={{ padding: 24 }}>Loading…</div>}
+              {signLoading && !signSession && <div style={{ padding: 24 }}>{tr("Loading…")}</div>}
               {signSession?.status === "ready" && signSession.url && (
-                <iframe title="Sign documents" src={signSession.url} style={{ border: 0, width: "100%", height: "100%" }} />
+                <iframe title={tr("Sign documents")} src={signSession.url} style={{ border: 0, width: "100%", height: "100%" }} />
               )}
               {/* KS_CLIENT_v17_PARTNER_SIGNING - signed / waiting for an earlier owner / not ready / not a signer, for whoever is signed in
                   (BF_CLIENT_BLOCK_PNW_ORDER_GATE_v1: the PNW statement is still signed first) */}
               {signingModalText(signSession) && signSession?.status !== "stub" && signSession?.status !== "error" ? <div style={{ padding: 24 }} data-testid="cmp-sign-text">{signingModalText(signSession)}</div> : null}
-              {signSession?.status === "stub" && <div style={{ padding: 24 }}>Signing isn’t enabled in this environment yet.</div>}
-              {signSession?.status === "error" && <div style={{ padding: 24 }}>We couldn’t load your signing session. Please try again shortly.</div>}
+              {signSession?.status === "stub" && <div style={{ padding: 24 }}>{tr("Signing isn’t enabled in this environment yet.")}</div>}
+              {signSession?.status === "error" && <div style={{ padding: 24 }}>{tr("We couldn’t load your signing session. Please try again shortly.")}</div>}
             </div>
           </div>
         </div>
@@ -1598,32 +1583,28 @@ export default function MiniPortalPage() {
           style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1200, padding: 20 }}
         >
           <div style={{ background: "var(--color-surface, #fff)", borderRadius: 14, maxWidth: 440, width: "100%", padding: 24, boxShadow: "0 20px 50px rgba(0,0,0,0.25)" }}>
-            <h2 style={{ margin: "0 0 12px", fontSize: 19, color: "#0f172a" }}>Delete your account?</h2>
+            <h2 style={{ margin: "0 0 12px", fontSize: 19, color: "#0f172a" }}>{tr("Delete your account?")}</h2>
             {deleteStep === 1 && (
               <>
-                <p style={{ margin: "0 0 20px", fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5, color: "#374151" }}>
-                  If you delete your account, any active applications will also be deleted. This cannot be undone.
-                </p>
+                <p style={{ margin: "0 0 20px", fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5, color: "#374151" }}>{tr("If you delete your account, any active applications will also be deleted. This cannot be undone.")}</p>
                 <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-                  <button type="button" onClick={() => setDeleteStep(0)} style={{ padding: "10px 16px", borderRadius: 10, border: "1.5px solid #e5e7eb", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer" }}>Keep my account</button>
-                  <button type="button" onClick={() => setDeleteStep(2)} style={{ padding: "10px 16px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Continue</button>
+                  <button type="button" onClick={() => setDeleteStep(0)} style={{ padding: "10px 16px", borderRadius: 10, border: "1.5px solid #e5e7eb", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer" }}>{tr("Keep my account")}</button>
+                  <button type="button" onClick={() => setDeleteStep(2)} style={{ padding: "10px 16px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>{tr("Continue")}</button>
                 </div>
               </>
             )}
             {deleteStep === 2 && (
               <>
-                <p style={{ margin: "0 0 16px", fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5, color: "#374151" }}>
-                  Once deleted, {brandName()} will not be allowed to communicate with you regarding lender communications, offers to finance, or to assist you with completing your funding.
-                </p>
+                <p style={{ margin: "0 0 16px", fontSize: "var(--ks-text-body-sm)", lineHeight: 1.5, color: "#374151" }}>{tr("Once deleted, {brand} will not be allowed to communicate with you regarding lender communications, offers to finance, or to assist you with completing your funding.", { brand: brandName() })}</p>
                 {deleteErr && <p style={{ margin: "0 0 12px", fontSize: "var(--ks-text-label)", color: "#dc2626" }}>{deleteErr}</p>}
                 <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-                  <button type="button" onClick={() => setDeleteStep(0)} style={{ padding: "10px 16px", borderRadius: 10, border: "1.5px solid #e5e7eb", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-                  <button type="button" onClick={() => void confirmDeleteAccount()} style={{ padding: "10px 16px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>Delete my account</button>
+                  <button type="button" onClick={() => setDeleteStep(0)} style={{ padding: "10px 16px", borderRadius: 10, border: "1.5px solid #e5e7eb", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer" }}>{tr("Cancel")}</button>
+                  <button type="button" onClick={() => void confirmDeleteAccount()} style={{ padding: "10px 16px", borderRadius: 10, border: "none", background: "#dc2626", color: "#fff", fontWeight: 600, cursor: "pointer" }}>{tr("Delete my account")}</button>
                 </div>
               </>
             )}
             {deleteStep === 3 && (
-              <p style={{ margin: 0, fontSize: "var(--ks-text-body-sm)", color: "#374151" }}>Deleting your account…</p>
+              <p style={{ margin: 0, fontSize: "var(--ks-text-body-sm)", color: "#374151" }}>{tr("Deleting your account…")}</p>
             )}
           </div>
         </div>

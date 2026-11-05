@@ -2,6 +2,7 @@ import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useState } from "react";
 import { tokens } from "@/styles";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_INSTALL_v177 - the wizard has a sticky action bar at the bottom of
@@ -37,7 +38,7 @@ export default function InstallPromptBanner() {
     >
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 600 }}>{t("install.banner")}</div>
-        <div style={{ fontSize: "var(--ks-text-label)", opacity: 0.85 }}>Faster access and offline support</div>
+        <div style={{ fontSize: "var(--ks-text-label)", opacity: 0.85 }}>{tr("Faster access and offline support")}</div>
       </div>
       <button
         onClick={() => setDismissed(true)}
@@ -50,9 +51,7 @@ export default function InstallPromptBanner() {
           minHeight: 40,
           cursor: "pointer",
         }}
-      >
-        Not now
-      </button>
+      >{tr("Not now")}</button>
       <button
         onClick={() => promptInstall()}
         style={{
@@ -65,9 +64,7 @@ export default function InstallPromptBanner() {
           fontWeight: 600,
           cursor: "pointer",
         }}
-      >
-        Install
-      </button>
+      >{tr("Install")}</button>
     </div>
   );
 }

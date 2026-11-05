@@ -8,6 +8,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 export type ChatAttachment = { name: string; contentType?: string | null; dataUrl?: string; url?: string };
@@ -105,7 +106,7 @@ export default function AuthorizedAttachment({ attachment: a, imageStyle, linkSt
 
   const kind = fetchedType ? attachmentKind(fetchedType) : attachmentKind(a.contentType);
   const label = kind === "audio" ? "Voicemail" : kind === "image" ? "Picture" : a.name || "File";
-  if (failed) return <span style={STATUS} data-testid="attachment-error">{label} couldn't load</span>;
+  if (failed) return <span style={STATUS} data-testid="attachment-error">{tr("{label} couldn't load", { label: label })}</span>;
   if (!objectUrl) return <span style={STATUS} data-testid="attachment-loading">{label}</span>;
   if (kind === "audio") {
     return <audio controls preload="metadata" src={objectUrl} style={AUDIO} aria-label={label} data-testid="attachment-audio" />;

@@ -36,7 +36,7 @@ describe("v463 step 5: choose first, then see only that path", () => {
     expect(src).toContain('Object.values(app.documents ?? {}).some(Boolean) ? "now" : null');
   });
   it("Continue belongs to the upload path only", () => {
-    const cont = src.lastIndexOf(">\n            Continue\n");
+    const cont = src.lastIndexOf('{tr("Continue")}'); // KS_CLIENT_LANGUAGES_v1 - visible text goes through tr()
     const gate = src.lastIndexOf('(missingRequiredDocs.length === 0 || docChoice === "now") && (', cont);
     expect(gate).toBeGreaterThan(src.indexOf("stickyCta"));
   });

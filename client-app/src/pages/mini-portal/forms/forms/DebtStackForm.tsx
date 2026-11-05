@@ -7,6 +7,7 @@
 // keypads, pinned Submit, and a localStorage draft.
 import { useEffect, useState } from "react";
 import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { MoneyInput, mergeDraft, readDraft, useFormDraft, visibleCount } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
 
@@ -114,7 +115,7 @@ export default function DebtStackForm({
     }
   };
 
-  if (!loaded) return <div>Loading…</div>;
+  if (!loaded) return <div>{tr("Loading…")}</div>;
 
   const cols: Array<{ key: keyof DebtRow; label: string }> = [
     { key: "lender", label: "Lender / creditor" },
@@ -137,7 +138,7 @@ export default function DebtStackForm({
     };
     return (
       <div key={c.key}>
-        <label className="cmpf-label" htmlFor={id}>{c.label}</label>
+        <label className="cmpf-label" htmlFor={id}>{tr(c.label)}</label>
         {MONEY_COLS.has(c.key) ? <MoneyInput {...common} /> : (
           <input className="cmpf-input" inputMode={c.key === "rate" ? "decimal" : undefined} {...common} />
         )}
@@ -147,13 +148,13 @@ export default function DebtStackForm({
 
   return (
     <div className="cmpf" onBlur={() => persist(data)}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Debt Schedule</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Debt Schedule")}</h2>
       <p className="cmpf-intro">
         List the business's existing debts and obligations (term loans, lines of credit, leases, etc.).
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Submitted")}</span>}
       </p>
 
-      <label className="cmpf-label" htmlFor="debt-client-name">Business / client name</label>
+      <label className="cmpf-label" htmlFor="debt-client-name">{tr("Business / client name")}</label>
       <input id="debt-client-name" className="cmpf-input" style={{ maxWidth: 420 }} value={data.client_name}
         onChange={(e) => setData((d) => ({ ...d, client_name: e.target.value }))} />
 
@@ -166,28 +167,28 @@ export default function DebtStackForm({
             </div>
             {shown > 1 && (
               <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-                <button type="button" className="cmpf-remove" aria-label={`Remove debt ${i + 1}`} onClick={() => removeRow(i)}>Remove</button>
+                <button type="button" className="cmpf-remove" aria-label={`Remove debt ${i + 1}`} onClick={() => removeRow(i)}>{tr("Remove")}</button>
               </div>
             )}
           </div>
         ))}
       </div>
 
-      <button type="button" className="cmpf-add" onClick={addRow}>+ Add debt</button>
+      <button type="button" className="cmpf-add" onClick={addRow}>{tr("+ Add debt")}</button>
 
       <div className="cmpf-totals">
-        <div>Total balance: <strong>{money(totals.balance)}</strong></div>
-        <div>Total monthly payments: <strong>{money(totals.monthly)}</strong></div>
+        <div>{tr("Total balance:")}{" "}<strong>{money(totals.balance)}</strong></div>
+        <div>{tr("Total monthly payments:")}{" "}<strong>{money(totals.monthly)}</strong></div>
       </div>
 
-      <label className="cmpf-label" htmlFor="debt-notes">Notes</label>
+      <label className="cmpf-label" htmlFor="debt-notes">{tr("Notes")}</label>
       <textarea id="debt-notes" className="cmpf-textarea" value={data.notes} onChange={(e) => setData((d) => ({ ...d, notes: e.target.value }))} />
 
       {error && <p className="cmpf-error">{error}</p>}
 
       <div className="cmpf-actions">
         <button type="button" className="cmpf-primary" disabled={submitting} onClick={() => void handleSubmit()}>
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? tr("Submitting...") : tr("Submit")}
         </button>
       </div>
     </div>

@@ -45,6 +45,7 @@ import { shouldAutoAdvance } from "../utils/autoadvance";
 import { persistApplicationStep } from "./saveStepProgress";
 import { isAccordLOCApp } from "./accordRisk";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export function Step3_Business() {
   const { app, update, autosaveError } = useApplicationStore();
   // BF_CLIENT_SBA_REDUCED_v191 - start-ups have no operating history to report.
@@ -237,16 +238,16 @@ export function Step3_Business() {
       (field) => !(onMediaPath && MEDIA_SKIP.has(field)) && !Validate.required(nextValues[field])
     );
     if (missing) {
-      setSaveError("Please complete all required business details.");
+      setSaveError(tr("Please complete all required business details."));
       return;
     }
     if (!onSbaStartupPath && !Validate.phone(nextValues.phone)) {
-      setSaveError("Please enter a valid 10-digit phone number for the business.");
+      setSaveError(tr("Please enter a valid 10-digit phone number for the business."));
       return;
     }
     // BF_CLIENT_BLOCK_v300_ACCORD_LOC_STEP3_v1
     if (!onSbaStartupPath && !accordRequirementsMet(nextValues)) {
-      setSaveError("Please complete all required Accord line-of-credit details.");
+      setSaveError(tr("Please complete all required Accord line-of-credit details."));
       return;
     }
 
@@ -331,7 +332,7 @@ export function Step3_Business() {
       <style>{`.wizard-step-shell label{display:block;font-size:var(--ks-text-label);font-weight:500;color:#374151;margin-bottom:6px}.wizard-step-shell input,.wizard-step-shell select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:var(--ks-text-body-sm);color:#111827;background:#fff;box-sizing:border-box}.wizard-step-shell select{appearance:none;cursor:pointer}`}</style>
     <WizardLayout>
       <div className="wizard-step-shell">
-      <StepHeader step={3} title="Business Details" subtitle="Legal information about your company." />
+      <StepHeader step={3} title={tr("Business Details")} subtitle="Legal information about your company." />
       {saveError && (
         <Card variant="muted" data-error={true}>
           <div style={components.form.errorText}>{saveError}</div>
@@ -388,9 +389,7 @@ export function Step3_Business() {
               20%+ owner, so they belong on Step 4 beside SSN and date of birth. */}
           {onSbaStartupPath && (
             <div style={{ gridColumn: "1 / -1" }}>
-              <div style={{ ...components.form.eyebrow, marginBottom: tokens.spacing.sm }}>
-                SBA loan questions
-              </div>
+              <div style={{ ...components.form.eyebrow, marginBottom: tokens.spacing.sm }}>{tr("SBA loan questions")}</div>
               <div
                 style={{
                   display: "grid",
@@ -401,7 +400,7 @@ export function Step3_Business() {
                 }}
               >
                 <div>
-                  <label style={components.form.label}>Business EIN</label>
+                  <label style={components.form.label}>{tr("Business EIN")}</label>
                   <Input
                     inputMode="numeric"
                     placeholder="12-3456789"
@@ -411,7 +410,7 @@ export function Step3_Business() {
                 </div>
 
                 <div>
-                  <label style={components.form.label}>Industry (NAICS code)</label>
+                  <label style={components.form.label}>{tr("Industry (NAICS code)")}</label>
                   <NaicsPicker
                     value={values.naicsCode || ""}
                     title={values.naicsTitle || ""}
@@ -423,7 +422,7 @@ export function Step3_Business() {
                 </div>
 
                 <div>
-                  <label style={components.form.label}>Year began operations</label>
+                  <label style={components.form.label}>{tr("Year began operations")}</label>
                   <Input
                     inputMode="numeric"
                     placeholder="2026"
@@ -433,7 +432,7 @@ export function Step3_Business() {
                 </div>
 
                 <div>
-                  <label style={components.form.label}>Number of employees (including owners)</label>
+                  <label style={components.form.label}>{tr("Number of employees (including owners)")}</label>
                   <Input
                     type="number"
                     min="0"
@@ -445,34 +444,26 @@ export function Step3_Business() {
                 {/* 1919 Q4. SBA's own wording: a Yes means the applicant is not
                     eligible for SBA financial assistance. No lender discretion. */}
                 <div>
-                  <label style={components.form.label}>
-                    Is the applicant, or any associate of the applicant, currently
-                    incarcerated, serving a sentence, or under indictment for a felony
-                    or any crime involving financial misconduct or a false statement?
-                  </label>
+                  <label style={components.form.label}>{tr("Is the applicant, or any associate of the applicant, currently incarcerated, serving a sentence, or under indictment for a felony or any crime involving financial misconduct or a false statement?")}</label>
                   <Select
                     value={values.sbaQ4Criminal || ""}
                     onChange={(e) => setField("sbaQ4Criminal", e.target.value)}
                   >
-                    <option value="">Select...</option>
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
+                    <option value="">{tr("Select...")}</option>
+                    <option value="no">{tr("No")}</option>
+                    <option value="yes">{tr("Yes")}</option>
                   </Select>
                   {values.sbaQ4Criminal === "yes" && (
                     <>
-                      <div style={{ ...components.form.errorText, marginTop: 6 }}>
-                        SBA rules make an applicant in this position ineligible for 7(a)
-                        assistance. Carry on if you like and we will look at other options,
-                        but we cannot place this as an SBA loan.
-                      </div>
+                      <div style={{ ...components.form.errorText, marginTop: 6 }}>{tr("SBA rules make an applicant in this position ineligible for 7(a) assistance. Carry on if you like and we will look at other options, but we cannot place this as an SBA loan.")}</div>
                       {/* BF_CLIENT_SBA_YES_DETAIL_v214 - collected here rather than
                           as a nameless upload in the mini-portal days later. */}
                       <div style={{ marginTop: 8 }}>
-                        <label style={components.form.label}>Please give the details</label>
+                        <label style={components.form.label}>{tr("Please give the details")}</label>
                         <textarea
                           value={values.sbaQ4CriminalDetail || ""}
                           onChange={(e) => setField("sbaQ4CriminalDetail", e.target.value)}
-                          placeholder="Charge or offence, date, jurisdiction, and current status"
+                          placeholder={tr("Charge or offence, date, jurisdiction, and current status")}
                           rows={3}
                           style={{ ...components.inputs.base, width: "100%", resize: "vertical", fontFamily: "inherit" }}
                         />
@@ -483,17 +474,14 @@ export function Step3_Business() {
 
                 {/* 1919 applicant certification. */}
                 <div>
-                  <label style={components.form.label}>
-                    Is the business at least 51% owned and controlled by US citizens or
-                    Lawful Permanent Residents?
-                  </label>
+                  <label style={components.form.label}>{tr("Is the business at least 51% owned and controlled by US citizens or Lawful Permanent Residents?")}</label>
                   <Select
                     value={values.sbaCitizenOwned || ""}
                     onChange={(e) => setField("sbaCitizenOwned", e.target.value)}
                   >
-                    <option value="">Select...</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
+                    <option value="">{tr("Select...")}</option>
+                    <option value="yes">{tr("Yes")}</option>
+                    <option value="no">{tr("No")}</option>
                   </Select>
                 </div>
               </div>
@@ -501,7 +489,7 @@ export function Step3_Business() {
           )}
 
           <div>
-            <label style={components.form.label}>Business Name (DBA)</label>
+            <label style={components.form.label}>{tr("Business Name (DBA)")}</label>
             <Input
               id={getWizardFieldId("step3", "businessName")}
               autoComplete="section-business organization"
@@ -529,7 +517,7 @@ export function Step3_Business() {
           <div>
             {/* BF_CLIENT_v66_STEP3_LEGAL_OPTIONAL — legal name is optional now;
               if blank on continue we copy the DBA/business name into it. */}
-            <label style={components.form.label}>Business Legal Name (if applicable)</label>
+            <label style={components.form.label}>{tr("Business Legal Name (if applicable)")}</label>
             <Input autoComplete="section-business organization"
               id={getWizardFieldId("step3", "legalName")}
               value={values.legalName || ""}
@@ -544,7 +532,7 @@ export function Step3_Business() {
           </div>
 
           <div>
-            <label style={components.form.label}>Business Structure</label>
+            <label style={components.form.label}>{tr("Business Structure")}</label>
             <Select
               id={getWizardFieldId("step3", "businessStructure")}
               value={values.businessStructure || ""}
@@ -557,18 +545,18 @@ export function Step3_Business() {
                 handleAutoAdvance("businessStructure", nextValues);
               }}
             >
-              <option value="">Select…</option>
-              <option value="Sole Proprietorship">Sole Proprietorship</option>
-              <option value="Partnership">Partnership</option>
-              <option value="LLC">LLC</option>
-              <option value="Corporation">Corporation</option>
-              <option value="S Corporation">S Corporation</option>
-              <option value="Non-Profit">Non-Profit</option>
+              <option value="">{tr("Select…")}</option>
+              <option value="Sole Proprietorship">{tr("Sole Proprietorship")}</option>
+              <option value="Partnership">{tr("Partnership")}</option>
+              <option value="LLC">{tr("LLC")}</option>
+              <option value="Corporation">{tr("Corporation")}</option>
+              <option value="S Corporation">{tr("S Corporation")}</option>
+              <option value="Non-Profit">{tr("Non-Profit")}</option>
             </Select>
           </div>
 
           <div>
-            <label style={components.form.label}>Business Address</label>
+            <label style={components.form.label}>{tr("Business Address")}</label>
             <AddressAutocompleteInput autoComplete="section-business address-line1"
               id={getWizardFieldId("step3", "address")}
               country={regionCountry}
@@ -600,7 +588,7 @@ export function Step3_Business() {
           </div>
 
           <div>
-            <label style={components.form.label}>City</label>
+            <label style={components.form.label}>{tr("City")}</label>
             <Input
               id={getWizardFieldId("step3", "city")}
               autoComplete="section-business address-level2"
@@ -658,9 +646,7 @@ export function Step3_Business() {
                   onChange={(e) =>
                     update({ business: { ...values, mailingSameAsOperating: e.target.checked } })
                   }
-                />
-                Mailing address same as operating address
-              </label>
+                />{tr("Mailing address same as operating address")}</label>
               {values.mailingSameAsOperating === false && (
                 <div
                   style={{
@@ -671,7 +657,7 @@ export function Step3_Business() {
                   }}
                 >
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <label style={components.form.label}>Mailing Address</label>
+                    <label style={components.form.label}>{tr("Mailing Address")}</label>
                     <AddressAutocompleteInput autoComplete="section-mailing address-line1"
                       country={regionCountry}
                       value={values.mailingAddress || ""}
@@ -694,7 +680,7 @@ export function Step3_Business() {
                     />
                   </div>
                   <div>
-                    <label style={components.form.label}>City</label>
+                    <label style={components.form.label}>{tr("City")}</label>
                     <Input autoComplete="section-mailing address-level2"
                       value={values.mailingCity || ""}
                       onChange={(e) => setField("mailingCity", e.target.value)}
@@ -723,7 +709,7 @@ export function Step3_Business() {
           )}
 
           <div>
-            <label style={components.form.label}>Business Phone</label>
+            <label style={components.form.label}>{tr("Business Phone")}</label>
             <PhoneInput autoComplete="section-business tel"
               id={getWizardFieldId("step3", "phone")}
               value={formatPhoneNumber(values.phone || "", countryCode)}
@@ -746,7 +732,7 @@ export function Step3_Business() {
           </div>
 
           <div>
-            <label style={components.form.label}>Business Website</label>
+            <label style={components.form.label}>{tr("Business Website")}</label>
             <Input
               id={getWizardFieldId("step3", "website")}
               type="url"
@@ -758,14 +744,14 @@ export function Step3_Business() {
                   handleAutoAdvance("website", values);
                 }
               }}
-              placeholder="https://"
+              placeholder={tr("https://")}
             />
           </div>
 
           {/* BF_CLIENT_SBA_REDUCED_v191 - no operating history on the SBA path */}
           {!isAccordLOC && !onSbaStartupPath && (
             <div>
-              <label style={components.form.label}>Business Start Date</label>
+              <label style={components.form.label}>{tr("Business Start Date")}</label>
               <Input
                 id={getWizardFieldId("step3", "startDate")}
                 type="date"
@@ -783,7 +769,7 @@ export function Step3_Business() {
           {/* BF_CLIENT_BLOCK_v300_ACCORD_LOC_STEP3_v1 — replaces Business Start Date in the Accord branch */}
           {isAccordLOC && (
             <div>
-              <label style={components.form.label}>In Business Since</label>
+              <label style={components.form.label}>{tr("In Business Since")}</label>
               <MonthYearSelect
                 id={getWizardFieldId("step3", "startDate")}
                 ariaLabel="In Business Since"
@@ -794,7 +780,7 @@ export function Step3_Business() {
           )}
           {isAccordLOC && (
             <div>
-              <label style={components.form.label}>Fiscal Year-End</label>
+              <label style={components.form.label}>{tr("Fiscal Year-End")}</label>
               <MonthYearSelect
                 monthOnly
                 ariaLabel="Fiscal Year-End"
@@ -808,25 +794,25 @@ export function Step3_Business() {
           {/* BF_CLIENT_BLOCK_v710_ACCORD_STEP3_v1 — CRA business number (optional) */}
           {isAccordLOC && (
             <div>
-              <label style={components.form.label}>CRA Business Number <span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
-              <Input value={values.craBusinessNumber || ""} onChange={(e) => setField("craBusinessNumber", e.target.value)} placeholder="e.g. 123456789 RC0001" />
+              <label style={components.form.label}>{tr("CRA Business Number")}{" "}<span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
+              <Input value={values.craBusinessNumber || ""} onChange={(e) => setField("craBusinessNumber", e.target.value)} placeholder={tr("e.g. 123456789 RC0001")} />
             </div>
           )}
           {/* BF_CLIENT_BLOCK_v710_ACCORD_STEP3_v1 — economic impact (optional) */}
           {isAccordLOC && (
             <div style={{ gridColumn: "1 / -1" }}>
-              <label style={components.form.label}>As a result of this loan, the business expects to <span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
+              <label style={components.form.label}>{tr("As a result of this loan, the business expects to")}{" "}<span style={{ color: tokens.colors.textSecondary, fontWeight: 400 }}>(optional)</span></label>
               <div style={{ display: "grid", gridTemplateColumns: typeof window !== "undefined" && window.innerWidth < 600 ? "1fr" : "1fr 1fr 1fr", gap: tokens.spacing.md }}>
-                <div><label style={components.form.label}>Rehire laid-off (#)</label><Input type="number" min="0" value={values.econRehire || ""} onChange={(e) => setField("econRehire", e.target.value)} /></div>
-                <div><label style={components.form.label}>Retain at-risk (#)</label><Input type="number" min="0" value={values.econRetain || ""} onChange={(e) => setField("econRetain", e.target.value)} /></div>
-                <div><label style={components.form.label}>Hire new (#)</label><Input type="number" min="0" value={values.econHireNew || ""} onChange={(e) => setField("econHireNew", e.target.value)} /></div>
+                <div><label style={components.form.label}>{tr("Rehire laid-off (#)")}</label><Input type="number" min="0" value={values.econRehire || ""} onChange={(e) => setField("econRehire", e.target.value)} /></div>
+                <div><label style={components.form.label}>{tr("Retain at-risk (#)")}</label><Input type="number" min="0" value={values.econRetain || ""} onChange={(e) => setField("econRetain", e.target.value)} /></div>
+                <div><label style={components.form.label}>{tr("Hire new (#)")}</label><Input type="number" min="0" value={values.econHireNew || ""} onChange={(e) => setField("econHireNew", e.target.value)} /></div>
               </div>
             </div>
           )}
 
           {/* BF_CLIENT_SBA_REDUCED_v191 */}
           <div style={{ display: onSbaStartupPath || onMediaPath ? "none" : undefined }}>
-            <label style={components.form.label}>Number of Employees</label>
+            <label style={components.form.label}>{tr("Number of Employees")}</label>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <button
                 style={{
@@ -873,7 +859,7 @@ export function Step3_Business() {
 
           {/* BF_CLIENT_SBA_REDUCED_v191 */}
           <div style={{ display: onSbaStartupPath || onMediaPath ? "none" : undefined }}>
-            <label style={components.form.label}>Estimated Yearly Revenue</label>
+            <label style={components.form.label}>{tr("Estimated Yearly Revenue")}</label>
             <Input
               id={getWizardFieldId("step3", "estimatedRevenue")}
               inputMode="decimal"
@@ -931,9 +917,7 @@ export function Step3_Business() {
             variant="secondary"
             style={{ width: "100%", maxWidth: "160px" }}
             onClick={() => navigate("/apply/step-2")}
-          >
-            ← Back
-          </Button>
+          >{tr("← Back")}</Button>
           {/* BF_CLIENT_STEP34_GUIDE_v156 - not disabled. Pressing it is how the
               applicant finds out what is missing; a disabled button answers
               nothing and this step has no per-field messages to fall back on. */}
@@ -952,9 +936,7 @@ export function Step3_Business() {
               void next();
             }}
             aria-disabled={!isValid}
-          >
-            Continue
-          </Button>
+          >{tr("Continue")}</Button>
         </div>
       </div>
       </div>

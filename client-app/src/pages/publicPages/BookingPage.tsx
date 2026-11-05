@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { useBrand } from "@/config/brand";
 import { dayKey, dayLabel, publicApi, timeLabel } from "./publicApi";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type MeetingType = { id: string | null; slug: string; name: string; description: string | null; duration_min: number; kind: "phone" | "video" };
 type Page = { company: string; team: boolean; staff: { id: string; firstName: string } | null; meetingTypes: MeetingType[]; timeZone: string; zoneLabel: string };
 type Slot = { startsAt: string; staffIds: string[] };
@@ -52,16 +53,16 @@ function SlotPicker({ slots, tz, value, onChange }: { slots: Slot[]; tz: string;
   }, [slots, tz]);
   const [day, setDay] = useState("");
   useEffect(() => { if (!day && days[0]) setDay(days[0][0]); }, [days, day]);
-  if (!slots.length) return <p>No times are open right now. Please try again later.</p>;
+  if (!slots.length) return <p>{tr("No times are open right now. Please try again later.")}</p>;
   const today = days.find(([k]) => k === day)?.[1] ?? [];
   return (
     <div>
-      <div role="group" aria-label="Day" style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
+      <div role="group" aria-label={tr("Day")} style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
         {days.map(([k, list]) => (
           <button key={k} type="button" aria-pressed={k === day} onClick={() => setDay(k)} style={k === day ? btn.primary : btn.ghost}>{dayLabel(list[0]!.startsAt, tz)}</button>
         ))}
       </div>
-      <div role="group" aria-label="Time" style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+      <div role="group" aria-label={tr("Time")} style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
         {today.map((s) => (
           <button key={s.startsAt} type="button" aria-pressed={s.startsAt === value} onClick={() => onChange(s.startsAt)} style={s.startsAt === value ? btn.primary : btn.ghost}>{timeLabel(s.startsAt, tz)}</button>
         ))}
@@ -99,7 +100,7 @@ export function BookPage() {
   if (done) {
     return (
       <main style={page} data-testid="booking-done">
-        <Header title="You're booked" />
+        <Header title={tr("You're booked")} />
         <div style={okBox} role="status">
           {type?.name ?? "Meeting"} with {done.booking.staffFirstName || pg?.company} on {dayLabel(done.booking.startsAt, pg!.timeZone)} at {timeLabel(done.booking.startsAt, pg!.timeZone)} ({pg!.zoneLabel}).
         </div>
@@ -107,13 +108,13 @@ export function BookPage() {
       </main>
     );
   }
-  if (!pg) return <main style={page}>{err ? <div style={errorBox} role="alert">{err}</div> : <p>Loading...</p>}</main>;
+  if (!pg) return <main style={page}>{err ? <div style={errorBox} role="alert">{err}</div> : <p>{tr("Loading...")}</p>}</main>;
 
   const submit = async () => {
     setErr(null);
-    if (!startsAt) return setErr("Pick a time.");
-    if (!form.name.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) return setErr("Enter your name and email.");
-    if (type?.kind === "phone" && form.phone.replace(/\D/g, "").length < 10) return setErr("Enter the phone number we should call.");
+    if (!startsAt) return setErr(tr("Pick a time."));
+    if (!form.name.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) return setErr(tr("Enter your name and email."));
+    if (type?.kind === "phone" && form.phone.replace(/\D/g, "").length < 10) return setErr(tr("Enter the phone number we should call."));
     setBusy(true);
     try {
       const r = await publicApi<Booked>("/api/booking", { method: "POST", body: {
@@ -129,10 +130,10 @@ export function BookPage() {
 
   return (
     <main style={page} data-testid="booking-page">
-      <Header title={pg.staff ? `Book a time with ${pg.staff.firstName}` : `Book a time with ${pg.company}`} subtitle={`Times are shown in ${pg.zoneLabel}.`} />
+      <Header title={pg.staff ? tr("Book a time with {firstName}", { firstName: pg.staff.firstName }) : tr("Book a time with {company}", { company: pg.company })} subtitle={tr("Times are shown in {zoneLabel}.", { zoneLabel: pg.zoneLabel })} />
       {pg.meetingTypes.length > 1 && (
         <section style={cardStyle}>
-          <label htmlFor="bk-type" style={label}>What would you like to book?</label>
+          <label htmlFor="bk-type" style={label}>{tr("What would you like to book?")}</label>
           <select id="bk-type" value={typeId} onChange={(e) => setTypeId(e.target.value)} style={field}>
             {pg.meetingTypes.map((t) => <option key={t.id ?? t.slug} value={t.id ?? ""}>{t.name} ({t.duration_min} min, {t.kind === "video" ? "video" : "phone"})</option>)}
           </select>
@@ -141,16 +142,16 @@ export function BookPage() {
       <section style={cardStyle}>
         <p style={{ margin: "0 0 8px", fontWeight: 600 }}>{type?.name} - {type?.duration_min} minutes, {type?.kind === "video" ? "video meeting" : "phone call"}</p>
         {type?.description ? <p style={{ marginTop: 0, color: "#374151" }}>{type.description}</p> : null}
-        {slots ? <SlotPicker slots={slots} tz={pg.timeZone} value={startsAt} onChange={setStartsAt} /> : <p>Finding open times...</p>}
+        {slots ? <SlotPicker slots={slots} tz={pg.timeZone} value={startsAt} onChange={setStartsAt} /> : <p>{tr("Finding open times...")}</p>}
       </section>
       <section style={cardStyle}>
-        <label htmlFor="bk-name" style={label}>Your name</label>
+        <label htmlFor="bk-name" style={label}>{tr("Your name")}</label>
         <input id="bk-name" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={field} />
-        <label htmlFor="bk-email" style={label}>Email</label>
+        <label htmlFor="bk-email" style={label}>{tr("Email")}</label>
         <input id="bk-email" type="email" autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={field} />
         <label htmlFor="bk-phone" style={label}>Phone{type?.kind === "phone" ? " (we'll call you)" : " (optional)"}</label>
         <input id="bk-phone" type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={field} />
-        <label htmlFor="bk-notes" style={label}>Anything we should know? (optional)</label>
+        <label htmlFor="bk-notes" style={label}>{tr("Anything we should know? (optional)")}</label>
         <textarea id="bk-notes" rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} style={field} />
         <label htmlFor="bk-sms" style={{ display: "flex", gap: 8, alignItems: "flex-start", marginTop: 10, fontSize: 14 }}>
           <input id="bk-sms" type="checkbox" checked={sms} onChange={(e) => setSms(e.target.checked)} style={{ marginTop: 4 }} />
@@ -158,7 +159,7 @@ export function BookPage() {
         </label>
       </section>
       {err ? <div style={errorBox} role="alert">{err}</div> : null}
-      <button type="button" style={{ ...btn.primary, width: "100%" }} disabled={busy} onClick={() => void submit()}>{busy ? "Booking..." : "Book this time"}</button>
+      <button type="button" style={{ ...btn.primary, width: "100%" }} disabled={busy} onClick={() => void submit()}>{busy ? tr("Booking...") : tr("Book this time")}</button>
     </main>
   );
 }
@@ -175,7 +176,7 @@ export function ManageBookingPage() {
   const [ok, setOk] = useState<string | null>(null);
   const load = () => publicApi<Managed>(`/api/booking/manage/${encodeURIComponent(token)}`).then(setM).catch((e) => setErr(e?.status === 404 ? "We can't find this booking." : "Please try again later."));
   useEffect(() => { void load(); }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
-  if (!m) return <main style={page}>{err ? <div style={errorBox} role="alert">{err}</div> : <p>Loading...</p>}</main>;
+  if (!m) return <main style={page}>{err ? <div style={errorBox} role="alert">{err}</div> : <p>{tr("Loading...")}</p>}</main>;
   const b = m.booking;
   const cancel = async () => {
     setErr(null);
@@ -199,7 +200,7 @@ export function ManageBookingPage() {
   };
   return (
     <main style={page} data-testid="manage-booking">
-      <Header title="Your booking" />
+      <Header title={tr("Your booking")} />
       <section style={cardStyle}>
         <p style={{ margin: 0 }}><strong>{b.meetingName}</strong> with {b.staffFirstName || m.company}</p>
         <p style={{ margin: "4px 0" }}>{dayLabel(b.startsAt, m.timeZone)} at {timeLabel(b.startsAt, m.timeZone)} ({m.zoneLabel}), {b.durationMin} minutes</p>
@@ -209,14 +210,14 @@ export function ManageBookingPage() {
       {err ? <div style={errorBox} role="alert">{err}</div> : null}
       {b.canChange && !slots && (
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button type="button" style={btn.primary} onClick={() => void showTimes()}>Pick a new time</button>
-          <button type="button" style={btn.ghost} onClick={() => { if (window.confirm("Cancel this booking?")) void cancel(); }}>Cancel booking</button>
+          <button type="button" style={btn.primary} onClick={() => void showTimes()}>{tr("Pick a new time")}</button>
+          <button type="button" style={btn.ghost} onClick={() => { if (window.confirm("Cancel this booking?")) void cancel(); }}>{tr("Cancel booking")}</button>
         </div>
       )}
       {slots && (
         <section style={cardStyle}>
           <SlotPicker slots={slots} tz={m.timeZone} value={startsAt} onChange={setStartsAt} />
-          <button type="button" style={{ ...btn.primary, marginTop: 10 }} disabled={!startsAt} onClick={() => void move()}>Move my booking</button>
+          <button type="button" style={{ ...btn.primary, marginTop: 10 }} disabled={!startsAt} onClick={() => void move()}>{tr("Move my booking")}</button>
         </section>
       )}
     </main>

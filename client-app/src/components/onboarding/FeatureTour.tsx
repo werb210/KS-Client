@@ -8,6 +8,7 @@ import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { biometryStatus, enrollDeviceWithReason, isEnrolled } from "@/native/deviceSignIn";
 import { trackEvent } from "@/utils/analytics";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 export const TOUR_KEY = "boreal_bf_feature_tour_v1";
 export type TourStep = { id: string; title: string; body: string; action?: "push" | "faceid" };
@@ -21,8 +22,8 @@ export function tourSteps(platform: string, opts: { faceId: boolean }): TourStep
   if (opts.faceId) steps.push({ id: "faceid", title: ios ? "Sign in with Face ID" : "Sign in with your fingerprint or face", body: "Skip the text code next time and open your file with a glance.", action: "faceid" });
   steps.push(
     { id: "scan", title: "Scan documents with your camera", body: "When we ask for a document, choose Scan to photograph it with your camera instead of hunting for a file." },
-    { id: "share", title: "Send files from other apps", body: ios ? `In Photos, Files or Mail, tap Share and choose ${brandName()} to send a document straight to your file.` : `In Photos, Files or Gmail, tap Share and choose ${brandName()} to send a document straight to your file.` },
-    { id: "widget", title: "Keep your progress on your home screen", body: ios ? `Touch and hold an empty spot on your home screen, tap Edit, then Add Widget, and choose ${brandName()}.` : `Touch and hold an empty spot on your home screen, tap Widgets, and drag ${brandName()} onto your screen.` },
+    { id: "share", title: "Send files from other apps", body: ios ? tr("In Photos, Files or Mail, tap Share and choose {brand} to send a document straight to your file.", { brand: brandName() }) : tr("In Photos, Files or Gmail, tap Share and choose {brand} to send a document straight to your file.", { brand: brandName() }) },
+    { id: "widget", title: "Keep your progress on your home screen", body: ios ? tr("Touch and hold an empty spot on your home screen, tap Edit, then Add Widget, and choose {brand}.", { brand: brandName() }) : tr("Touch and hold an empty spot on your home screen, tap Widgets, and drag {brand} onto your screen.", { brand: brandName() }) },
     { id: "call", title: "Call us from the app", body: "Tap Call us on your file to talk to your advisor right from the app, over Wi-Fi or data." },
   );
   return steps;
@@ -61,7 +62,7 @@ export default function FeatureTour({ forceOpen = false }: { forceOpen?: boolean
         let p = await PushNotifications.checkPermissions();
         if (p.receive === "prompt" || p.receive === "prompt-with-rationale") p = await PushNotifications.requestPermissions();
         if (p.receive === "granted") { await PushNotifications.register(); setNote("Notifications are on."); trackEvent("feature_tour_push_on", {}); }
-        else setNote(`Notifications are off. You can turn them on any time in your phone's Settings under ${brandName()}.`);
+        else setNote(tr("Notifications are off. You can turn them on any time in your phone's Settings under {brand}.", { brand: brandName() }));
       } else if (step.action === "faceid") {
         const r = await enrollDeviceWithReason();
         if (r.ok) { setNote("Done - next time you can sign in with a glance."); trackEvent("feature_tour_faceid_on", {}); }
@@ -72,7 +73,7 @@ export default function FeatureTour({ forceOpen = false }: { forceOpen?: boolean
   };
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="App tour" data-testid="feature-tour"
+    <div role="dialog" aria-modal="true" aria-label={tr("App tour")} data-testid="feature-tour"
       style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(11,31,58,0.72)", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "16px 16px calc(16px + env(safe-area-inset-bottom, 0px))" }}>
       <div style={{ width: "100%", maxWidth: 440, background: "#fff", color: "#0f172a", borderRadius: 16, padding: 20, boxShadow: "0 10px 30px rgba(0,0,0,.25)" }}>
         <div style={{ fontSize: "var(--ks-text-caption)", color: "#475569", marginBottom: 6 }}>{i + 1} of {steps.length}</div>
@@ -80,15 +81,15 @@ export default function FeatureTour({ forceOpen = false }: { forceOpen?: boolean
         <p style={{ fontSize: 15, lineHeight: 1.45, margin: "0 0 14px", color: "#334155" }}>{step.body}</p>
         {note && <p role="status" style={{ fontSize: "var(--ks-text-body-sm)", margin: "0 0 12px", color: "#065f46" }}>{note}</p>}
         <div style={{ display: "flex", gap: 8, justifyContent: "space-between", alignItems: "center" }}>
-          <button type="button" onClick={() => finish("skipped")} style={{ background: "none", border: "none", color: "#475569", fontSize: 15, padding: "10px 4px" }}>Skip tour</button>
+          <button type="button" onClick={() => finish("skipped")} style={{ background: "none", border: "none", color: "#475569", fontSize: 15, padding: "10px 4px" }}>{tr("Skip tour")}</button>
           <div style={{ display: "flex", gap: 8 }}>
             {step.action && !note && (
               <button type="button" disabled={busy} onClick={() => void act()} style={{ background: "#0B1F3A", color: "#fff", border: "none", borderRadius: 10, padding: "10px 14px", fontSize: 15 }}>
-                {busy ? "One moment..." : step.action === "push" ? "Turn on notifications" : "Turn on"}
+                {busy ? "One moment..." : step.action === "push" ? tr("Turn on notifications") : tr("Turn on")}
               </button>
             )}
             <button type="button" onClick={next} style={{ background: step.action && !note ? "#e2e8f0" : "#0B1F3A", color: step.action && !note ? "#0f172a" : "#fff", border: "none", borderRadius: 10, padding: "10px 14px", fontSize: 15 }}>
-              {last ? "Done" : step.action && !note ? "Not now" : "Next"}
+              {last ? "Done" : step.action && !note ? tr("Not now") : tr("Next")}
             </button>
           </div>
         </div>

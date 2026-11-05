@@ -33,6 +33,8 @@ import { validateBootToken } from "./state/validateBootToken";
 import { hydrateToken } from "./auth/token";
 import { startBorealRuntime } from "./native/borealRuntime";
 import { hasCachedBrand, loadBrand } from "./config/brand"; // KS_CLIENT_v4_BRANDING
+import { installLanguageHeader, lang } from "./i18n"; // KS_CLIENT_LANGUAGES_v1
+import { SERVER_URL } from "./config/licensee";
 
 try {
   validateEnv();
@@ -84,6 +86,9 @@ void validateBootToken();
 
 // KS_CLIENT_v4_BRANDING - the licensee's name before the first screen. First visit: wait for it (2.5s at most);
 // later visits use the name saved on the device and refresh it in the background.
+// KS_CLIENT_LANGUAGES_v1 - the brokerage's server hears the client's language; the page says which language it is in.
+installLanguageHeader(SERVER_URL);
+try { document.documentElement.lang = lang() === "fr" ? "fr-CA" : lang() === "es" ? "es" : "en-CA"; } catch { /* no document */ }
 if (hasCachedBrand()) void loadBrand(); else await loadBrand();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

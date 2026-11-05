@@ -31,6 +31,7 @@ import {
   saveConversation,
   type MayaConversation,
 } from "./mayaConversation";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 // BF_CLIENT_MAYA_SCREEN_CONTEXT_v1 — tell Maya which page/step the signed-in
@@ -54,7 +55,7 @@ function buildClientScreenContext(applicationId: string | null): Record<string, 
     ? `Application wizard \u2014 Step ${step} of 6${label ? ` (${label})` : ""}`
     : path === "/"
       ? "Client landing page"
-      : `Client app page: ${path}`;
+      : tr("Client app page: {path}", { path: path });
   return {
     surface: "client",
     path,
@@ -95,7 +96,7 @@ export function getOrCreateMayaSessionId(): string {
   }
 }
 
-const greeting = (): string => `Hi — I'm ${assistantName()}. How can I help?`;
+const greeting = (): string => tr("Hi — I'm {assistant}. How can I help?", { assistant: assistantName() });
 // BF_CLIENT_v802_MAYA_LIGHT
 const MAYA_SUGGESTIONS = [
   "What happens next with my application?",
@@ -473,7 +474,7 @@ export default function MayaWidget() {
               <p className="text-xs text-slate-600">{t("assistant.subtitle")}</p>
             </div>
             <button
-              aria-label="Close chat"
+              aria-label={tr("Close chat")}
               onClick={() => setOpen(false)}
               className="rounded p-2 hover:bg-slate-100"
             >
@@ -491,7 +492,7 @@ export default function MayaWidget() {
                 {item.from === "user" ? item.message : <MayaMessage message={item.message} />}
               </div>
             ))}
-            {sending ? <p className="text-xs text-slate-600">{assistantName()} is typing…</p> : null}
+            {sending ? <p className="text-xs text-slate-600">{tr("{assistant} is typing…", { assistant: assistantName() })}</p> : null}
           </div>
           {/* BF_CLIENT_v802_MAYA_LIGHT - three or four questions to start with, until the client has asked one. */}
           {mode === "chat" && !messages.some((m) => m.from === "user") ? (
@@ -510,12 +511,12 @@ export default function MayaWidget() {
                 rows={3}
                 value={issue}
                 onChange={(e) => setIssue(e.target.value)}
-                placeholder="Describe the issue…"
+                placeholder={tr("Describe the issue…")}
               />
               {/* BF_CLIENT_v805_PHONE_FIXES - only say something about a screenshot when there is one (or one is being taken). */}
               {issueShotBusy || issueShot ? (
                 <div className="text-xs text-slate-600">
-                  {issueShotBusy ? "Capturing screenshot…" : "Screenshot attached (will be sent)"}
+                  {issueShotBusy ? tr("Capturing screenshot…") : tr("Screenshot attached (will be sent)")}
                 </div>
               ) : null}
               {issueShot ? (
@@ -526,28 +527,24 @@ export default function MayaWidget() {
                   type="button"
                   onClick={() => { setMode("chat"); setIssueShot(null); }}
                   className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm text-[#0B1F3A]"
-                >
-                  Cancel
-                </button>
+                >{tr("Cancel")}</button>
                 <button
                   type="button"
                   onClick={() => void submitIssue()}
                   className="flex-1 rounded bg-[#0B1F3A] px-3 py-2 text-sm text-white"
-                >
-                  Submit
-                </button>
+                >{tr("Submit")}</button>
               </div>
             </div>
           ) : mode === "lead" ? (
             <div className="flex flex-col gap-2 border-t border-slate-200 px-3 py-2 md:px-4">
-              <div className="text-xs text-slate-600">A {brandName()} advisor will text you back. A mobile number is best:</div>
-              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Your name" value={leadDraft.name} onChange={(e) => setLeadDraft({ ...leadDraft, name: e.target.value })} />
-              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Mobile number" type="tel" value={leadDraft.phone} onChange={(e) => setLeadDraft({ ...leadDraft, phone: e.target.value })} autoFocus />
-              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder="Email (optional if you gave a number)" type="email" value={leadDraft.email} onChange={(e) => setLeadDraft({ ...leadDraft, email: e.target.value })} />
+              <div className="text-xs text-slate-600">{tr("A {brand} advisor will text you back. A mobile number is best:", { brand: brandName() })}</div>
+              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder={tr("Your name")} value={leadDraft.name} onChange={(e) => setLeadDraft({ ...leadDraft, name: e.target.value })} />
+              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder={tr("Mobile number")} type="tel" value={leadDraft.phone} onChange={(e) => setLeadDraft({ ...leadDraft, phone: e.target.value })} autoFocus />
+              <input className="rounded border border-slate-300 bg-white p-2 text-sm text-[#0B1F3A] placeholder:text-slate-500" placeholder={tr("Email (optional if you gave a number)")} type="email" value={leadDraft.email} onChange={(e) => setLeadDraft({ ...leadDraft, email: e.target.value })} />
               {leadError ? <div className="text-xs text-red-700">{leadError}</div> : null}
               <div className="flex gap-2">
-                <button type="button" onClick={() => setMode("chat")} className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm text-[#0B1F3A]">Cancel</button>
-                <button type="button" onClick={() => void submitLead()} className="flex-1 rounded bg-[#0B1F3A] px-3 py-2 text-sm text-white">Start chat</button>
+                <button type="button" onClick={() => setMode("chat")} className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm text-[#0B1F3A]">{tr("Cancel")}</button>
+                <button type="button" onClick={() => void submitLead()} className="flex-1 rounded bg-[#0B1F3A] px-3 py-2 text-sm text-white">{tr("Start chat")}</button>
               </div>
             </div>
           ) : (
@@ -557,21 +554,17 @@ export default function MayaWidget() {
                   type="button"
                   onClick={() => void requestHumanSupport()}
                   className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm text-[#0B1F3A]"
-                >
-                  Talk to a Human
-                </button>
+                >{tr("Talk to a Human")}</button>
                 <button
                   type="button"
                   onClick={() => void openReport()}
                   className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm text-[#0B1F3A]"
-                >
-                  Report an Issue
-                </button>
+                >{tr("Report an Issue")}</button>
               </div>
               <form onSubmit={handleSend} className="flex gap-2 border-t border-slate-200 px-3 py-2 md:px-4">
                 <input
                   className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-3 py-2 text-sm text-[#0B1F3A] placeholder:text-slate-500"
-                  placeholder="Type a message…"
+                  placeholder={tr("Type a message…")}
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -580,9 +573,7 @@ export default function MayaWidget() {
                   type="submit"
                   disabled={sending || !input.trim()}
                   className="shrink-0 rounded bg-[#0B1F3A] px-3 py-2 text-sm text-white disabled:opacity-50"
-                >
-                  Send
-                </button>
+                >{tr("Send")}</button>
               </form>
             </>
           )}
@@ -592,7 +583,7 @@ export default function MayaWidget() {
       {/* BF_CLIENT_UI_CLUSTER_v1 — the floating button now toggles open AND close. */}
       <button
         type="button"
-        aria-label={open ? "Close chat" : "Open chat"}
+        aria-label={open ? tr("Close chat") : tr("Open chat")}
         data-maya-launcher="true" /* BF_CLIENT_CMP_PHONE_TABS_v732 - hidden on the phone client portal (Chat > Ask Maya opens her) */
         onClick={() => setOpen((o) => !o)}
         className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-[calc(1rem+env(safe-area-inset-right))] z-[60] flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full bg-[#0B1F3A] text-white shadow-lg hover:bg-[#13294B]"

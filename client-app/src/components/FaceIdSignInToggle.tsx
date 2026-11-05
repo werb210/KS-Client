@@ -23,6 +23,7 @@ import {
   type BiometryStatus,
 } from "@/native/deviceSignIn";
 import { Icon } from "@/components/cmp/icons";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { Capacitor } from "@capacitor/core"; // BF_CLIENT_v807_ANDROID // BF_CLIENT_v805_PHONE_FIXES
 
 type Phase = "checking" | "ready";
@@ -83,7 +84,7 @@ export default function FaceIdSignInToggle({ variant }: { variant?: "row" } = {}
       await refresh();
       clearHint();
     } catch {
-      setError("Face ID could not be turned off. Try again.");
+      setError(tr("Face ID could not be turned off. Try again."));
     } finally {
       setBusy(false);
     }
@@ -153,9 +154,9 @@ export default function FaceIdSignInToggle({ variant }: { variant?: "row" } = {}
 
   return (
     <div style={row} data-testid="face-id-setting">
-      <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#0f172a", fontWeight: 600 }}>Face ID sign-in</span>
+      <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#0f172a", fontWeight: 600 }}>{tr("Face ID sign-in")}</span>
 
-      {phase === "checking" && <span style={{ fontSize: "var(--ks-text-label)", color: "#64748b" }}>Checking…</span>}
+      {phase === "checking" && <span style={{ fontSize: "var(--ks-text-label)", color: "#64748b" }}>{tr("Checking…")}</span>}
 
       {phase === "ready" && status && !status.available && (
         <span style={{ fontSize: "var(--ks-text-label)", color: "#64748b" }} data-testid="face-id-unavailable">
@@ -166,21 +167,19 @@ export default function FaceIdSignInToggle({ variant }: { variant?: "row" } = {}
       {phase === "ready" && status?.available && !enrolled && (
         <>
           <button type="button" style={button} disabled={busy} onClick={() => void turnOn()}>
-            {busy ? "Turning on…" : "Turn on Face ID sign-in"}
+            {busy ? tr("Turning on…") : tr("Turn on Face ID sign-in")}
           </button>
           {hint && (
-            <span style={{ fontSize: "var(--ks-text-label)", color: "#64748b" }}>
-              Skip the text code next time.
-            </span>
+            <span style={{ fontSize: "var(--ks-text-label)", color: "#64748b" }}>{tr("Skip the text code next time.")}</span>
           )}
         </>
       )}
 
       {phase === "ready" && status?.available && enrolled && (
         <>
-          <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#15803d", fontWeight: 600 }}>On</span>
+          <span style={{ fontSize: "var(--ks-text-body-sm)", color: "#15803d", fontWeight: 600 }}>{tr("On")}</span>
           <button type="button" style={link} disabled={busy} onClick={() => void turnOff()}>
-            {busy ? "Turning off…" : "Turn off"}
+            {busy ? tr("Turning off…") : tr("Turn off")}
           </button>
         </>
       )}

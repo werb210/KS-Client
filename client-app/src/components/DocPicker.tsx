@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { apiCall } from "@/api/client";
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { enqueueUploadFromFile, isRetryableUploadFailure } from "@/lib/uploadQueue"; // BF_CLIENT_UPLOAD_QUEUE_v278
 import { queuedMessage, reportUploadFailure } from "@/lib/docUpload"; // BF_CLIENT_DIRECT_UPLOAD_v730
 import { duplicateSummary, readDuplicate, type DuplicateUpload } from "@/lib/duplicateUpload"; // BF_CLIENT_v848_DUPLICATE_UX
@@ -56,7 +57,7 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
     }
     apiCall<NeededResponse>(`/api/client/documents-needed/needed?applicationId=${encodeURIComponent(applicationId)}`)
       .then((d) => { if (active) setData(d); })
-      .catch(() => { if (active) setError("We couldn't load your document list. Check your connection and try again."); }) // BF_CLIENT_NO_FALSE_ALL_CLEAR_v728
+      .catch(() => { if (active) setError(tr("We couldn't load your document list. Check your connection and try again.")); }) // BF_CLIENT_NO_FALSE_ALL_CLEAR_v728
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [applicationId, documentType, documentLabel]);
@@ -179,7 +180,7 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
       onUploaded?.();
       // BF_CLIENT_v841_OTHER_DOC - an extra document never clears a list; say it arrived and stay open.
       if (documentType === OTHER_DOC_TYPE && !aimedAt) {
-        setNotice(files.length === 1 ? "Thanks — your document was added. Your advisor will see it." : `Thanks — ${files.length} documents were added. Your advisor will see them.`);
+        setNotice(files.length === 1 ? "Thanks — your document was added. Your advisor will see it." : tr("Thanks — {length} documents were added. Your advisor will see them.", { length: files.length }));
         setUploading(null);
         return;
       }
@@ -211,31 +212,29 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
         style={{ background: "#fff", borderRadius: 12, width: "100%", maxWidth: 520, maxHeight: "85vh", overflow: "auto", padding: 24 }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>Upload Documents</h2>
-          <button type="button" onClick={onClose} aria-label="Close" style={{ border: 0, background: "transparent", fontSize: 24, cursor: "pointer", color: "#64748b" }}>×</button>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 600 }}>{tr("Upload Documents")}</h2>
+          <button type="button" onClick={onClose} aria-label={tr("Close")} style={{ border: 0, background: "transparent", fontSize: 24, cursor: "pointer", color: "#64748b" }}>×</button>
         </div>
 
-        {loading && <p style={{ color: "#64748b" }}>Loading…</p>}
-        {error && <p style={{ color: "#b91c1c" }}>{error} <button type="button" onClick={() => window.location.reload()} style={{ marginLeft: 6, border: "1px solid #b91c1c", background: "#fff", color: "#b91c1c", borderRadius: 6, padding: "2px 10px", cursor: "pointer" }}>Try again</button></p>}
+        {loading && <p style={{ color: "#64748b" }}>{tr("Loading…")}</p>}
+        {error && <p style={{ color: "#b91c1c" }}>{error} <button type="button" onClick={() => window.location.reload()} style={{ marginLeft: 6, border: "1px solid #b91c1c", background: "#fff", color: "#b91c1c", borderRadius: 6, padding: "2px 10px", cursor: "pointer" }}>{tr("Try again")}</button></p>}
         {notice && <p data-testid="docpicker-queued-notice" style={{ color: "#1e40af" }}>{notice}</p>}
         {empty && (
-          <p style={{ color: A11Y_COLORS.successText }}>You're all caught up — no documents needed right now.</p>
+          <p style={{ color: A11Y_COLORS.successText }}>{tr("You're all caught up — no documents needed right now.")}</p>
         )}
 
         {data.rejected.length > 0 && (
           <section style={{ marginBottom: 20 }}>
-            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#b91c1c", margin: "12px 0 8px" }}>Re-upload rejected</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#b91c1c", margin: "12px 0 8px" }}>{tr("Re-upload rejected")}</h3>
             {data.rejected.map((d) => (
               <div key={`r-${d.document_type}`} className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{d.label}</span>
+                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{tr(d.label)}</span>
                 <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                   {Capacitor.isNativePlatform() && (
-                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>
-                      Scan to PDF
-                    </button>
+                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>{tr("Scan to PDF")}</button>
                   )}
                   <button type="button" onClick={() => pickAndUpload(d.document_type)} disabled={uploading === d.document_type} style={fileBtnPrimary}>
-                    {uploading === d.document_type ? "Uploading…" : Capacitor.isNativePlatform() ? "Choose file" : "Re-upload"}
+                    {uploading === d.document_type ? "Uploading…" : Capacitor.isNativePlatform() ? tr("Choose file") : tr("Re-upload")}
                   </button>
                 </span>
               </div>
@@ -245,18 +244,16 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
 
         {data.stillNeeded.length > 0 && (
           <section>
-            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 8px" }}>Still needed</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 8px" }}>{tr("Still needed")}</h3>
             {data.stillNeeded.map((d) => (
               <div key={`n-${d.document_type}`} className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{d.label}</span>
+                <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{tr(d.label)}</span>
                 <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                   {Capacitor.isNativePlatform() && (
-                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>
-                      Scan to PDF
-                    </button>
+                    <button type="button" onClick={() => void scanAndUpload(d.document_type, d.label)} disabled={uploading === d.document_type} data-testid="docpicker-scan" style={{ minHeight: 40, padding: "6px 14px", border: 0, borderRadius: 8, background: "#0B1F3A", color: "#fff", cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}>{tr("Scan to PDF")}</button>
                   )}
                   <button type="button" onClick={() => pickAndUpload(d.document_type)} disabled={uploading === d.document_type} style={fileBtnPrimary}>
-                    {uploading === d.document_type ? "Uploading…" : Capacitor.isNativePlatform() ? "Choose file" : "Upload"}
+                    {uploading === d.document_type ? "Uploading…" : Capacitor.isNativePlatform() ? tr("Choose file") : tr("Upload")}
                   </button>
                 </span>
               </div>
@@ -267,20 +264,16 @@ export default function DocPicker({ applicationId, onClose, onUploaded, document
         {/* BF_CLIENT_v841_OTHER_DOC - always offered (not when opened for one specific item). */}
         {!aimedAt && !loading && (
           <section data-testid="docpicker-other" style={{ marginTop: 20 }}>
-            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 4px" }}>Anything else?</h3>
+            <h3 style={{ fontSize: "var(--ks-text-body-sm)", fontWeight: 700, color: "#0f172a", margin: "12px 0 4px" }}>{tr("Anything else?")}</h3>
             <div className="dp-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f1f5f9" }}>
-              <span style={{ fontSize: "var(--ks-text-body-sm)" }}>
-                Other document (optional)
-                <span style={{ display: "block", fontSize: "var(--ks-text-label)", color: "#475569" }}>Anything you think will help, even if we didn't ask for it.</span>
+              <span style={{ fontSize: "var(--ks-text-body-sm)" }}>{tr("Other document (optional)")}<span style={{ display: "block", fontSize: "var(--ks-text-label)", color: "#475569" }}>{tr("Anything you think will help, even if we didn't ask for it.")}</span>
               </span>
               <span className="dp-actions" style={{ display: "flex", gap: 8 }}>
                 {Capacitor.isNativePlatform() && (
-                  <button type="button" onClick={() => void scanAndUpload(OTHER_DOC_TYPE, "Other document")} disabled={uploading === OTHER_DOC_TYPE} data-testid="docpicker-other-scan" style={fileBtnPrimary}>
-                    Scan to PDF
-                  </button>
+                  <button type="button" onClick={() => void scanAndUpload(OTHER_DOC_TYPE, "Other document")} disabled={uploading === OTHER_DOC_TYPE} data-testid="docpicker-other-scan" style={fileBtnPrimary}>{tr("Scan to PDF")}</button>
                 )}
                 <button type="button" onClick={() => pickAndUpload(OTHER_DOC_TYPE)} disabled={uploading === OTHER_DOC_TYPE} data-testid="docpicker-other-upload" style={fileBtnPrimary}>
-                  {uploading === OTHER_DOC_TYPE ? "Uploading…" : Capacitor.isNativePlatform() ? "Choose file" : "Add file"}
+                  {uploading === OTHER_DOC_TYPE ? "Uploading…" : Capacitor.isNativePlatform() ? tr("Choose file") : tr("Add file")}
                 </button>
               </span>
             </div>

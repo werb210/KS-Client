@@ -61,6 +61,7 @@ import { logError } from "@/lib/logger";
 import { buildSubmitBody } from "@/lib/payload/buildSubmitBody";
 import { normalizeForSubmit } from "./submitNormalize";
 import { savePendingSubmit, clearPendingSubmit, subscribeRetry } from "../state/pendingSubmit";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { sendSubmitAttempt } from "../utils/submitAttempt"; // BF_CLIENT_BLOCK_v872
 import { sendFraudSignals } from "@/fraud/signals"; // KS_CLIENT_v6_FRAUD
 
@@ -68,37 +69,37 @@ import { sendFraudSignals } from "@/fraud/signals"; // KS_CLIENT_v6_FRAUD
 // (Legal text supplied by Boreal; review with counsel. Province = Alberta placeholder.)
 const tcClauses = (): Array<{ title: string; blocks: Array<{ p?: string; ul?: string[] }> }> => [
   {
-    title: "Electronic Communications Risk Acknowledgement",
+    title: tr("Electronic Communications Risk Acknowledgement"),
     blocks: [
-      { p: "I/We acknowledge and accept the risks associated with electronic communications and electronic transmission of information. I/We understand that communications transmitted by email, SMS/text message, web portals, online applications, electronic document systems, client messaging systems, mobile applications, or other electronic means may be intercepted, delayed, lost, altered, corrupted, misdirected, impersonated, or accessed by unauthorized parties." },
-      { p: `I/We understand that ${nameWithLegal()}, its affiliates, related entities, employees, contractors, representatives, lender partners, service providers, and technology providers cannot guarantee the security, confidentiality, delivery, or uninterrupted operation of electronic communications or electronic systems.` },
-      { p: `To the fullest extent permitted by law, I/We release and hold harmless ${brandName()}, its affiliates, related entities, employees, contractors, representatives, lender partners, and service providers from any loss, damage, claim, cost, liability, or expense arising from the use of electronic communications, electronic signatures, electronic document transmission, electronic storage, online portals, client messaging systems, or related technologies.` },
+      { p: tr("I/We acknowledge and accept the risks associated with electronic communications and electronic transmission of information. I/We understand that communications transmitted by email, SMS/text message, web portals, online applications, electronic document systems, client messaging systems, mobile applications, or other electronic means may be intercepted, delayed, lost, altered, corrupted, misdirected, impersonated, or accessed by unauthorized parties.") },
+      { p: tr("I/We understand that {legalName}, its affiliates, related entities, employees, contractors, representatives, lender partners, service providers, and technology providers cannot guarantee the security, confidentiality, delivery, or uninterrupted operation of electronic communications or electronic systems.", { legalName: nameWithLegal() }) },
+      { p: tr("To the fullest extent permitted by law, I/We release and hold harmless {brand}, its affiliates, related entities, employees, contractors, representatives, lender partners, and service providers from any loss, damage, claim, cost, liability, or expense arising from the use of electronic communications, electronic signatures, electronic document transmission, electronic storage, online portals, client messaging systems, or related technologies.", { brand: brandName() }) },
     ],
   },
   {
-    title: "Consent to Collect, Use, Verify, and Share Information",
+    title: tr("Consent to Collect, Use, Verify, and Share Information"),
     blocks: [
-      { p: `I/We authorize ${brandName()}, its affiliates, subsidiaries, parent companies, related entities, operating divisions, employees, contractors, representatives, lender partners, investors, insurers, credit reporting agencies, financial institutions, service providers, professional advisors, and other parties involved in evaluating, arranging, underwriting, servicing, or administering financing transactions to collect, verify, use, disclose, exchange, transmit, and retain personal information, business information, financial information, banking information, credit information, application information, supporting documents, and any other information provided in connection with this application.` },
-      { p: `I/We further authorize ${brandName()} to share such information with any current or prospective lender, funding source, investor, insurer, service provider, referral partner, credit reporting agency, governmental authority, compliance provider, fraud prevention provider, or any other party reasonably required to facilitate, evaluate, arrange, administer, monitor, service, or complete a financing transaction.` },
-      { p: `I/We certify that all information supplied is true, accurate, and complete to the best of my/our knowledge. I/We understand that ${brandName()} may rely upon this information and may conduct reasonable verification procedures, including identity verification, business verification, credit inquiries, banking verification, fraud prevention reviews, and related due diligence activities.` },
-      { p: `I/We acknowledge that ${brandName()} may receive commissions, fees, referral compensation, lender-paid compensation, or other remuneration in connection with financing transactions and that ${brandName()} does not guarantee approval, funding, rates, terms, conditions, lender participation, or financing availability.` },
-      { p: "I/We represent and warrant that the individual submitting this application is duly authorized to provide these consents and authorizations on behalf of the business and on behalf of all owners, principals, shareholders, directors, officers, and proposed guarantors identified in this application." },
-      { p: `I/We acknowledge that personal information is collected, used, retained, and disclosed in accordance with ${brandName()}'s Privacy Policy, and that such information will be retained only as long as reasonably necessary for the purposes described or as required by law.` },
-      { p: "This authorization and any resulting financing relationship are governed by the laws of the Province of Alberta and the federal laws of Canada applicable therein, without regard to conflict-of-laws principles." },
+      { p: tr("I/We authorize {brand}, its affiliates, subsidiaries, parent companies, related entities, operating divisions, employees, contractors, representatives, lender partners, investors, insurers, credit reporting agencies, financial institutions, service providers, professional advisors, and other parties involved in evaluating, arranging, underwriting, servicing, or administering financing transactions to collect, verify, use, disclose, exchange, transmit, and retain personal information, business information, financial information, banking information, credit information, application information, supporting documents, and any other information provided in connection with this application.", { brand: brandName() }) },
+      { p: tr("I/We further authorize {brand} to share such information with any current or prospective lender, funding source, investor, insurer, service provider, referral partner, credit reporting agency, governmental authority, compliance provider, fraud prevention provider, or any other party reasonably required to facilitate, evaluate, arrange, administer, monitor, service, or complete a financing transaction.", { brand: brandName() }) },
+      { p: tr("I/We certify that all information supplied is true, accurate, and complete to the best of my/our knowledge. I/We understand that {brand} may rely upon this information and may conduct reasonable verification procedures, including identity verification, business verification, credit inquiries, banking verification, fraud prevention reviews, and related due diligence activities.", { brand: brandName() }) },
+      { p: tr("I/We acknowledge that {brand} may receive commissions, fees, referral compensation, lender-paid compensation, or other remuneration in connection with financing transactions and that {brand} does not guarantee approval, funding, rates, terms, conditions, lender participation, or financing availability.", { brand: brandName() }) },
+      { p: tr("I/We represent and warrant that the individual submitting this application is duly authorized to provide these consents and authorizations on behalf of the business and on behalf of all owners, principals, shareholders, directors, officers, and proposed guarantors identified in this application.") },
+      { p: tr("I/We acknowledge that personal information is collected, used, retained, and disclosed in accordance with {brand}'s Privacy Policy, and that such information will be retained only as long as reasonably necessary for the purposes described or as required by law.", { brand: brandName() }) },
+      { p: tr("This authorization and any resulting financing relationship are governed by the laws of the Province of Alberta and the federal laws of Canada applicable therein, without regard to conflict-of-laws principles.") },
     ],
   },
   {
-    title: "Communication Consent (Email, SMS, Phone, Portal, and Client Messaging)",
+    title: tr("Communication Consent (Email, SMS, Phone, Portal, and Client Messaging)"),
     blocks: [
       // BF_CLIENT_v808_CONSENT_WORDING - texts about the application come only from Boreal; lenders and other
       // third parties never text through Boreal or receive the mobile number for marketing (Twilio 30468 review).
-      { p: `I/We authorize ${brandName()} and its staff to communicate with me/us regarding this application, any related financing transaction, account administration, document requests, underwriting matters, servicing matters, and other business-related communications.` },
-      { p: "This authorization includes communication through:" },
-      { ul: ["Email", "SMS/Text Messages", "Telephone Calls", "Voicemail Messages", "Automated Calling Systems", "Client Portal Notifications", "In-Application Messaging", `${brandName()} Client-to-Staff Messaging Systems`, "Secure Document Portals", "Electronic Signature Platforms", "Other electronic communication methods provided now or in the future"] },
-      { p: "This consent applies to all email addresses, telephone numbers, messaging accounts, portal accounts, and contact information provided now or in the future. I/We understand that message and data rates may apply and that electronic communications may not always be secure." },
-      { p: "I/We agree that electronic records, electronic communications, electronic acknowledgements, and electronic signatures shall have the same legal force and effect as original written documents and handwritten signatures." },
-      { p: `Text messages about this application come only from ${brandName()}. ${brandName()} does not share my/our mobile number or text-messaging consent with lenders, affiliates or any third party for marketing or promotional purposes. Marketing text messages are sent only if I/we tick the separate, optional \"Text me news, tips and offers\" box.` },
-      { p: `I/We may withdraw consent for commercial electronic messages or marketing communications at any time by using the unsubscribe mechanism provided in those messages or by contacting ${brandName()} directly. Withdrawing marketing consent will not affect communications reasonably necessary to administer or service an active application or financing transaction.` },
+      { p: tr("I/We authorize {brand} and its staff to communicate with me/us regarding this application, any related financing transaction, account administration, document requests, underwriting matters, servicing matters, and other business-related communications.", { brand: brandName() }) },
+      { p: tr("This authorization includes communication through:") },
+      { ul: [tr("Email"), tr("SMS/Text Messages"), tr("Telephone Calls"), tr("Voicemail Messages"), tr("Automated Calling Systems"), tr("Client Portal Notifications"), tr("In-Application Messaging"), tr("{brand} Client-to-Staff Messaging Systems", { brand: brandName() }), tr("Secure Document Portals"), tr("Electronic Signature Platforms"), tr("Other electronic communication methods provided now or in the future")] },
+      { p: tr("This consent applies to all email addresses, telephone numbers, messaging accounts, portal accounts, and contact information provided now or in the future. I/We understand that message and data rates may apply and that electronic communications may not always be secure.") },
+      { p: tr("I/We agree that electronic records, electronic communications, electronic acknowledgements, and electronic signatures shall have the same legal force and effect as original written documents and handwritten signatures.") },
+      { p: tr("Text messages about this application come only from {brand}. {brand} does not share my/our mobile number or text-messaging consent with lenders, affiliates or any third party for marketing or promotional purposes. Marketing text messages are sent only if I/we tick the separate, optional \"Text me news, tips and offers\" box.", { brand: brandName() }) },
+      { p: tr("I/We may withdraw consent for commercial electronic messages or marketing communications at any time by using the unsubscribe mechanism provided in those messages or by contacting {brand} directly. Withdrawing marketing consent will not affect communications reasonably necessary to administer or service an active application or financing transaction.", { brand: brandName() }) },
     ],
   },
 ];
@@ -108,7 +109,7 @@ import { brandName, nameWithLegal } from "@/config/brand"; // KS_CLIENT_v4_BRAND
 
 // BF_CLIENT_v808_MARKETING_OPTIN - same words as BF-Server MARKETING_SMS_OPTIN_TEXT (stored with the consent).
 export const marketingSmsOptinText = (): string =>
-  `Optional: Text me news, tips and offers from ${brandName()}. Up to 4 messages per month. Message and data rates may apply. Reply STOP to opt out at any time. Not required to apply.`;
+  tr("Optional: Text me news, tips and offers from {brand}. Up to 4 messages per month. Message and data rates may apply. Reply STOP to opt out at any time. Not required to apply.", { brand: brandName() });
 
 export function Step6_Review(): JSX.Element {
   const TC_CLAUSES = tcClauses(); // KS_CLIENT_v4_BRANDING - built with the licensee name
@@ -665,8 +666,8 @@ export function Step6_Review(): JSX.Element {
             gap: tokens.spacing.sm,
           }}
         >
-          <div style={components.form.eyebrow}>Submission incomplete</div>
-          <h1 style={components.form.title}>We couldn't submit your application</h1>
+          <div style={components.form.eyebrow}>{tr("Submission incomplete")}</div>
+          <h1 style={components.form.title}>{tr("We couldn't submit your application")}</h1>
           <p style={components.form.subtitle} role="alert">{submitError}</p>
           {incompleteStep ? (
             <Button
@@ -678,16 +679,12 @@ export function Step6_Review(): JSX.Element {
                 update({ currentStep: step });
                 navigate(`/apply/step-${step}`);
               }}
-            >
-              Go to Step {incompleteStep}
-            </Button>
+            >{tr("Go to Step {incompleteStep}", { incompleteStep: incompleteStep })}</Button>
           ) : (
             <Button
               style={{ marginTop: tokens.spacing.sm, width: "100%", maxWidth: "260px" }}
               onClick={() => { setSubmitError(null); void submit(); }}
-            >
-              Try Again
-            </Button>
+            >{tr("Try Again")}</Button>
           )}
         </Card>
       </WizardLayout>
@@ -810,7 +807,7 @@ export function Step6_Review(): JSX.Element {
         <style>{`.wizard-step-shell label{display:block;font-size:var(--ks-text-label);font-weight:500;color:#374151;margin-bottom:6px}.wizard-step-shell input,.wizard-step-shell select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:var(--ks-text-body-sm);color:#111827;background:#fff;box-sizing:border-box}.wizard-step-shell select{appearance:none;cursor:pointer}`}</style>
     <WizardLayout>
       <div className="wizard-step-shell">
-      <StepHeader step={6} title="Terms & Conditions + Typed Signature" subtitle="Check everything is right. You can edit any section before submitting." />
+      <StepHeader step={6} title={tr("Terms & Conditions + Typed Signature")} subtitle="Check everything is right. You can edit any section before submitting." />
 
       {/* BF_CLIENT_BLOCK_v_REVIEW_SUMMARY_v1 - read-only "what you entered" summary
           at the top of Step 6 (Direction A mockup). Display only; does not touch the
@@ -834,7 +831,7 @@ export function Step6_Review(): JSX.Element {
         ];
         return (
           <Card style={{ marginBottom: tokens.spacing.lg }}>
-            <h2 style={{ ...components.form.sectionTitle, marginBottom: tokens.spacing.md }}>Application summary</h2>
+            <h2 style={{ ...components.form.sectionTitle, marginBottom: tokens.spacing.md }}>{tr("Application summary")}</h2>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
               {rows.map(([label, value], i) => (
                 <div key={label} style={{
@@ -853,7 +850,7 @@ export function Step6_Review(): JSX.Element {
       {/* BF_CLIENT_BLOCK_v327 - Accord Risk Profile moved here from Step 3 (top of Step 6). */}
       {isAccordLOCApp(app) && (
         <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.md, marginBottom: tokens.spacing.lg }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: "#111827", margin: 0 }}>Risk Profile</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: "#111827", margin: 0 }}>{tr("Risk Profile")}</h2>
           <div style={{ display: "grid", gridTemplateColumns: typeof window !== "undefined" && window.innerWidth < 600 ? "1fr" : "1fr 1fr", gap: tokens.spacing.md }}>
             {ACCORD_RISK_QUESTIONS.map((q) => {
               const biz = (app.business ?? {}) as Record<string, any>;
@@ -863,14 +860,14 @@ export function Step6_Review(): JSX.Element {
               const setDetail = (v: string) => update({ business: { ...biz, [`${q.key}Detail`]: v } as any });
               return (
                 <div key={q.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <label>{q.label}</label>
+                  <label>{tr(q.label)}</label>
                   <select value={val} onChange={(e) => setVal(e.target.value)}>
-                    <option value="">Select...</option>
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
+                    <option value="">{tr("Select...")}</option>
+                    <option value="No">{tr("No")}</option>
+                    <option value="Yes">{tr("Yes")}</option>
                   </select>
                   {val === "Yes" && (
-                    <input value={detail} onChange={(e) => setDetail(e.target.value)} placeholder="Please provide details" />
+                    <input value={detail} onChange={(e) => setDetail(e.target.value)} placeholder={tr("Please provide details")} />
                   )}
                 </div>
               );
@@ -891,7 +888,7 @@ export function Step6_Review(): JSX.Element {
 
         {(!docsPresent && !app.documentsDeferred) && (
           <Card variant="muted" data-error={true}>
-            <div style={{ fontWeight: 600 }}>One or more documents needs attention</div>
+            <div style={{ fontWeight: 600 }}>{tr("One or more documents needs attention")}</div>
             <div style={components.form.helperText}>
               Please return to Step 5 and re-upload any rejected documents, or choose
               "I will supply documents later".
@@ -903,10 +900,8 @@ export function Step6_Review(): JSX.Element {
         <PgiSection app={app} update={update} />
 
         <div>
-          <h2 style={components.form.sectionTitle}>Terms & Conditions</h2>
-          <p style={{ fontSize: tokens.typography.body.fontSize, color: tokens.colors.textSecondary, marginTop: tokens.spacing.xs }}>
-            Please review and accept each of the following. Select "View full terms" to read the complete text of each.
-          </p>
+          <h2 style={components.form.sectionTitle}>{tr("Terms & Conditions")}</h2>
+          <p style={{ fontSize: tokens.typography.body.fontSize, color: tokens.colors.textSecondary, marginTop: tokens.spacing.xs }}>{tr("Please review and accept each of the following. Select \"View full terms\" to read the complete text of each.")}</p>
         </div>
 
         {/* BF_CLIENT_SMS_DISCLOSURE_v690 - one required checkbox covers the three agreements (each still
@@ -1016,9 +1011,7 @@ export function Step6_Review(): JSX.Element {
                 type="button"
                 onClick={() => setOpenClause(null)}
                 style={{ marginTop: 8, padding: "10px 20px", background: "#0b1320", color: "#fff", border: 0, borderRadius: 8, cursor: "pointer", fontSize: "var(--ks-text-body-sm)", fontWeight: 600 }}
-              >
-                Close
-              </button>
+              >{tr("Close")}</button>
             </div>
           </div>
         )}
@@ -1034,43 +1027,37 @@ export function Step6_Review(): JSX.Element {
           }}
         >
           <div style={layout.stackTight}>
-            <label style={components.form.label}>Typed signature</label>
+            <label style={components.form.label}>{tr("Typed signature")}</label>
             <Input
-              placeholder="Type your full legal name"
+              placeholder={tr("Type your full legal name")}
               value={app.typedSignature || ""}
               onChange={(e) => update({ typedSignature: e.target.value })}
             />
-            <p style={components.form.helperText}>
-              By typing your name, you are providing a legally binding signature.
-            </p>
+            <p style={components.form.helperText}>{tr("By typing your name, you are providing a legally binding signature.")}</p>
           </div>
 
           {hasPartner && (
             <div style={layout.stackTight}>
-              <label style={components.form.label}>Business partner signature</label>
+              <label style={components.form.label}>{tr("Business partner signature")}</label>
               <Input
-                placeholder="Type full legal name"
+                placeholder={tr("Type full legal name")}
                 value={app.coApplicantSignature || ""}
                 onChange={(e) =>
                   update({ coApplicantSignature: e.target.value })
                 }
               />
-              <p style={components.form.helperText}>
-                All applicants listed in the application must sign.
-              </p>
+              <p style={components.form.helperText}>{tr("All applicants listed in the application must sign.")}</p>
             </div>
           )}
 
           <div style={layout.stackTight}>
-            <label style={components.form.label}>Date</label>
+            <label style={components.form.label}>{tr("Date")}</label>
             <Input value={app.signatureDate || today} readOnly />
           </div>
         </div>
 
         {typeof app.readinessScore === "number" && (
-          <div style={components.form.helperText}>
-            Your capital readiness score: {app.readinessScore} / 100
-          </div>
+          <div style={components.form.helperText}>{tr("Your capital readiness score: {readinessScore} / 100", { readinessScore: app.readinessScore })}</div>
         )}
 
         <div style={components.form.helperText}>
@@ -1110,7 +1097,7 @@ export function Step6_Review(): JSX.Element {
                 })
               }
             >
-              {submitting ? "Submitting..." : "Submit Application"}
+              {submitting ? tr("Submitting...") : tr("Submit Application")}
             </Button>
           </div>
         </div>

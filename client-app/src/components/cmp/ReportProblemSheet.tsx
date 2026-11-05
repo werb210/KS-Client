@@ -6,6 +6,7 @@ import { apiRequest } from "@/lib/api";
 import { Sheet } from "./CmpHome";
 import "./cmp.css";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export async function captureScreen(skip: (el: Element) => boolean): Promise<string | null> {
   try {
     const html2canvas = (await import("html2canvas")).default;
@@ -61,7 +62,7 @@ export default function ReportProblemSheet({ applicationId, contact, onClose }: 
 
   const send = async () => {
     const description = text.trim();
-    if (!description) { setErr("Tell us what went wrong."); return; }
+    if (!description) { setErr(tr("Tell us what went wrong.")); return; }
     setBusy(true);
     setErr(null);
     try {
@@ -78,7 +79,7 @@ export default function ReportProblemSheet({ applicationId, contact, onClose }: 
       });
       setSent(true);
     } catch {
-      setErr("We couldn't send that. Check your connection and try again.");
+      setErr(tr("We couldn't send that. Check your connection and try again."));
     } finally {
       setBusy(false);
     }
@@ -86,32 +87,31 @@ export default function ReportProblemSheet({ applicationId, contact, onClose }: 
 
   return (
     <div data-report-sheet="1">
-      <Sheet title="Report a problem" onClose={onClose} testId="cmp-report-sheet">
+      <Sheet title={tr("Report a problem")} onClose={onClose} testId="cmp-report-sheet">
         {sent ? (
           <div data-testid="cmp-report-sent">
-            <p style={{ fontSize: 17, fontWeight: 700, color: "#0B1F3A", margin: "4px 0 6px" }}>Thanks, we got your report.</p>
-            <p className="cmpx-muted" style={{ margin: "0 0 16px" }}>Our team will look into it. If we need more detail, your advisor will message you.</p>
-            <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onClose}>Done</button>
+            <p style={{ fontSize: 17, fontWeight: 700, color: "#0B1F3A", margin: "4px 0 6px" }}>{tr("Thanks, we got your report.")}</p>
+            <p className="cmpx-muted" style={{ margin: "0 0 16px" }}>{tr("Our team will look into it. If we need more detail, your advisor will message you.")}</p>
+            <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onClose}>{tr("Done")}</button>
           </div>
         ) : (
           <>
-            <label className="cmpx-field">What went wrong?
-              <textarea rows={4} value={text} onChange={(e) => setText(e.target.value)} data-testid="cmp-report-text"
-                placeholder="For example: the Upload button did nothing on the Home screen." />
+            <label className="cmpx-field">{tr("What went wrong?")}<textarea rows={4} value={text} onChange={(e) => setText(e.target.value)} data-testid="cmp-report-text"
+                placeholder={tr("For example: the Upload button did nothing on the Home screen.")} />
             </label>
             <div className="cmpx-report__shot">
-              {shotBusy ? <p className="cmpx-muted" style={{ margin: 0 }}>Taking a picture of your screen...</p>
+              {shotBusy ? <p className="cmpx-muted" style={{ margin: 0 }}>{tr("Taking a picture of your screen...")}</p>
                 : shot ? (
                   <label className="cmpx-report__shotlabel">
                     <input type="checkbox" checked={includeShot} onChange={(e) => setIncludeShot(e.target.checked)} data-testid="cmp-report-include-shot" />
-                    <span>Include this picture of your screen</span>
-                    <img src={shot} alt="Your screen" className="cmpx-report__img" />
+                    <span>{tr("Include this picture of your screen")}</span>
+                    <img src={shot} alt={tr("Your screen")} className="cmpx-report__img" />
                   </label>
                 ) : null}
             </div>
             {err ? <p className="cmpx-err" role="alert">{err}</p> : null}
             <button type="button" className="cmpx-btn cmpx-btn--block" onClick={() => void send()} disabled={busy || shotBusy} data-testid="cmp-report-send">
-              {busy ? "Sending..." : "Send report"}
+              {busy ? tr("Sending...") : tr("Send report")}
             </button>
           </>
         )}

@@ -1,5 +1,6 @@
 import { components } from "@/styles";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type SpinnerProps = {
   variant?: "light" | "dark";
 };
@@ -12,7 +13,7 @@ export function Spinner({ variant = "dark" }: SpinnerProps) {
           ? components.buttons.spinner
           : components.buttons.spinnerDark
       }
-      aria-label="Loading"
+      aria-label={tr("Loading")}
     />
   );
 }

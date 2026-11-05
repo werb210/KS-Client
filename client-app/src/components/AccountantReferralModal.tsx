@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { tokens } from "@/styles/tokens";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export type AccountantDetails = {
   firm: string;
   contact: string;
@@ -87,16 +88,16 @@ export function AccountantReferralModal({
       phone: phoneDigits(details.phone),
     };
     if (!trimmed.firm || !trimmed.contact || !trimmed.email || !trimmed.phone) {
-      setError("Please fill in all four fields so we can reach your accountant.");
+      setError(tr("Please fill in all four fields so we can reach your accountant."));
       return;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed.email)) {
-      setError("Please enter a valid email address.");
+      setError(tr("Please enter a valid email address."));
       return;
     }
     // Ten digits, because the accountant signs in with this number by SMS.
     if (trimmed.phone.length !== 10) {
-      setError("Please enter a 10-digit phone number for your accountant.");
+      setError(tr("Please enter a 10-digit phone number for your accountant."));
       return;
     }
     setError(null);
@@ -132,28 +133,23 @@ export function AccountantReferralModal({
           boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
         }}
       >
-        <div id="accountant-referral-title" style={{ fontWeight: 700, fontSize: 18, marginBottom: tokens.spacing.sm }}>
-          Who is your accountant?
-        </div>
-        <div style={{ fontSize: "var(--ks-text-label)", color: tokens.colors.textSecondary, marginBottom: tokens.spacing.md }}>
-          We will email them a request to upload your financial documents. You can
-          carry on and finish your application now.
-        </div>
+        <div id="accountant-referral-title" style={{ fontWeight: 700, fontSize: 18, marginBottom: tokens.spacing.sm }}>{tr("Who is your accountant?")}</div>
+        <div style={{ fontSize: "var(--ks-text-label)", color: tokens.colors.textSecondary, marginBottom: tokens.spacing.md }}>{tr("We will email them a request to upload your financial documents. You can carry on and finish your application now.")}</div>
 
         <label style={{ display: "block", marginBottom: tokens.spacing.sm }}>
-          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>Accounting firm</div>
+          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>{tr("Accounting firm")}</div>
           <Input autoComplete="organization" value={details.firm} onChange={set("firm")} disabled={busy} />
         </label>
         <label style={{ display: "block", marginBottom: tokens.spacing.sm }}>
-          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>Accountant name</div>
+          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>{tr("Accountant name")}</div>
           <Input autoComplete="name" value={details.contact} onChange={set("contact")} disabled={busy} />
         </label>
         <label style={{ display: "block", marginBottom: tokens.spacing.sm }}>
-          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>Email</div>
+          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>{tr("Email")}</div>
           <Input type="email" autoComplete="email" value={details.email} onChange={set("email")} disabled={busy} />
         </label>
         <label style={{ display: "block", marginBottom: tokens.spacing.md }}>
-          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>Phone</div>
+          <div style={{ fontSize: "var(--ks-text-label)", marginBottom: 4 }}>{tr("Phone")}</div>
           <Input
             type="tel"
             inputMode="tel"
@@ -173,11 +169,9 @@ export function AccountantReferralModal({
         )}
 
         <div style={{ display: "flex", gap: tokens.spacing.sm, justifyContent: "flex-end" }}>
-          <Button variant="secondary" onClick={onCancel} disabled={busy}>
-            Cancel
-          </Button>
+          <Button variant="secondary" onClick={onCancel} disabled={busy}>{tr("Cancel")}</Button>
           <Button onClick={handleSubmit} disabled={busy}>
-            {busy ? "Saving…" : "Send to my accountant"}
+            {busy ? tr("Saving…") : tr("Send to my accountant")}
           </Button>
         </div>
       </div>

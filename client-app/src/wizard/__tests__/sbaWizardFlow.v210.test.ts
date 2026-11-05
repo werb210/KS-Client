@@ -49,7 +49,7 @@ describe("Step 3 layout", () => {
 
 describe("Step 4 button", () => {
   it("does not promise Documents on a path that skips it", () => {
-    expect(step4).toContain('{onSba ? "Continue to Review');
+    expect(step4).toContain('{onSba ? tr("Continue to Review'); // KS_CLIENT_LANGUAGES_v1
   });
 
   it("still says Documents off the SBA path", () => {

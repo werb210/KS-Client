@@ -1,6 +1,7 @@
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
 import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
+import { installLanguageHeader } from "@/i18n";
 
 type HttpResponse<T = unknown> = {
   data: T;
@@ -22,6 +23,8 @@ type RequestConfig = {
 type ApiClientError = Error & { status?: number; code?: string; body?: unknown }; // BF_CLIENT_v848_DUPLICATE_UX - body
 
 const API_BASE = ENV.API_BASE || SERVER_URL;
+// KS_CLIENT_LANGUAGES_v1 - when the API lives elsewhere than SERVER_URL, it hears the client's language too.
+if (API_BASE !== SERVER_URL) installLanguageHeader(API_BASE);
 
 function getAuthHeaders(headers?: HeadersInit): HeadersInit {
   const token = getToken();

@@ -12,6 +12,7 @@ import { useIsPhoneWidth } from "@/components/CmpPhone"; // BF_CLIENT_v802_ACCOU
 import { Sheet } from "@/components/cmp/CmpHome";
 import { Icon } from "@/components/cmp/icons";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export default function AccountBar() {
   // BF_CLIENT_SIGN_OUT_v345
   // There was no way to sign out of this app. clearToken() was called in exactly
@@ -53,17 +54,17 @@ export default function AccountBar() {
   if (isPhone) {
     return (
       <>
-        <button type="button" className="cmpx-acct-btn" aria-label="Account" data-testid="account-button" onClick={() => setSheetOpen(true)}>
+        <button type="button" className="cmpx-acct-btn" aria-label={tr("Account")} data-testid="account-button" onClick={() => setSheetOpen(true)}>
           <Icon name="user" size={20} />
         </button>
         {sheetOpen ? (
-          <Sheet title="Account" onClose={() => setSheetOpen(false)} testId="account-sheet">
+          <Sheet title={tr("Account")} onClose={() => setSheetOpen(false)} testId="account-sheet">
             <div className="cmpx-list cmpx-settings__toggles" style={{ marginBottom: 12 }}>
               <FaceIdSignInToggle variant="row" />
               <PasskeySignInToggle />
             </div>
             <button type="button" className="cmpx-btn cmpx-btn--ghost cmpx-btn--block" disabled={signingOut} onClick={() => void signOut()}>
-              <Icon name="out" />{signingOut ? "Signing out..." : "Sign out"}
+              <Icon name="out" />{signingOut ? tr("Signing out...") : tr("Sign out")}
             </button>
           </Sheet>
         ) : null}
@@ -103,7 +104,7 @@ export default function AccountBar() {
           padding: 0,
         }}
       >
-        {signingOut ? "Signing out…" : "Sign out"}
+        {signingOut ? tr("Signing out…") : tr("Sign out")}
       </button>
     </div>
   );

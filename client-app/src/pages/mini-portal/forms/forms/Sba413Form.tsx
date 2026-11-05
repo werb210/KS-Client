@@ -19,6 +19,7 @@ import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api
 // the YYYY-MM-DD schedule dates, 44px controls, pinned Submit, localStorage draft.
 import { MoneyInput, mergeDraft, readDraft, useFormDraft } from "../cmpFormKit";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 // BF_CLIENT_SBA_413_PER_OWNER_v200
 // SBA requires one Form 413 per owner of 20% or more, plus each guarantor - it
 // is a personal balance sheet, not a company one. application_form_responses is
@@ -151,7 +152,7 @@ export default function Sba413Form({
       setSubmitted(true);
       onComplete(); // BF_CLIENT_SBA_SUBMIT_CLOSES_v746
     } catch {
-      setError("We could not save that. Please try again, or call us on (866) 631-8939.");
+      setError(tr("We could not save that. Please try again, or call us on (866) 631-8939."));
     } finally {
       setSaving(false);
     }
@@ -161,7 +162,7 @@ export default function Sba413Form({
 
   const row = (r: { key: string; label: string }) => (
     <div key={r.key} className="cmpf-row" style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
-      <label htmlFor={`sba413-${r.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{r.label}</label>
+      <label htmlFor={`sba413-${r.key}`} style={{ flex: 1, fontSize: "var(--ks-text-body-sm)", color: "#0B1F3A" }}>{tr(r.label)}</label>
       <span style={{ width: 170, flex: "none" }} className="cmpf-row-field">
         <MoneyInput
           id={`sba413-${r.key}`}
@@ -219,14 +220,14 @@ export default function Sba413Form({
       <div style={{ color: "#51617D", fontSize: "var(--ks-text-body-sm)", marginBottom: 8 }}>{hint}</div>
       {list.map((_, index) => <div key={index} className="cmpf-card cmp-grid-2" style={{ marginBottom: 8 }}>
         {columns.map((c) => <div key={c.field} style={{ gridColumn: c.field === columns[0].field ? "1 / -1" : undefined }}>
-          <label className="cmpf-label" htmlFor={`sba413-${listKey}-${index}-${c.field}`} style={{ marginTop: 0 }}>{c.label}</label>
+          <label className="cmpf-label" htmlFor={`sba413-${listKey}-${index}-${c.field}`} style={{ marginTop: 0 }}>{tr(c.label)}</label>
           {cell(listKey, index, c.field, c.placeholder)}
         </div>)}
-        <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end" }}><button type="button" className="cmpf-remove" onClick={() => removeRow(listKey, index)}>Remove</button></div>
+        <div style={{ gridColumn: "1 / -1", display: "flex", justifyContent: "flex-end" }}><button type="button" className="cmpf-remove" onClick={() => removeRow(listKey, index)}>{tr("Remove")}</button></div>
       </div>)}
       {list.length < max ? <button type="button" className="cmpf-add" onClick={() => addRow(listKey, max)}>
         + Add {list.length === 0 ? "an entry" : "another"}</button> :
-        <div style={{ color: "#51617D", fontSize: "var(--ks-text-label)" }}>The form holds {max}. If you have more, tell us in Notes and we will attach a continuation sheet.</div>}
+        <div style={{ color: "#51617D", fontSize: "var(--ks-text-label)" }}>{tr("The form holds {max}. If you have more, tell us in Notes and we will attach a continuation sheet.", { max: max })}</div>}
     </div>;
   };
   const textSchedule = (key: string, title: string, hint: string) => <div style={{ marginBottom: 20 }}>
@@ -241,21 +242,16 @@ export default function Sba413Form({
         Personal Financial Statement (SBA Form 413)
         {ownerName ? <span style={{ fontWeight: 400, color: "#51617D" }}> — {ownerName}</span> : null}
       </h3>
-      <p className="cmpf-intro">
-        SBA requires this from every owner of 20% or more and from anyone guaranteeing
-        the loan. Figures should be current within 120 days. Divide jointly owned
-        assets and liabilities as appropriate. Your answers save as you go, so you can
-        stop and come back.
-      </p>
+      <p className="cmpf-intro">{tr("SBA requires this from every owner of 20% or more and from anyone guaranteeing the loan. Figures should be current within 120 days. Divide jointly owned assets and liabilities as appropriate. Your answers save as you go, so you can stop and come back.")}</p>
 
       {section("Assets", ASSET_ROWS)}
       {section("Liabilities", LIAB_ROWS)}
 
       <div style={{ background: "#F5F8FC", borderRadius: 8, padding: 12, marginBottom: 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}><span>Total assets</span><strong>{fmt(totals.assets)}</strong></div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}><span>Total liabilities</span><strong>{fmt(totals.liabilities)}</strong></div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><span>{tr("Total assets")}</span><strong>{fmt(totals.assets)}</strong></div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><span>{tr("Total liabilities")}</span><strong>{fmt(totals.liabilities)}</strong></div>
         <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid #E4EAF2", marginTop: 6, paddingTop: 6 }}>
-          <span>Net worth</span><strong>{fmt(totals.netWorth)}</strong>
+          <span>{tr("Net worth")}</span><strong>{fmt(totals.netWorth)}</strong>
         </div>
       </div>
 
@@ -304,7 +300,7 @@ export default function Sba413Form({
       {section("Contingent liabilities", CONTINGENT_ROWS)}
 
       <div style={{ marginBottom: 20 }}>
-        <label className="cmpf-section" htmlFor="sba413-notes" style={{ display: "block", marginTop: 0 }}>Notes</label>
+        <label className="cmpf-section" htmlFor="sba413-notes" style={{ display: "block", marginTop: 0 }}>{tr("Notes")}</label>
         <textarea
           id="sba413-notes"
           className="cmpf-textarea"
@@ -312,20 +308,18 @@ export default function Sba413Form({
           onChange={(e) => set("notes", e.target.value)}
           onBlur={persist}
           rows={4}
-          placeholder="Unpaid taxes, other liabilities, life insurance held, or anything a lender should see alongside the numbers above."
+          placeholder={tr("Unpaid taxes, other liabilities, life insurance held, or anything a lender should see alongside the numbers above.")}
         />
       </div>
 
       {error ? <p style={{ color: "#B42318", fontSize: "var(--ks-text-body-sm)" }}>{error}</p> : null}
-      {submitted ? <p style={{ color: "#067647", fontSize: "var(--ks-text-body-sm)" }}>Saved. You can reopen this any time to update it.</p> : null}
+      {submitted ? <p style={{ color: "#067647", fontSize: "var(--ks-text-body-sm)" }}>{tr("Saved. You can reopen this any time to update it.")}</p> : null}
 
       <div className="cmpf-actions">
         <button type="button" className="cmpf-primary" onClick={handleSubmit} disabled={saving}>
-          {saving ? "Saving..." : "Submit"}
+          {saving ? tr("Saving...") : tr("Submit")}
         </button>
-        <button type="button" className="cmpf-secondary" onClick={() => onComplete()}>
-          Done
-        </button>
+        <button type="button" className="cmpf-secondary" onClick={() => onComplete()}>{tr("Done")}</button>
       </div>
     </div>
   );

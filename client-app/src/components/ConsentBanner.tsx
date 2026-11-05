@@ -5,6 +5,7 @@ import { CONSENT_KEY } from "@/utils/analytics";
 import { SERVER_URL } from "@/config/licensee";
 import { startJourney } from "@/lib/journey";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 const KEY = CONSENT_KEY;
 const VISITOR_KEY = "ks_consent_visitor";
 export const CONSENT_POLICY_VERSION = "2026-11";
@@ -55,8 +56,8 @@ function applyConsent(granted: boolean) {
  *  else. Elsewhere: Google analytics and ad measurement run on notice until Decline; the rest waits for Accept. */
 export function consentNotice(region: ConsentRegion): string {
   return region === "QC"
-    ? "We'd like to use cookies to see how visitors use this site (Google Analytics and session recordings) and to measure our Google ads. All tracking is off until you accept."
-    : "We use cookies to see how visitors use this site and to measure our ads. Google Analytics and Google Ads measurement are on unless you decline. Session recordings and visitor tracking start only if you accept.";
+    ? tr("We'd like to use cookies to see how visitors use this site (Google Analytics and session recordings) and to measure our Google ads. All tracking is off until you accept.")
+    : tr("We use cookies to see how visitors use this site and to measure our ads. Google Analytics and Google Ads measurement are on unless you decline. Session recordings and visitor tracking start only if you accept.");
 }
 
 export default function ConsentBanner(): ReactElement | null {
@@ -109,8 +110,8 @@ export default function ConsentBanner(): ReactElement | null {
         {consentNotice(region)}
       </p>
       <div style={{ display: "flex", gap: 8 }}>
-        <button onClick={() => choose(false)} style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", cursor: "pointer" }}>Decline</button>
-        <button onClick={() => choose(true)} style={{ background: "#1E3A8A", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", fontWeight: 600, cursor: "pointer" }}>Accept</button>
+        <button onClick={() => choose(false)} style={{ background: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", cursor: "pointer" }}>{tr("Decline")}</button>
+        <button onClick={() => choose(true)} style={{ background: "#1E3A8A", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: "var(--ks-text-label)", fontWeight: 600, cursor: "pointer" }}>{tr("Accept")}</button>
       </div>
     </div>
   );

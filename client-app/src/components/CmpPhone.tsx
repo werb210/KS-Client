@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import "./CmpPhone.css";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 // BF_CLIENT_v802_PHONE_UI - To do is part of Home now (Home carries the to-do badge): Home, Chat, More, Settings.
 export type CmpTab = "home" | "chat" | "more" | "settings";
 export const PHONE_QUERY = "(max-width: 640px)";
@@ -78,14 +79,14 @@ export function CmpTabBar({ tab, onTab, todoCount, mode = "phone" }: { tab: CmpT
   // BF_CLIENT_v807_TABLET - wide screens: a rail on the left, and no Chat tab (Chat is always open on the right).
   const tabs = mode === "wide" ? TABS.filter((t) => t.id !== "chat") : TABS;
   return (
-    <nav className={"cmp-tabbar" + (mode === "wide" ? " cmp-tabbar--rail" : "")} aria-label="Client portal" data-testid="cmp-tabbar">
+    <nav className={"cmp-tabbar" + (mode === "wide" ? " cmp-tabbar--rail" : "")} aria-label={tr("Client portal")} data-testid="cmp-tabbar">
       {tabs.map((t) => {
         const on = t.id === tab;
         return (
           <button key={t.id} type="button" className={"cmp-tabbar__tab" + (on ? " cmp-tabbar__tab--on" : "")} aria-current={on ? "page" : undefined}
             data-testid={"cmp-tab-" + t.id} onClick={() => onTab(t.id)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[t.id]}</svg>
-            <span>{t.label}</span>
+            <span>{tr(t.label)}</span>
             {t.id === "home" && todoCount > 0 ? <span className="cmp-tabbar__badge" aria-label={todoCount + " to do"}>{todoCount}</span> : null}
           </button>
         );
@@ -126,7 +127,7 @@ export function CmpMoreFooter({ onDeleteAccount }: { onDeleteAccount: () => void
         {native ? `App ${native}` : "Web app"}{build ? ` · ${build}` : ""}
       </div>
       {/* BF_CLIENT_v802_SETTINGS - Delete account is the last thing on the page, in plain text. */}
-      <button type="button" className="cmp-more-footer__delete" onClick={onDeleteAccount}>Delete account</button>
+      <button type="button" className="cmp-more-footer__delete" onClick={onDeleteAccount}>{tr("Delete account")}</button>
     </div>
   );
 }

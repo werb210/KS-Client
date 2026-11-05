@@ -30,6 +30,7 @@ import Sba413Form from "./forms/Sba413Form";
 // BF_CLIENT_SBA_1919_v199
 import Sba1919Form from "./forms/Sba1919Form";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type RequiredDoc = {
   document_type: string;
   required: boolean;
@@ -183,7 +184,7 @@ export default function Stage2Page() {
     return { done, total };
   }, [requiredDocs, responses]);
 
-  if (loading) return <div style={{ padding: 24 }}>Loading...</div>;
+  if (loading) return <div style={{ padding: 24 }}>{tr("Loading...")}</div>;
   if (error) return <div style={{ padding: 24, color: "#dc2626" }}>{error}</div>;
 
   if (activeForm && FORM_RENDERERS[activeForm] && applicationId) {
@@ -196,9 +197,7 @@ export default function Stage2Page() {
             void load();
           }}
           style={{ marginBottom: 16, padding: "6px 12px", fontSize: "var(--ks-text-label)", cursor: "pointer", background: "#f3f4f6", border: "1px solid #d1d5db", borderRadius: 4 }}
-        >
-          ← Back to forms
-        </button>
+        >{tr("← Back to forms")}</button>
         <FormComponent
           applicationId={applicationId}
           onComplete={() => {
@@ -217,12 +216,8 @@ export default function Stage2Page() {
         style={{ background: "none", border: 0, padding: "8px 0", marginBottom: 8, color: "#1e3a8a", fontSize: 15, fontWeight: 600, cursor: "pointer", minHeight: 44 }}>
         &larr; Back to my application
       </button>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Continue your application</h1>
-      <p style={{ fontSize: "var(--ks-text-body-sm)", color: "#6b7280", marginBottom: 20 }}>
-        We've received your initial documents. The items below are needed
-        so lenders can complete their review. Your progress saves
-        automatically -- come back any time.
-      </p>
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{tr("Continue your application")}</h1>
+      <p style={{ fontSize: "var(--ks-text-body-sm)", color: "#6b7280", marginBottom: 20 }}>{tr("We've received your initial documents. The items below are needed so lenders can complete their review. Your progress saves automatically -- come back any time.")}</p>
 
       {progress.total > 0 && (
         <div style={{
@@ -230,16 +225,11 @@ export default function Stage2Page() {
           background: progress.done === progress.total ? "#d1fae5" : "#fef3c7",
           fontSize: "var(--ks-text-label)", fontWeight: 600,
           color: progress.done === progress.total ? "#065f46" : "#92400e",
-        }}>
-          {progress.done} of {progress.total} forms completed
-        </div>
+        }}>{tr("{done} of {total} forms completed", { done: progress.done, total: progress.total })}</div>
       )}
 
       {requiredDocs.length === 0 && (
-        <div style={{ padding: 24, textAlign: "center", color: "#6b7280" }}>
-          Nothing more needed right now. We'll text you if a lender
-          requests anything additional.
-        </div>
+        <div style={{ padding: 24, textAlign: "center", color: "#6b7280" }}>{tr("Nothing more needed right now. We'll text you if a lender requests anything additional.")}</div>
       )}
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 8 }}>
@@ -274,11 +264,11 @@ export default function Stage2Page() {
                       marginLeft: 8, padding: "2px 6px", fontSize: "var(--ks-text-tiny)",
                       background: "#dbeafe", color: "#1e40af", borderRadius: 3,
                       fontWeight: 600,
-                    }}>📝 form</span>
+                    }}>{tr("📝 form")}</span>
                   )}
                 </div>
                 <div style={{ fontSize: "var(--ks-text-help)", color: "#6b7280", marginTop: 2 }}>
-                  {isComplete ? "✓ Completed" : isDraft ? "Draft saved" : "Not started"}
+                  {isComplete ? "✓ Completed" : isDraft ? tr("Draft saved") : tr("Not started")}
                 </div>
               </div>
               {isForm ? (
@@ -292,7 +282,7 @@ export default function Stage2Page() {
                     borderRadius: 4, cursor: "pointer",
                   }}
                 >
-                  {isComplete ? "Review / edit" : isDraft ? "Continue" : "Start form"}
+                  {isComplete ? "Review / edit" : isDraft ? tr("Continue") : tr("Start form")}
                 </button>
               ) : (
                 <button
@@ -311,7 +301,7 @@ export default function Stage2Page() {
                     borderRadius: 4, cursor: "pointer",
                   }}
                 >
-                  {isComplete ? "Uploaded" : "Upload"}
+                  {isComplete ? tr("Uploaded") : tr("Upload")}
                 </button>
               )}
             </li>

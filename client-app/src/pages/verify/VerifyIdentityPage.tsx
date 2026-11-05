@@ -15,6 +15,7 @@ import { SERVER_URL } from "@/config/licensee";
 import { openExternal } from "@/native/openExternal";
 import { A11Y_COLORS } from "@/styles/a11yColors";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type KycStatus = "requested" | "in_progress" | "processing" | "approved" | "declined" | "review" | "expired" | "cancelled" | "error";
 type Verification = { id: string; application_id: string; status: KycStatus; mode: "hosted" | "upload"; requested_at: string | null; completed_at: string | null };
 type Mine = { ok: boolean; enabled: boolean; wizard_step: boolean; verifications: Verification[] };
@@ -62,7 +63,7 @@ export default function VerifyIdentityPage() {
       setMine(r);
       setError(null);
     } catch {
-      setError("We could not load your verification. Please check your connection and try again.");
+      setError(tr("We could not load your verification. Please check your connection and try again."));
     }
   }, [applicationId, wizard]);
   useEffect(() => { void load(); }, [load]);
@@ -89,14 +90,14 @@ export default function VerifyIdentityPage() {
         await load();
       }
     } catch {
-      setError("The verification service did not answer. Please try again in a minute.");
+      setError(tr("The verification service did not answer. Please try again in a minute."));
     } finally {
       setBusy(false);
     }
   };
 
   const upload = async (v: Verification) => {
-    if (!files.id_front || !files.selfie) { setError("Please add a photo of the front of your ID and a selfie."); return; }
+    if (!files.id_front || !files.selfie) { setError(tr("Please add a photo of the front of your ID and a selfie.")); return; }
     setBusy(true);
     setError(null);
     try {
@@ -113,7 +114,7 @@ export default function VerifyIdentityPage() {
       setFiles({});
       await load();
     } catch {
-      setError("We could not send your pictures. Please check your connection and try again.");
+      setError(tr("We could not send your pictures. Please check your connection and try again."));
     } finally {
       setBusy(false);
     }
@@ -124,22 +125,22 @@ export default function VerifyIdentityPage() {
     setFiles((cur) => ({ ...cur, [key]: f }));
   };
 
-  if (!mine && !error) return <main style={s.page}><p style={s.p}>Loading…</p></main>;
+  if (!mine && !error) return <main style={s.page}><p style={s.p}>{tr("Loading…")}</p></main>;
 
   return (
     <main style={s.page} data-testid="verify-page">
-      <h1 style={s.h1}>Verify your identity</h1>
+      <h1 style={s.h1}>{tr("Verify your identity")}</h1>
       {error ? <p role="alert" style={s.err}>{error}</p> : null}
       {mine && (!mine.enabled || !current) ? (
         <>
-          <p style={s.p}>{wizard ? "Your application is in. There is nothing else to do here right now." : "There is no identity check waiting for you right now."}</p>
-          <button type="button" style={s.btn} onClick={goPortal}>Go to my application</button>
+          <p style={s.p}>{wizard ? tr("Your application is in. There is nothing else to do here right now.") : tr("There is no identity check waiting for you right now.")}</p>
+          <button type="button" style={s.btn} onClick={goPortal}>{tr("Go to my application")}</button>
         </>
       ) : null}
       {current && !OPEN.has(current.status) ? (
         <>
           <p style={current.status === "approved" ? { ...s.p, ...s.ok } : s.p} data-testid="verify-done">{DONE_TEXT[current.status] ?? "Thank you."}</p>
-          <button type="button" style={s.btn} onClick={goPortal}>Go to my application</button>
+          <button type="button" style={s.btn} onClick={goPortal}>{tr("Go to my application")}</button>
         </>
       ) : null}
       {current && OPEN.has(current.status) && current.mode === "hosted" ? (
@@ -148,31 +149,31 @@ export default function VerifyIdentityPage() {
             <p style={s.p} data-testid="verify-done">{DONE_TEXT.processing}</p>
           ) : (
             <>
-              <p style={s.p}>It takes about two minutes. You will need:</p>
+              <p style={s.p}>{tr("It takes about two minutes. You will need:")}</p>
               <ul style={s.list}>
-                <li>Your driver's licence, provincial or state photo ID, or passport</li>
-                <li>Good light, and your phone's camera for a short selfie</li>
+                <li>{tr("Your driver's licence, provincial or state photo ID, or passport")}</li>
+                <li>{tr("Good light, and your phone's camera for a short selfie")}</li>
               </ul>
-              <p style={{ ...s.p, marginTop: 12 }}>Our secure ID-check partner takes the pictures and checks them. Your pictures are kept with your application and never shared with anyone else.</p>
-              <button type="button" style={s.btn} disabled={busy} onClick={() => void start(current)}>{current.status === "in_progress" ? "Continue verifying" : "Start"}</button>
+              <p style={{ ...s.p, marginTop: 12 }}>{tr("Our secure ID-check partner takes the pictures and checks them. Your pictures are kept with your application and never shared with anyone else.")}</p>
+              <button type="button" style={s.btn} disabled={busy} onClick={() => void start(current)}>{current.status === "in_progress" ? tr("Continue verifying") : tr("Start")}</button>
             </>
           )}
-          <button type="button" style={s.ghost} onClick={goPortal}>{wizard ? "Do this later" : "Back to my application"}</button>
+          <button type="button" style={s.ghost} onClick={goPortal}>{wizard ? tr("Do this later") : tr("Back to my application")}</button>
         </section>
       ) : null}
       {current && OPEN.has(current.status) && current.mode === "upload" ? (
         <section style={s.card}>
-          {sent ? <p style={{ ...s.p, ...s.ok }}>Sent. Thank you.</p> : null}
-          <p style={s.p}>Add a clear photo of your government photo ID and a selfie. A member of our team compares them.</p>
-          <label style={s.label} htmlFor="kyc-front">Front of your ID</label>
+          {sent ? <p style={{ ...s.p, ...s.ok }}>{tr("Sent. Thank you.")}</p> : null}
+          <p style={s.p}>{tr("Add a clear photo of your government photo ID and a selfie. A member of our team compares them.")}</p>
+          <label style={s.label} htmlFor="kyc-front">{tr("Front of your ID")}</label>
           <input id="kyc-front" type="file" accept="image/*" capture="environment" onChange={pick("id_front")} />
-          <label style={s.label} htmlFor="kyc-back">Back of your ID (if it has one)</label>
+          <label style={s.label} htmlFor="kyc-back">{tr("Back of your ID (if it has one)")}</label>
           <input id="kyc-back" type="file" accept="image/*" capture="environment" onChange={pick("id_back")} />
-          <label style={s.label} htmlFor="kyc-selfie">A selfie</label>
+          <label style={s.label} htmlFor="kyc-selfie">{tr("A selfie")}</label>
           <input id="kyc-selfie" type="file" accept="image/*" capture="user" onChange={pick("selfie")} />
           <div style={{ marginTop: 16 }}>
-            <button type="button" style={s.btn} disabled={busy} onClick={() => void upload(current)}>{busy ? "Sending…" : "Send"}</button>
-            <button type="button" style={s.ghost} onClick={goPortal}>{wizard ? "Do this later" : "Back to my application"}</button>
+            <button type="button" style={s.btn} disabled={busy} onClick={() => void upload(current)}>{busy ? tr("Sending…") : tr("Send")}</button>
+            <button type="button" style={s.ghost} onClick={goPortal}>{wizard ? tr("Do this later") : tr("Back to my application")}</button>
           </div>
         </section>
       ) : null}

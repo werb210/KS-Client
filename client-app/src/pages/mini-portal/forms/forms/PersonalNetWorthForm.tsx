@@ -13,6 +13,7 @@
 // Data keys are unchanged.
 import { useEffect, useMemo, useState } from "react";
 import { getFormResponse, saveFormResponse, submitFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import {
   AddressBlock, MoneyInput, addressEntries, addressFromPrefill, hasAddressParts, isBlank,
@@ -73,7 +74,7 @@ const INCOME_ROWS: Array<{ key: string; label: string }> = [
 ];
 
 const disclosures = (): string[] => [
-  `Previous dealings with ${brandName()} (any division or subsidiary)?`,
+  tr("Previous dealings with {brand} (any division or subsidiary)?", { brand: brandName() }),
   "Ever filed for bankruptcy, consumer proposal, or any form of insolvency?",
   "Ever convicted of a criminal offence not pardoned?",
   "Income taxes for previous year(s) fully satisfied?",
@@ -184,7 +185,7 @@ export default function PersonalNetWorthForm({
     // never happens (common for phone-OTP applicants with no email on file).
     const signerEmail = String((data as Record<string, unknown>).primary_email ?? "").trim();
     if (!signerEmail) {
-      setError("Please enter your personal email above - it is required to sign your Personal Net Worth statement.");
+      setError(tr("Please enter your personal email above - it is required to sign your Personal Net Worth statement."));
       return;
     }
     setError(null);
@@ -205,7 +206,7 @@ export default function PersonalNetWorthForm({
       if (resp?.signing_url) {
         setSigningUrl(resp.signing_url);
       } else {
-        setError("We could not start signing. Please confirm your personal email above is correct, then submit again.");
+        setError(tr("We could not start signing. Please confirm your personal email above is correct, then submit again."));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Submit failed");
@@ -243,7 +244,7 @@ export default function PersonalNetWorthForm({
         <div key={key}>
           <label className="cmpf-label" htmlFor={id}>{label}</label>
           <select id={id} className="cmpf-select" value={data[key] ?? ""} onChange={(e) => set(key, e.target.value)} onBlur={persist}>
-            <option value="">Select...</option>
+            <option value="">{tr("Select...")}</option>
             {MARITAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
@@ -286,20 +287,18 @@ export default function PersonalNetWorthForm({
   );
   const yesNoCell = (key: string, label: string) => (
     <select aria-label={label} className="cmpf-select" value={data[key] ?? ""} onChange={(e) => set(key, e.target.value)} onBlur={persist}>
-      <option value="">Select...</option><option value="yes">Yes</option><option value="no">No</option>
+      <option value="">{tr("Select...")}</option><option value="yes">{tr("Yes")}</option><option value="no">{tr("No")}</option>
     </select>
   );
 
   if (signingUrl) {
     return (
       <div className="cmpf">
-        <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Sign your Personal Net Worth statement</h2>
-        <p className="cmpf-intro">
-          Please review and sign below. Your statement is saved.
-        </p>
-        <iframe title="Sign Personal Net Worth" src={signingUrl} style={{ width: "100%", height: 620, border: "1px solid #E4EAF2", borderRadius: 8 }} />
+        <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Sign your Personal Net Worth statement")}</h2>
+        <p className="cmpf-intro">{tr("Please review and sign below. Your statement is saved.")}</p>
+        <iframe title={tr("Sign Personal Net Worth")} src={signingUrl} style={{ width: "100%", height: 620, border: "1px solid #E4EAF2", borderRadius: 8 }} />
         <div className="cmpf-actions">
-          <button type="button" className="cmpf-primary" onClick={() => onComplete()}>Done</button>
+          <button type="button" className="cmpf-primary" onClick={() => onComplete()}>{tr("Done")}</button>
         </div>
       </div>
     );
@@ -307,18 +306,18 @@ export default function PersonalNetWorthForm({
 
   return (
     <div className="cmpf" onBlur={persist}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Personal Statement of Affairs</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Personal Statement of Affairs")}</h2>
       <p className="cmpf-intro">
         Personal net worth declaration.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Submitted")}</span>}
       </p>
 
       <label className="cmpf-check" style={{ marginTop: 4 }}>
         <input type="checkbox" checked={joint} onChange={(e) => setJoint(e.target.checked)} />
-        <span>Joint declaration (Primary Party and Spouse / Common-law partner)</span>
+        <span>{tr("Joint declaration (Primary Party and Spouse / Common-law partner)")}</span>
       </label>
 
-      <div className="cmpf-section">Primary Party</div>
+      <div className="cmpf-section">{tr("Primary Party")}</div>
       <div className="cmp-grid-2">
         {f("primary_name", "Full legal name")}
         {f("primary_sin", "SIN (Canada) or SSN (US)")}
@@ -336,7 +335,7 @@ export default function PersonalNetWorthForm({
       {addr("primary_home_address", "Full home address")}
       {addr("primary_physical_address", "Physical address (if different)")}
 
-      <div className="cmpf-section">Personal References</div>
+      <div className="cmpf-section">{tr("Personal References")}</div>
       {[1, 2, 3].filter((n) => n <= refsShown).map((n) => (
         <div key={n} className="cmp-grid-2" data-testid={`pnw-ref-${n}`}>
           {f(`ref${n}_name`, `Reference ${n} - name`)}
@@ -346,12 +345,12 @@ export default function PersonalNetWorthForm({
         </div>
       ))}
       {refsShown < 3 && (
-        <button type="button" className="cmpf-add" onClick={() => setRefsRevealed(refsShown + 1)}>+ Add reference</button>
+        <button type="button" className="cmpf-add" onClick={() => setRefsRevealed(refsShown + 1)}>{tr("+ Add reference")}</button>
       )}
 
       {joint && (
         <>
-          <div className="cmpf-section">Spouse / Common-law Partner</div>
+          <div className="cmpf-section">{tr("Spouse / Common-law Partner")}</div>
           <div className="cmp-grid-2">
             {f("spouse_sin", "SIN (Canada) or SSN (US)")}
             {f("spouse_alt_names", "Alternate name(s)")}
@@ -367,27 +366,27 @@ export default function PersonalNetWorthForm({
         </>
       )}
 
-      <div className="cmpf-section">Sources of Income (annual)</div>
+      <div className="cmpf-section">{tr("Sources of Income (annual)")}</div>
       <table className="cmpf-table resp-table">
         <thead>
           <tr>
-            <th>Income type</th>
-            <th>Primary party</th>
-            {joint && <th>Spouse</th>}
+            <th>{tr("Income type")}</th>
+            <th>{tr("Primary party")}</th>
+            {joint && <th>{tr("Spouse")}</th>}
           </tr>
         </thead>
         <tbody>
           {INCOME_ROWS.map((r) => (
             <tr key={r.key}>
-              <td data-label="" style={{ fontWeight: 600, verticalAlign: "middle" }}>{r.label}</td>
-              <td data-label="Primary party">{moneyCell(`inc_${r.key}_primary`, `${r.label} - primary party`)}</td>
-              {joint && <td data-label="Spouse">{moneyCell(`inc_${r.key}_spouse`, `${r.label} - spouse`)}</td>}
+              <td data-label="" style={{ fontWeight: 600, verticalAlign: "middle" }}>{tr(r.label)}</td>
+              <td data-label={tr("Primary party")}>{moneyCell(`inc_${r.key}_primary`, `${r.label} - primary party`)}</td>
+              {joint && <td data-label={tr("Spouse")}>{moneyCell(`inc_${r.key}_spouse`, `${r.label} - spouse`)}</td>}
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="cmpf-section">Spouse / Other Family Income (Monthly)</div>
+      <div className="cmpf-section">{tr("Spouse / Other Family Income (Monthly)")}</div>
       <div className="cmp-grid-2">
         {f("spouse_name", "Spouse legal name")}
         {f("spouse_monthly_income", "Spouse monthly income")}
@@ -397,21 +396,21 @@ export default function PersonalNetWorthForm({
         {f("other_family_income_monthly", "Other family monthly income")}
       </div>
 
-      <div className="cmpf-section">Disclosures</div>
+      <div className="cmpf-section">{tr("Disclosures")}</div>
       <table className="cmpf-table resp-table">
         <thead>
           <tr>
-            <th>Question</th>
-            <th>Primary</th>
-            {joint && <th>Spouse</th>}
+            <th>{tr("Question")}</th>
+            <th>{tr("Primary")}</th>
+            {joint && <th>{tr("Spouse")}</th>}
           </tr>
         </thead>
         <tbody>
           {disclosures().map((q, i) => (
             <tr key={i}>
               <td data-label="" style={{ whiteSpace: "normal", verticalAlign: "middle" }}>{q}</td>
-              <td data-label="Primary" style={{ minWidth: 120 }}>{yesNoCell(`disc_${i}_primary`, `${q} - primary`)}</td>
-              {joint && <td data-label="Spouse" style={{ minWidth: 120 }}>{yesNoCell(`disc_${i}_spouse`, `${q} - spouse`)}</td>}
+              <td data-label={tr("Primary")} style={{ minWidth: 120 }}>{yesNoCell(`disc_${i}_primary`, `${q} - primary`)}</td>
+              {joint && <td data-label={tr("Spouse")} style={{ minWidth: 120 }}>{yesNoCell(`disc_${i}_spouse`, `${q} - spouse`)}</td>}
             </tr>
           ))}
         </tbody>
@@ -421,26 +420,26 @@ export default function PersonalNetWorthForm({
       <div className="cmpf-section">Assets &amp; Liabilities</div>
       <div className="cmp-grid-2">
         <div>
-          <div className="cmpf-sub" style={{ color: "#0B1F3A" }}>Assets</div>
+          <div className="cmpf-sub" style={{ color: "#0B1F3A" }}>{tr("Assets")}</div>
           {ASSET_ROWS.map((r) => f(r.key, r.label))}
         </div>
         <div>
-          <div className="cmpf-sub" style={{ color: "#0B1F3A" }}>Liabilities</div>
+          <div className="cmpf-sub" style={{ color: "#0B1F3A" }}>{tr("Liabilities")}</div>
           {LIAB_ROWS.map((r) => f(r.key, r.label))}
         </div>
       </div>
 
       <div className="cmpf-totals" style={{ marginTop: 16 }}>
-        <div>Total assets: <strong>{money(totals.assets)}</strong></div>
-        <div>Total liabilities: <strong>{money(totals.liabilities)}</strong></div>
-        <div style={{ marginTop: 4 }}>Net worth: <strong>{money(totals.net)}</strong></div>
+        <div>{tr("Total assets:")}{" "}<strong>{money(totals.assets)}</strong></div>
+        <div>{tr("Total liabilities:")}{" "}<strong>{money(totals.liabilities)}</strong></div>
+        <div style={{ marginTop: 4 }}>{tr("Net worth:")}{" "}<strong>{money(totals.net)}</strong></div>
       </div>
 
       {error && <p className="cmpf-error">{error}</p>}
 
       <div className="cmpf-actions">
         <button type="button" className="cmpf-primary" disabled={submitting} onClick={() => void handleSubmit()}>
-          {submitting ? "Submitting..." : "Submit"}
+          {submitting ? tr("Submitting...") : tr("Submit")}
         </button>
       </div>
     </div>

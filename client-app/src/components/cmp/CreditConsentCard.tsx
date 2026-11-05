@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiCall } from "@/api/client";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export type ClientConsent = { id: string; status: "requested" | "given"; person: string; consent_text: string; given_at: string | null; needs_date_of_birth: boolean };
 
 export default function CreditConsentCard({ applicationId }: { applicationId: string }) {
@@ -35,25 +36,21 @@ export default function CreditConsentCard({ applicationId }: { applicationId: st
 
   return (
     <section className="cmpx-card" data-cmp-tab="home" data-testid="cmp-credit-consent">
-      <div className="cmpx-eyebrow">Credit check</div>
-      <h2 style={{ margin: "4px 0 8px", fontSize: 18 }}>Your advisor needs your consent to check credit</h2>
+      <div className="cmpx-eyebrow">{tr("Credit check")}</div>
+      <h2 style={{ margin: "4px 0 8px", fontSize: 18 }}>{tr("Your advisor needs your consent to check credit")}</h2>
       {open.map((c) => (
         <div key={c.id} style={{ borderTop: "1px solid rgba(127,127,127,0.25)", paddingTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ fontWeight: 700 }}>For {c.person}</div>
+          <div style={{ fontWeight: 700 }}>{tr("For {person}", { person: c.person })}</div>
           <p style={{ fontSize: 14, margin: 0 }}>{c.consent_text}</p>
-          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 14 }}>Type your full name
-            <input aria-label={`Full name for ${c.person}`} value={form[c.id]?.name ?? ""} onChange={(e) => set(c.id, { name: e.target.value })} style={{ minHeight: 40, padding: "0 10px" }} />
+          <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 14 }}>{tr("Type your full name")}<input aria-label={tr("Full name for {person}", { person: c.person })} value={form[c.id]?.name ?? ""} onChange={(e) => set(c.id, { name: e.target.value })} style={{ minHeight: 40, padding: "0 10px" }} />
           </label>
           {c.needs_date_of_birth ? (
-            <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 14 }}>Date of birth
-              <input type="date" aria-label={`Date of birth for ${c.person}`} value={form[c.id]?.dob ?? ""} onChange={(e) => set(c.id, { dob: e.target.value })} style={{ minHeight: 40, padding: "0 10px" }} />
+            <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 14 }}>{tr("Date of birth")}<input type="date" aria-label={tr("Date of birth for {person}", { person: c.person })} value={form[c.id]?.dob ?? ""} onChange={(e) => set(c.id, { dob: e.target.value })} style={{ minHeight: 40, padding: "0 10px" }} />
             </label>
           ) : null}
           <label style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 14 }}>
-            <input type="checkbox" checked={form[c.id]?.agree ?? false} onChange={(e) => set(c.id, { agree: e.target.checked })} />
-            I agree to the credit check described above.
-          </label>
-          <button type="button" className="cmpx-btn cmpx-btn--block" disabled={busy} onClick={() => void give(c)}>{busy ? "Sending..." : "Give consent"}</button>
+            <input type="checkbox" checked={form[c.id]?.agree ?? false} onChange={(e) => set(c.id, { agree: e.target.checked })} />{tr("I agree to the credit check described above.")}</label>
+          <button type="button" className="cmpx-btn cmpx-btn--block" disabled={busy} onClick={() => void give(c)}>{busy ? tr("Sending...") : tr("Give consent")}</button>
         </div>
       ))}
       {note ? <div className="cmpx-note" role="status">{note}</div> : null}

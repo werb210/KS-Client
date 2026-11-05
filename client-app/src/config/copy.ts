@@ -3,6 +3,7 @@
 // rest of the app keeps its own wording. Keys and Keystone's defaults: copy.defaults.json (the licensee validator
 // rejects unknown keys). {name} = the company name, {year}, {support_email}, {support_phone}.
 import DEFAULTS from "./copy.defaults.json";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName, brand } from "./brand";
 import { LICENSEE_BUILD } from "./licenseeBuild";
 import { SUPPORT_EMAIL } from "./licensee";
@@ -17,7 +18,8 @@ export function fill(text: string, vars: Record<string, string>): string {
 
 /** The text for `key`, with the licensee's override when it has one. */
 export function t(key: CopyKey, vars: Record<string, string> = {}): string {
-  const base = overrides[key] ?? DEFAULTS[key] ?? key;
+  // KS_CLIENT_LANGUAGES_v1 - Keystone's default wording is translated; a licensee's own wording is shown as written.
+  const base = overrides[key] ?? (DEFAULTS[key] ? tr(DEFAULTS[key]) : key);
   return fill(base, {
     name: brandName(),
     year: String(new Date().getFullYear()),

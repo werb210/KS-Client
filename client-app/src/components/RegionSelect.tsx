@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Select } from "./ui/Select";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 export function RegionSelect({
   country,
   value,
@@ -91,7 +92,7 @@ export function RegionSelect({
       value={value}
       onChange={(e: unknown) => onChange(e.target.value)}
     >
-      <option value="">Select</option>
+      <option value="">{tr("Select")}</option>
       {options.map((option) => (
         <option key={option} value={option}>
           {option}

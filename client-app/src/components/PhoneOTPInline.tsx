@@ -15,8 +15,9 @@ import QuickSignIn from './QuickSignIn'; // BF_CLIENT_ONE_SIGN_IN_v737
 import { getToken, setToken } from '@/auth/token'; // BF_CLIENT_SIGNIN_LOOKUP_TOKEN_v742 - getToken
 // BF_CLIENT_OTP_ATTRIBUTION_v1
 import { getAttribution } from '@/lib/attribution';
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { openExternal } from "@/native/openExternal"; // BF_CLIENT_v805_PHONE_FIXES - Terms and Privacy open in the in-app browser
-import { SMS_UPDATES_CONSENT_TEXT } from "@/lib/smsUpdatesConsent"; // BF_CLIENT_v809_SMS_UPDATES_CONSENT
+import { smsUpdatesConsentText } from "@/lib/smsUpdatesConsent"; // BF_CLIENT_v809_SMS_UPDATES_CONSENT
 import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
 import { PRIVACY_URL, SERVER_URL, TERMS_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE + v5
 
@@ -421,15 +422,15 @@ export default function PhoneOTPInline() {
         data-testid="sms-updates-consent-checkbox"
         style={{ width: 18, height: 18, marginTop: 1, flex: '0 0 auto' }}
       />
-      <span>{SMS_UPDATES_CONSENT_TEXT}</span>
+      <span>{smsUpdatesConsentText()}</span>
     </label>
   );
   // BF_CLIENT_SMS_DISCLOSURE_v690 + v809 - the sign-in code itself; texts about the application need the box above.
   const signInCodeNote = (
     <p data-testid="sms-disclosure" style={{ fontSize: "var(--ks-text-caption)", color: '#64748b', marginTop: 10, marginBottom: 0, textAlign: 'center', lineHeight: 1.5 }}>
-      We&apos;ll text a one-time sign-in code to this number. Message and data rates may apply. See our{' '}
-      {legalLink(TERMS_URL, 'Terms')} and{' '}
-      {legalLink(PRIVACY_URL, 'Privacy Policy')}.
+      {tr("We'll text a one-time sign-in code to this number. Message and data rates may apply. See our")}{' '}
+      {legalLink(TERMS_URL, tr('Terms'))} {tr("and")}{' '}
+      {legalLink(PRIVACY_URL, tr('Privacy Policy'))}.
     </p>
   );
 
@@ -446,9 +447,7 @@ export default function PhoneOTPInline() {
       {phase === 'phone' && (
         <>
           <QuickSignIn />
-          <label style={{ display: 'block', fontSize: "var(--ks-text-body-sm)", color: '#334155', marginBottom: 6 }}>
-            Mobile phone number
-          </label>
+          <label style={{ display: 'block', fontSize: "var(--ks-text-body-sm)", color: '#334155', marginBottom: 6 }}>{tr("Mobile phone number")}</label>
           <input
             type="tel"
             inputMode="tel"
@@ -487,9 +486,7 @@ export default function PhoneOTPInline() {
 
       {(phase === 'code' || phase === 'submitting') && (
         <>
-          <label style={{ display: 'block', fontSize: "var(--ks-text-body-sm)", color: '#334155', marginBottom: 6 }}>
-            Enter the code we sent to {phoneDisplay}
-          </label>
+          <label style={{ display: 'block', fontSize: "var(--ks-text-body-sm)", color: '#334155', marginBottom: 6 }}>{tr("Enter the code we sent to {phoneDisplay}", { phoneDisplay: phoneDisplay })}</label>
           {/* BF_OTP_AUTOFILL_v341 — autoComplete="one-time-code" + inputMode="numeric"
               are REQUIRED for the iOS / Chrome SMS-autofill bubble to fire. A prior change
               removed them (mistaking them for the cause); their ABSENCE is what suppressed
@@ -499,7 +496,7 @@ export default function PhoneOTPInline() {
             name="otp"
             autoComplete="one-time-code"
             inputMode="numeric"
-            placeholder="Enter code"
+            placeholder={tr("Enter code")}
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D+/g, '').slice(0, 6))}
             maxLength={6}
@@ -533,9 +530,7 @@ export default function PhoneOTPInline() {
               color: '#1e3a8a', fontSize: "var(--ks-text-label)", cursor: 'pointer', padding: 0,
               display: 'block', marginLeft: 'auto', marginRight: 'auto',
             }}
-          >
-            ← Use a different number
-          </button>
+          >{tr("← Use a different number")}</button>
           <p style={{ fontSize: "var(--ks-text-help)", color: '#64748b', marginTop: 10, marginBottom: 0, textAlign: 'center' }}>
             Code arrives automatically — we&apos;ll continue once you finish typing.
           </p>

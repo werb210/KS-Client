@@ -7,6 +7,7 @@ import { Sheet } from "./CmpHome";
 import { addToCalendar, bookedCallEvent } from "@/native/calendar"; // BF_CLIENT_v823_CALENDAR
 import "./cmp.css";
 
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Slot = { startsAt: string; staffIds: string[] };
 type Booked = { startsAt: string; staffFirstName?: string | null; kind: "phone" | "teams"; joinUrl?: string | null };
 
@@ -70,9 +71,9 @@ export default function BookCallSheet({ advisorId, advisorFirstName, prefill, on
 
   const submit = async () => {
     setErr(null);
-    if (!startsAt) { setErr("Pick a time."); return; }
-    if (!name.trim() || !/^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(email.trim())) { setErr("Add your name and email so we can send the invitation."); return; }
-    if (kind === "phone" && phone.replace(/\D/g, "").length < 10) { setErr("Add the number we should call."); return; }
+    if (!startsAt) { setErr(tr("Pick a time.")); return; }
+    if (!name.trim() || !/^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(email.trim())) { setErr(tr("Add your name and email so we can send the invitation.")); return; }
+    if (kind === "phone" && phone.replace(/\D/g, "").length < 10) { setErr(tr("Add the number we should call.")); return; }
     setBusy(true);
     try {
       const r = await apiCall<{ ok?: boolean; booking?: Booked }>("/api/booking", { method: "POST", body: { kind, name: name.trim(), email: email.trim(), phone: phone.trim(), startsAt, staffId: forStaff, notes: notes.trim() } });
@@ -90,35 +91,33 @@ export default function BookCallSheet({ advisorId, advisorFirstName, prefill, on
   };
 
   return (
-    <Sheet title="Book a call" onClose={onClose} testId="cmp-book-sheet" panelClassName={booked ? undefined : "cmpx-sheet__panel--cta"}>
+    <Sheet title={tr("Book a call")} onClose={onClose} testId="cmp-book-sheet" panelClassName={booked ? undefined : "cmpx-sheet__panel--cta"}>
       {booked ? (
         <div data-testid="cmp-book-done">
-          <p style={{ fontSize: 17, fontWeight: 700, color: "#0B1F3A", margin: "4px 0 6px" }}>You're booked.</p>
+          <p style={{ fontSize: 17, fontWeight: 700, color: "#0B1F3A", margin: "4px 0 6px" }}>{tr("You're booked.")}</p>
           <p className="cmpx-muted" style={{ margin: "0 0 16px" }}>
             {fmt(booked.startsAt, { weekday: "long", month: "long", day: "numeric" })} at {fmt(booked.startsAt, { hour: "numeric", minute: "2-digit" })}
-            {booked.staffFirstName ? " with " + booked.staffFirstName : ""}. {booked.kind === "teams" ? "The Teams link is in the invitation we emailed you." : "We'll call you at the number you gave."}
+            {booked.staffFirstName ? " with " + booked.staffFirstName : ""}. {booked.kind === "teams" ? tr("The Teams link is in the invitation we emailed you.") : tr("We'll call you at the number you gave.")}
           </p>
           {/* BF_CLIENT_v823_CALENDAR */}
           {bookedCallEvent(booked) ? (
             <button type="button" className="cmpx-btn cmpx-btn--block" style={{ marginBottom: 10 }} data-testid="cmp-book-calendar"
-              onClick={() => { const event = bookedCallEvent(booked); if (event) void addToCalendar(event); }}>
-              Add to calendar
-            </button>
+              onClick={() => { const event = bookedCallEvent(booked); if (event) void addToCalendar(event); }}>{tr("Add to calendar")}</button>
           ) : null}
-          <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onClose}>Done</button>
+          <button type="button" className="cmpx-btn cmpx-btn--block" onClick={onClose}>{tr("Done")}</button>
         </div>
       ) : (
         <>
-          <p className="cmpx-muted" style={{ margin: "0 0 8px" }}>A 30-minute call with {who}. Times are Alberta time.</p>
-          <div className="cmpx-seg" role="group" aria-label="Call type">
-            <button type="button" aria-pressed={kind === "phone"} onClick={() => setKind("phone")}>Phone call</button>
-            <button type="button" aria-pressed={kind === "teams"} onClick={() => setKind("teams")}>Teams video</button>
+          <p className="cmpx-muted" style={{ margin: "0 0 8px" }}>{tr("A 30-minute call with {who}. Times are Alberta time.", { who: who })}</p>
+          <div className="cmpx-seg" role="group" aria-label={tr("Call type")}>
+            <button type="button" aria-pressed={kind === "phone"} onClick={() => setKind("phone")}>{tr("Phone call")}</button>
+            <button type="button" aria-pressed={kind === "teams"} onClick={() => setKind("teams")}>{tr("Teams video")}</button>
           </div>
-          {loadErr ? <p className="cmpx-err">{loadErr}</p> : slots === null ? <p className="cmpx-muted">Loading times...</p> : days.length === 0 ? (
-            <p className="cmpx-muted">No times are open in the next two weeks. Message your advisor and they'll find a time with you.</p>
+          {loadErr ? <p className="cmpx-err">{loadErr}</p> : slots === null ? <p className="cmpx-muted">{tr("Loading times...")}</p> : days.length === 0 ? (
+            <p className="cmpx-muted">{tr("No times are open in the next two weeks. Message your advisor and they'll find a time with you.")}</p>
           ) : (
             <>
-              <div className="cmpx-days" role="group" aria-label="Day">
+              <div className="cmpx-days" role="group" aria-label={tr("Day")}>
                 {days.map((d) => (
                   <button key={d.key} type="button" className="cmpx-day" aria-pressed={d.key === day} onClick={() => { setDay(d.key); setStartsAt(""); }}>
                     <small>{fmt(d.first, { weekday: "short" })}</small>
@@ -129,7 +128,7 @@ export default function BookCallSheet({ advisorId, advisorFirstName, prefill, on
               </div>
               {timeGroups.map((g) => (
                 <div key={g.label} data-testid={"cmp-book-group-" + g.label.toLowerCase()}>
-                  <p className="cmpx-timegroup">{g.label}</p>
+                  <p className="cmpx-timegroup">{tr(g.label)}</p>
                   <div className="cmpx-times" role="group" aria-label={g.label + " times"}>
                     {g.list.map((s) => (
                       <button key={s.startsAt} type="button" className="cmpx-time" aria-pressed={s.startsAt === startsAt} onClick={() => setStartsAt(s.startsAt)}>
@@ -139,10 +138,10 @@ export default function BookCallSheet({ advisorId, advisorFirstName, prefill, on
                   </div>
                 </div>
               ))}
-              <label className="cmpx-field">Your name<input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" /></label>
-              <label className="cmpx-field">Email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></label>
-              {kind === "phone" ? <label className="cmpx-field">Number to call<input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" /></label> : null}
-              <label className="cmpx-field">Anything we should know? (optional)<textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></label>
+              <label className="cmpx-field">{tr("Your name")}<input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" /></label>
+              <label className="cmpx-field">{tr("Email")}<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></label>
+              {kind === "phone" ? <label className="cmpx-field">{tr("Number to call")}<input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" /></label> : null}
+              <label className="cmpx-field">{tr("Anything we should know? (optional)")}<textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} /></label>
               <div className="cmpx-book-cta">
                 {err ? <p className="cmpx-err" role="alert">{err}</p> : null}
                 <button type="button" className="cmpx-btn cmpx-btn--block" disabled={busy || !startsAt} onClick={() => void submit()} data-testid="cmp-book-confirm">

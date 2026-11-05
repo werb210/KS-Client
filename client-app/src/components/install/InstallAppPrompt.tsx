@@ -5,6 +5,7 @@
 import { t } from "@/config/copy"; // KS_CLIENT_v5_LICENSEE_APPS
 import { useEffect, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { Capacitor } from "@capacitor/core"; // BF_CLIENT_INSTALL_CARD_NATIVE_v338
 import { ANDROID_PLAY_STORE_URL, iosAppStoreUrl } from "@/lib/appStoreLinks"; // BF_CLIENT_v817
 import { brandName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
@@ -121,17 +122,17 @@ export default function InstallAppPrompt() {
       <div style={styles.title}>{t("install.title")}</div>
       <div style={styles.subtitle}>{t("install.subtitle")}</div>
       <ul style={styles.benefits}>
-        <li>Call {brandName()} directly</li>
-        <li>Message your intake team</li>
-        <li>Upload missing documents</li>
-        <li>Complete additional forms</li>
-        <li>Review your offers</li>
+        <li>{tr("Call {brand} directly", { brand: brandName() })}</li>
+        <li>{tr("Message your intake team")}</li>
+        <li>{tr("Upload missing documents")}</li>
+        <li>{tr("Complete additional forms")}</li>
+        <li>{tr("Review your offers")}</li>
       </ul>
       <div style={styles.buttonRow}>
-        <button type="button" style={styles.primaryBtn} onClick={onAddToHome}>Add to Home Screen</button>
+        <button type="button" style={styles.primaryBtn} onClick={onAddToHome}>{tr("Add to Home Screen")}</button>
         {/* BF_CLIENT_v817 - real store links (were "Coming Soon" placeholders). */}
-        <a style={styles.linkBtn} href={iosAppStoreUrl()} target="_blank" rel="noopener noreferrer" data-testid="install-ios-link">Download for iOS</a>
-        <a style={styles.linkBtn} href={ANDROID_PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" data-testid="install-android-link">Download for Android</a>
+        <a style={styles.linkBtn} href={iosAppStoreUrl()} target="_blank" rel="noopener noreferrer" data-testid="install-ios-link">{tr("Download for iOS")}</a>
+        <a style={styles.linkBtn} href={ANDROID_PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" data-testid="install-android-link">{tr("Download for Android")}</a>
         <button type="button" style={styles.secondaryBtn} onClick={dismiss}>Don&rsquo;t show again</button>
       </div>
       {openSteps && (

@@ -12,6 +12,7 @@
 // "Accord" in what the applicant reads, and the authorization text below.
 import { useEffect, useState } from "react";
 import { getFormResponse, submitFormResponse, saveFormResponse } from "@/lib/api";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { formatPhoneNumber } from "@/utils/location"; // v_ADVISOR_PHONE_FMT_v1
 import { A11Y_COLORS } from "@/styles/a11yColors"; // BF_CLIENT_v789_CONTRAST
 import { MoneyInput, isBlank, mergeDraft, readDraft, useFormDraft } from "../cmpFormKit"; // BF_CLIENT_v805_FORMS
@@ -114,7 +115,7 @@ export default function AdvisorsForm({
 
   const handleSubmit = async (skipReminder = false) => {
     if (!authorized) {
-      setError(`Please authorize ${brandName()} to discuss the application before continuing.`);
+      setError(tr("Please authorize {brand} to discuss the application before continuing.", { brand: brandName() }));
       return;
     }
     // BF_CLIENT_v808_ADVISORS_REMINDER - CPA, lawyer or insurance agent left empty: remind before submitting.
@@ -155,7 +156,7 @@ export default function AdvisorsForm({
     <div>
       <label className="cmpf-label" htmlFor={id}>{label}</label>
       <select id={id} className="cmpf-select" value={value} onChange={(e) => onChange(e.target.value)} onBlur={persist}>
-        <option value="">Select...</option><option value="Yes">Yes</option><option value="No">No</option>
+        <option value="">{tr("Select...")}</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option>
       </select>
     </div>
   );
@@ -168,11 +169,11 @@ export default function AdvisorsForm({
 
   return (
     <div className="cmpf">
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>Professional Advisors</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 6px" }}>{tr("Professional Advisors")}</h2>
       <p className="cmpf-intro">
         {/* BF_CLIENT_v808_ADVISORS_REMINDER */}
         Add your accountant, lawyer and insurance agent so {brandName()} can coordinate with them. If you don't have one, you can still submit.
-        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>✓ Submitted</span>}
+        {submitted && <span style={{ marginLeft: 12, color: A11Y_COLORS.successText, fontWeight: 600 }}>{tr("✓ Submitted")}</span>}
       </p>
 
       <div>
@@ -190,7 +191,7 @@ export default function AdvisorsForm({
       </div>
       {hiddenAdvisors.length > 0 && (
         <div data-testid="add-advisor">
-          <div className="cmpf-sub" style={{ marginTop: 0 }}>Add another advisor</div>
+          <div className="cmpf-sub" style={{ marginTop: 0 }}>{tr("Add another advisor")}</div>
           {hiddenAdvisors.map(({ key, label }) => (
             <button key={key} type="button" className="cmpf-add" onClick={() => revealAdvisor(key)}>+ {label}</button>
           ))}
@@ -198,7 +199,7 @@ export default function AdvisorsForm({
       )}
 
       {/* BF_CLIENT_BLOCK_v710_ONGOING_MONITORING_v1 */}
-      <h3 style={{ fontSize: 17, fontWeight: 700, margin: "24px 0 6px" }}>Ongoing Monitoring</h3>
+      <h3 style={{ fontSize: 17, fontWeight: 700, margin: "24px 0 6px" }}>{tr("Ongoing Monitoring")}</h3>
       <div className="cmpf-card">
         <div className="cmp-grid-2">
           {text("mon-software", "Accounting software used", monitoring.accountingSoftware, (v) => setMon("accountingSoftware", v))}
@@ -214,15 +215,14 @@ export default function AdvisorsForm({
         </div>
       </div>
 
-      <h3 style={{ fontSize: 17, fontWeight: 700, margin: "24px 0 6px" }}>Financial Advisor / Consultant</h3>
+      <h3 style={{ fontSize: 17, fontWeight: 700, margin: "24px 0 6px" }}>{tr("Financial Advisor / Consultant")}</h3>
       <div className="cmpf-card" style={{ background: "#F5F8FC" }}>
-        <div style={{ fontSize: 15, color: "#0B1F3A" }}>
-          Your financial advisor on this transaction is <strong>{financialAdvisorFirm()}</strong>.
+        <div style={{ fontSize: 15, color: "#0B1F3A" }}>{tr("Your financial advisor on this transaction is")}{" "}<strong>{financialAdvisorFirm()}</strong>.
         </div>
         <label className="cmpf-check">
           <input type="checkbox" checked={authorized} onChange={(e) => { setAuthorized(e.target.checked); void saveFormResponse(applicationId, FORM_KEY, buildPayload(e.target.checked)).catch(() => {}); }} />
           {/* BF_CLIENT_v807_FORMS */}
-          <span>I authorize {brandName()} to discuss this proposed credit facility with any of its lending partners.</span>
+          <span>{tr("I authorize {brand} to discuss this proposed credit facility with any of its lending partners.", { brand: brandName() })}</span>
         </label>
       </div>
 
@@ -245,10 +245,8 @@ export default function AdvisorsForm({
               const el = typeof document !== "undefined" ? document.getElementById(`adv-${first}-firm`) : null;
               el?.scrollIntoView?.({ block: "center", behavior: "smooth" });
               el?.focus();
-            }}>Go back and fill them in</button>
-            <button type="button" className="cmpf-secondary" data-testid="advisors-submit-anyway" onClick={() => void handleSubmit(true)}>
-              Submit without them
-            </button>
+            }}>{tr("Go back and fill them in")}</button>
+            <button type="button" className="cmpf-secondary" data-testid="advisors-submit-anyway" onClick={() => void handleSubmit(true)}>{tr("Submit without them")}</button>
           </div>
         </div>
       ) : null}
@@ -260,7 +258,7 @@ export default function AdvisorsForm({
           disabled={submitting || !authorized}
           onClick={() => void handleSubmit(false)}
         >
-          {submitting ? "Submitting..." : "Submit Advisors"}
+          {submitting ? tr("Submitting...") : tr("Submit Advisors")}
         </button>
       </div>
     </div>

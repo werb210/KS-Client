@@ -14,6 +14,7 @@ import { Icon } from "./icons";
 import AuthorizedAttachment from "./AuthorizedAttachment"; // BF_CLIENT_v819_CLIENT_MMS - texted pictures in the chat
 import { type Advisor, type MayaEntry, advisorName, defaultRecipient, initials, loadMayaThread, saveMayaThread, SUGGESTED_QUESTIONS } from "./cmpData";
 import "./cmp.css";
+import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 import { brandName, assistantName } from "@/config/brand"; // KS_CLIENT_v4_BRANDING
 
 type Attachment = { name: string; contentType: string; dataUrl: string };
@@ -122,7 +123,7 @@ export default function CmpChat(p: Props) {
     if (to === "maya" && p.attachments.length === 0) { p.setText(""); await askMaya(body); return; }
     setSending(true);
     try { await p.sendToAdvisor(body, true); }
-    catch { setError("We couldn't send that. Check your connection and try again."); }
+    catch { setError(tr("We couldn't send that. Check your connection and try again.")); }
     finally { setSending(false); }
   }
 
@@ -133,15 +134,15 @@ export default function CmpChat(p: Props) {
       await p.sendToAdvisor(entry.question, false);
       update((cur) => cur.map((e) => (e.id === entry.id ? { ...e, forwarded: true } : e)));
     } catch {
-      setError("We couldn't send that to your advisor. Try again in a moment.");
+      setError(tr("We couldn't send that to your advisor. Try again in a moment."));
     }
   }
 
   const showSuggestions = !p.text.trim() && to === "maya" && !maya.some((e) => e.from === "client");
 
   return (
-    <section className="cmp-phone-only cmpx-chat" data-cmp-tab="chat" data-testid="cmp-chat" aria-label="Chat">
-      <div className="cmpx-chatto" role="tablist" aria-label="Who are you writing to?" data-testid="cmp-chat-to">
+    <section className="cmp-phone-only cmpx-chat" data-cmp-tab="chat" data-testid="cmp-chat" aria-label={tr("Chat")}>
+      <div className="cmpx-chatto" role="tablist" aria-label={tr("Who are you writing to?")} data-testid="cmp-chat-to">
         <button type="button" role="tab" aria-selected={to === "maya"} className="cmpx-chatto__opt" onClick={() => p.setRecipient("maya")} data-testid="cmp-to-maya">
           <span className="cmpx-avatar cmpx-avatar--maya" aria-hidden="true"><Icon name="sparkle" size={18} /></span>
           <span className="cmpx-chatto__text"><span className="cmpx-chatto__name">{assistantName()}</span><span className="cmpx-chatto__sub">AI assistant &middot; answers right away</span></span>
@@ -154,7 +155,7 @@ export default function CmpChat(p: Props) {
       <div className="cmpx-chat__body" ref={p.bodyRef}>
         {timeline.length === 0 ? (
           <div className="cmpx-chat__empty" data-testid="cmp-chat-empty">{to === "maya"
-            ? `Ask ${assistantName()} anything about your application. Answers come right away, and any answer can be sent on to your advisor.`
+            ? tr("Ask {assistant} anything about your application. Answers come right away, and any answer can be sent on to your advisor.", { assistant: assistantName() })
             : "Write to " + advisorWho + ". They'll reply here, and you'll get a notification."}</div>
         ) : timeline.map((t) => {
           if (t.kind === "maya") {
@@ -199,16 +200,16 @@ export default function CmpChat(p: Props) {
             </div>
           );
         })}
-        {mayaBusy ? <div className="cmpx-chat__typing">{assistantName()} is typing...</div> : null}
+        {mayaBusy ? <div className="cmpx-chat__typing">{tr("{assistant} is typing...", { assistant: assistantName() })}</div> : null}
         {p.staffTyping ? <div className="cmpx-chat__typing">{p.advisor?.firstName || "Your advisor"} is typing...</div> : null}
       </div>
       {showSuggestions ? (
-        <div className="cmpx-suggest" role="group" aria-label="Suggested questions" data-testid="cmp-suggestions">
+        <div className="cmpx-suggest" role="group" aria-label={tr("Suggested questions")} data-testid="cmp-suggestions">
           {SUGGESTED_QUESTIONS.map((q) => <button key={q} type="button" onClick={() => void askMaya(q)}>{q}</button>)}
         </div>
       ) : null}
       <div className="cmpx-composer">
-        <p className="cmpx-composer__writing" data-testid="cmp-chat-writing">You're writing to <b>{writingTo}</b>. {writingNote}</p>
+        <p className="cmpx-composer__writing" data-testid="cmp-chat-writing">{tr("You're writing to")}{" "}<b>{writingTo}</b>. {writingNote}</p>
         {p.attachments.length > 0 ? (
           <div className="cmpx-chips">
             {p.attachments.map((a, i) => (
@@ -218,14 +219,14 @@ export default function CmpChat(p: Props) {
         ) : null}
         {error ? <p className="cmpx-err" role="alert" style={{ margin: "0 4px 6px" }}>{error}</p> : null}
         <div className="cmpx-composer__row">
-          <label className="cmpx-composer__attach" title="Attach a file" aria-label="Attach a file">
+          <label className="cmpx-composer__attach" title={tr("Attach a file")} aria-label={tr("Attach a file")}>
             <Icon name="clip" />
             <input type="file" style={{ display: "none" }} onChange={(e) => { for (const f of Array.from(e.target.files ?? [])) p.onAttach(f); e.target.value = ""; if (to === "maya") p.setRecipient("advisor"); }} />
           </label>
           <input ref={p.inputRef} className="cmpx-composer__input" data-testid="cmp-chat-input" value={p.text} onChange={(e) => p.setText(e.target.value)} onFocus={scrollToEnd}
             placeholder={to === "maya" ? `Ask ${assistantName()} a question` : "Message " + (p.advisor?.firstName || "your advisor")}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void send(); } }} enterKeyHint="send" />
-          <button type="button" className="cmpx-send" aria-label="Send" data-testid="cmp-chat-send" disabled={sending || mayaBusy || (!p.text.trim() && p.attachments.length === 0)} onClick={() => void send()}>
+          <button type="button" className="cmpx-send" aria-label={tr("Send")} data-testid="cmp-chat-send" disabled={sending || mayaBusy || (!p.text.trim() && p.attachments.length === 0)} onClick={() => void send()}>
             <Icon name="send" size={20} strokeWidth={2.2} />
           </button>
         </div>
