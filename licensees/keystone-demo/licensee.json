@@ -22,7 +22,7 @@
     "welcome.title": "Welcome to {name} - let's get your business funded",
     "landing.tagline": "Business financing, arranged by the Keystone Demo team."
   },
-  "support": { "email": "keystone@boreal.financial", "phone": "" },
+  "support": { "email": "support@keystonecrm.online", "phone": "" },
   "legal": {
     "privacy_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/privacy",
     "terms_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/terms"
