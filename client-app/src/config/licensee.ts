@@ -17,10 +17,28 @@ const clean = (v: unknown): string => {
   return /^https?:\/\/[^\s/]+/i.test(s) ? s.replace(/\/+$/, "") : "";
 };
 
-export const SERVER_URL: string =
-  clean(env.VITE_API_BASE) || clean(env.VITE_API_BASE_URL) || clean(env.VITE_API_URL) || DEV.server;
+// KS_SHARED_APP_BUILD_v1 - one build serves every brokerage. The shared web host answers /ks-config.js (loaded by
+// index.html before the app) with this brokerage's addresses; without it, a <code>.app.<domain> address implies
+// <code>.api.<domain>. A build's own VITE_* settings come after both (branded native apps, the development copy).
+type RuntimeConfig = { code?: string; server_url?: string; portal_url?: string; client_url?: string };
 
-export const CLIENT_URL: string = clean(env.VITE_CLIENT_APP_URL) || DEV.client;
+export function runtimeConfig(w: unknown = typeof window === "undefined" ? undefined : window): RuntimeConfig {
+  const c = (w as { __KS_CONFIG__?: unknown } | undefined)?.__KS_CONFIG__;
+  return c && typeof c === "object" ? (c as RuntimeConfig) : {};
+}
+
+export function addressesFromHost(host: string | undefined): { server: string; client: string } | null {
+  const m = /^([a-z0-9-]+)\.app\.([a-z0-9.-]+\.[a-z]{2,})$/i.exec(String(host ?? "").toLowerCase());
+  return m ? { server: `https://${m[1]}.api.${m[2]}`, client: `https://${m[1]}.app.${m[2]}` } : null;
+}
+
+const RT = runtimeConfig();
+const FROM_HOST = addressesFromHost(typeof window === "undefined" ? undefined : window.location?.hostname);
+
+export const SERVER_URL: string =
+  clean(RT.server_url) || FROM_HOST?.server || clean(env.VITE_API_BASE) || clean(env.VITE_API_BASE_URL) || clean(env.VITE_API_URL) || DEV.server;
+
+export const CLIENT_URL: string = clean(RT.client_url) || FROM_HOST?.client || clean(env.VITE_CLIENT_APP_URL) || DEV.client;
 
 /** The licensee's public website; their client app until they give one. */
 export const WEBSITE_URL: string = clean(env.VITE_WEBSITE_URL) || CLIENT_URL;

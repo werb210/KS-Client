@@ -13,7 +13,7 @@ import { SERVER_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE
 
 type Row = { code: string; country: string; title: string };
 
-const API = import.meta.env.VITE_API_BASE_URL || SERVER_URL;
+const API = SERVER_URL;
 
 export function NaicsPicker({
   value,

@@ -22,7 +22,7 @@ import { trackUsage } from "@/lib/appUsage"; // BF_CLIENT_v811_APP_USAGE
 import { PRIVACY_URL, SERVER_URL, TERMS_URL } from "@/config/licensee"; // KS_CLIENT_v1_LICENSEE + v5
 
 const API_BASE =
-  ((import.meta as any).env?.VITE_API_URL) || SERVER_URL;
+  SERVER_URL;
 
 type Phase = 'phone' | 'code' | 'submitting';
 
@@ -256,7 +256,7 @@ export default function PhoneOTPInline() {
       // OTP success isn't blocked by an API hiccup.
       try {
         const lookup = await fetchWithTimeout(
-          (import.meta.env.VITE_API_BASE_URL || SERVER_URL) + '/api/client/applications/by-phone', // KS_SHARED_HOSTING_v1 - never same-origin
+          SERVER_URL + '/api/client/applications/by-phone', // KS_SHARED_HOSTING_v1 - never same-origin
           // BF_CLIENT_SIGNIN_LOOKUP_TOKEN_v742 - read the token where setToken() keeps it. This read the old 'auth_token' key,
           // which setToken() deletes, so the lookup always went out with no token, got a 401, and every sign-in made a new
           // blank application instead of opening the client's existing one.

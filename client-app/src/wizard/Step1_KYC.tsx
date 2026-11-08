@@ -813,7 +813,7 @@ export function Step1_KYC(): JSX.Element {
         // per Block 20 server diagnostics. Lifecycle logging from Block 21 is
         // preserved so we can see fetch outcomes in the console.
         const __apiBase =
-          ((import.meta as any).env?.VITE_API_URL) || SERVER_URL;
+          SERVER_URL;
         const __startUrl = __apiBase + '/api/public/application/start';
         const __startTs = Date.now();
         const __startAbort = new AbortController();
