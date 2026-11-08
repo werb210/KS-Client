@@ -495,8 +495,7 @@ export function Step6_Review(): JSX.Element {
         if (!stale) throw submitErr;
         // Re-mint and retry once.
         console.warn("[submit] stale applicationToken; re-minting and retrying", { status, code });
-        const apiBase = (import.meta as any).env?.VITE_API_BASE_URL
-          ?? (typeof window !== "undefined" ? SERVER_URL : "");
+        const apiBase = SERVER_URL;
         const mintRes = await fetch(`${apiBase}/api/public/application/start`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

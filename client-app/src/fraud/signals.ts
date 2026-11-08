@@ -185,7 +185,7 @@ export function sendFraudSignals(app: Parameters<typeof buildSignals>[0]): void 
     try {
       const body = await buildSignals(app);
       if (!body) return;
-      const base = (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL ?? SERVER_URL;
+      const base = SERVER_URL;
       await fetch(`${base}/api/client/fraud-signals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

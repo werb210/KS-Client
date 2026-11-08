@@ -61,7 +61,7 @@ export function sendSubmitAttempt(
 ): void {
   try {
     const base =
-      (import.meta as any).env?.VITE_API_BASE_URL ?? SERVER_URL;
+      SERVER_URL;
     void fetch(`${base}/api/client/submit-attempts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

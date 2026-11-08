@@ -10,7 +10,7 @@ import { signedInDestination } from "@/native/useLeaveIfSignedIn";
 import { SERVER_URL } from "@/config/licensee";
 
 // KS_SHARED_HOSTING_v1 - never a same-origin /api: the web host only serves files (no Static Web Apps /api rewrite).
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) || SERVER_URL;
+const API_BASE = SERVER_URL;
 
 export async function resolveSignedInRoute(token: string, timeoutMs = 5000): Promise<string> {
   const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;

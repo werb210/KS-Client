@@ -100,6 +100,20 @@ jobs:
           app_location: "client-app/dist"
           skip_app_build: true
 
+      # KS_SHARED_APP_BUILD_v1 - the same build, published once for every brokerage (sites/_shared/client/). The shared
+      # web host serves it at each brokerage's client app address and tells it the brokerage at /ks-config.js.
+      - name: Publish the shared build for every brokerage (sites/_shared/client/)
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.licensee == ''))
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.KS_SITES_STORAGE_CONNECTION_STRING }}
+          KS_DOMAIN: ${{ vars.KS_DOMAIN || 'keystonecrm.online' }}
+        run: |
+          if [ -z "$AZURE_STORAGE_CONNECTION_STRING" ]; then echo "::notice::KS_SITES_STORAGE_CONNECTION_STRING is not set: the shared build was not published"; exit 0; fi
+          node ../deploy/shared-csp.mjs dist "$KS_DOMAIN"
+          node ../deploy/publish-site.mjs client _shared dist
+
   # KS_LICENSEE_DEPLOY_v1 + KS_SHARED_HOSTING_v1 - every brokerage's client web app, after the gates above passed.
   # Brokerages no longer get a Static Web App each: their builds are served by the shared web host (ks-shared-web,
   # KS-Ops web-host/), which streams them from the blob container `sites` at <code>/client/. deploy/licensees.json
