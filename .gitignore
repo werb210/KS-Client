@@ -6,3 +6,4 @@ dist/
 .DS_Store
 www/
 client-app/www/
+client-app/android/app/google-services.json

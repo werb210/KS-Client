@@ -21,6 +21,11 @@ function fixtureRepo(): string {
   }, "")).concat(["client-app/android/app/google-services.json"], bn.GENERATED_DIRS);
   for (const rel of files) {
     mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true });
+    // google-services.json is no longer committed (CI writes it): the fixture gets a stand-in.
+    if (rel.endsWith("google-services.json") && !existsSync(path.join(ROOT, rel))) {
+      writeFileSync(path.join(dir, rel), JSON.stringify({ project_info: { project_id: "placeholder" }, client: [] }, null, 2));
+      continue;
+    }
     cpSync(path.join(ROOT, rel), path.join(dir, rel), { recursive: true });
   }
   cpSync(path.join(ROOT, "licensees"), path.join(dir, "licensees"), { recursive: true });

@@ -33,7 +33,7 @@ describe("booking page", () => {
     });
     route("/book/:slug", <BookPage />, "/book/jane");
     expect(await screen.findByText("Book a time with Jane")).toBeTruthy();
-    expect(fetchMock.mock.calls.some(([u]) => String(u).includes("staff=s1&type=t1"))).toBe(true);
+    await waitFor(() => expect(fetchMock.mock.calls.some(([u]) => String(u).includes("staff=s1&type=t1"))).toBe(true));
     fireEvent.click(await screen.findByText("11:00 a.m."));
     fireEvent.change(screen.getByLabelText("Your name"), { target: { value: "Pat Lee" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "pat@x.test" } });

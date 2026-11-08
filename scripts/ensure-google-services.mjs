@@ -73,7 +73,7 @@ function placeholderFor(packageName) {
             android_client_info: { package_name: packageName },
           },
           oauth_client: [],
-          api_key: [{ current_key: 'AIzaSyBOREALCIPLACEHOLDERKEY00000000000' }],
+          api_key: [{ current_key: 'placeholder-not-a-real-key' }],
           services: { appinvite_service: { other_platform_oauth_client: [] } },
         },
       ],
