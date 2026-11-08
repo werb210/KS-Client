@@ -1,7 +1,7 @@
 // @vitest-environment node
 // KS_CLIENT_PREVIEW_APP_v1 - scripts/preview/brand-preview.mjs makes the native projects the offline Keystone Preview app.
 import { execFileSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -24,6 +24,11 @@ function fixtureRepo(): string {
   }, "")).concat(["client-app/android/app/google-services.json"], bn.GENERATED_DIRS);
   for (const rel of files) {
     mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true });
+    // google-services.json is no longer committed (CI writes it): the fixture gets a stand-in.
+    if (rel.endsWith("google-services.json") && !existsSync(path.join(ROOT, rel))) {
+      writeFileSync(path.join(dir, rel), JSON.stringify({ project_info: { project_id: "placeholder" }, client: [] }, null, 2));
+      continue;
+    }
     cpSync(path.join(ROOT, rel), path.join(dir, rel), { recursive: true });
   }
   cpSync(path.join(ROOT, "licensees"), path.join(dir, "licensees"), { recursive: true });
