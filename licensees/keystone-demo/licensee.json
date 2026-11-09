@@ -3,8 +3,13 @@
   "key": "keystone-demo",
   "app_name": "Keystone Demo",
   "company_name": "Keystone Demo Brokerage",
-  "ios": { "bundle_id": "financial.boreal.keystone.demo", "team_id": "" },
-  "android": { "application_id": "financial.boreal.keystone.demo" },
+  "ios": {
+    "bundle_id": "com.keystonecrm.demo",
+    "team_id": "76VAY7UJKJ"
+  },
+  "android": {
+    "application_id": "com.keystonecrm.demo"
+  },
   "server_url": "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net",
   "client_web_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net",
   "colors": {
@@ -15,17 +20,39 @@
     "on_primary": "#FFFFFF"
   },
   "fonts": {
-    "body": { "family": "Inter", "google": true, "weights": [400, 500, 600, 700] },
-    "heading": { "family": "Merriweather", "google": true, "weights": [400, 700] }
+    "body": {
+      "family": "Inter",
+      "google": true,
+      "weights": [
+        400,
+        500,
+        600,
+        700
+      ]
+    },
+    "heading": {
+      "family": "Merriweather",
+      "google": true,
+      "weights": [
+        400,
+        700
+      ]
+    }
   },
   "wording": {
     "welcome.title": "Welcome to {name} - let's get your business funded",
     "landing.tagline": "Business financing, arranged by the Keystone Demo team."
   },
-  "support": { "email": "support@keystonecrm.online", "phone": "" },
+  "support": {
+    "email": "support@keystonecrm.online",
+    "phone": ""
+  },
   "legal": {
     "privacy_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/privacy",
     "terms_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net/terms"
   },
-  "assets": { "icon": "icon.png", "splash": "splash.png" }
+  "assets": {
+    "icon": "icon.png",
+    "splash": "splash.png"
+  }
 }
