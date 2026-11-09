@@ -49,28 +49,28 @@ describe("brand-native", () => {
     bn.brandNative("keystone-demo", opts);
 
     const cap = read(dir, "client-app/capacitor.config.ts");
-    expect(cap).toContain("appId: 'financial.boreal.keystone.demo'");
+    expect(cap).toContain("appId: 'com.keystonecrm.demo'");
     expect(cap).toContain("appName: 'Keystone Demo'");
 
     const pbx = read(dir, "client-app/ios/App/App.xcodeproj/project.pbxproj");
     expect(pbx).not.toContain("com.borealfinancial.client");
-    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = financial.boreal.keystone.demo;");
-    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = financial.boreal.keystone.demo.share;");
-    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = financial.boreal.keystone.demo.widget;");
+    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = com.keystonecrm.demo;");
+    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = com.keystonecrm.demo.share;");
+    expect(pbx).toContain("PRODUCT_BUNDLE_IDENTIFIER = com.keystonecrm.demo.widget;");
     expect(pbx).not.toContain("76VAY7UJKJ");
 
     const plist = read(dir, "client-app/ios/App/App/Info.plist");
     expect(plist).toMatch(/<key>CFBundleDisplayName<\/key>\s*<string>Keystone Demo<\/string>/);
     expect(plist).not.toMatch(/<string>Boreal/);
-    expect(read(dir, "client-app/ios/App/App/App.entitlements")).toContain("group.financial.boreal.keystone.demo");
+    expect(read(dir, "client-app/ios/App/App/App.entitlements")).toContain("group.com.keystonecrm.demo");
     expect(read(dir, "client-app/ios/App/App/App.entitlements")).toContain("applinks:wonderful-island-0b68ae310.5.azurestaticapps.net");
     expect(read(dir, "client-app/ios/App/BorealShare/ShareViewController.swift")).toContain('"Keystone Demo"');
     expect(read(dir, "client-app/ios/App/ci/ExportOptions.plist")).toContain("<string>ABCDE12345</string>");
 
-    expect(read(dir, "client-app/android/app/build.gradle")).toContain('applicationId "financial.boreal.keystone.demo"');
+    expect(read(dir, "client-app/android/app/build.gradle")).toContain('applicationId "com.keystonecrm.demo"');
     expect(read(dir, "client-app/android/app/src/main/res/values/strings.xml")).toContain('<string name="app_name">Keystone Demo</string>');
     const gs = JSON.parse(read(dir, "client-app/android/app/google-services.json"));
-    expect(gs.client[0].client_info.android_client_info.package_name).toBe("financial.boreal.keystone.demo");
+    expect(gs.client[0].client_info.android_client_info.package_name).toBe("com.keystonecrm.demo");
 
     const env = read(dir, bn.ENV_FILE);
     expect(env).toContain("VITE_LICENSEE=keystone-demo");
