@@ -22,6 +22,8 @@ export type Brand = {
   font_family: string;
   /** KS_CLIENT_LANGUAGES_v1 - the languages the brokerage offers its clients, e.g. "en,fr" (English always). */
   client_languages: string;
+  /** KS_CLIENT_BRAND_ASSETS_v1 - the browser tab icon ("" = the app's own). */
+  favicon_url: string;
 };
 
 const CACHE_KEY = "ks_brand_v1";
@@ -39,6 +41,7 @@ const KEYSTONE_BRAND: Brand = {
   background_color: "",
   font_family: "",
   client_languages: "en",
+  favicon_url: "",
 };
 
 // KS_CLIENT_v5_LICENSEE_APPS - a licensee's branded build (VITE_LICENSEE) starts from licensee.json, and keeps those
@@ -78,6 +81,7 @@ function clean(raw: unknown): Brand {
     if (v && v.length <= 200) out[k] = v;
   }
   if (!/^https:\/\//i.test(out.logo_url)) out.logo_url = "";
+  if (!/^https:\/\//i.test(out.favicon_url)) out.favicon_url = ""; // KS_CLIENT_BRAND_ASSETS_v1
   if (!/^#[0-9a-f]{6}$/i.test(out.primary_color)) out.primary_color = DEFAULT_BRAND.primary_color;
   if (!/^#[0-9a-f]{6}$/i.test(out.accent_color)) out.accent_color = DEFAULT_BRAND.accent_color;
   if (out.background_color && !/^#[0-9a-f]{6}$/i.test(out.background_color)) out.background_color = DEFAULT_BRAND.background_color;
@@ -108,6 +112,7 @@ function set(next: Brand): void {
   current = next;
   try { window.localStorage.setItem(CACHE_KEY, JSON.stringify(next)); } catch { /* private mode */ }
   try { if (typeof document !== "undefined") document.title = next.company_name; } catch { /* no document */ }
+  try { applyFavicon(next.favicon_url); } catch { /* no document */ } // KS_CLIENT_BRAND_ASSETS_v1
   try { applyBrandTheme(next); } catch { /* no document */ }
   listeners.forEach((l) => l());
 }
@@ -157,3 +162,17 @@ export function useBrand(): Brand {
 
 /** For tests. */
 export function __setBrandForTests(b: Partial<Brand>): void { set(clean({ ...current, ...b })); }
+
+/** KS_CLIENT_BRAND_ASSETS_v1 - points the browser tab icon at the brokerage's favicon (when it has one). */
+export function applyFavicon(url: string): void {
+  if (typeof document === "undefined" || !/^https:\/\//i.test(url)) return;
+  let link = document.querySelector<HTMLLinkElement>("link[rel='icon'][data-brand]");
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "icon";
+    link.setAttribute("data-brand", "1");
+    document.head.appendChild(link);
+  }
+  link.href = url;
+}
+try { applyFavicon(current.favicon_url); } catch { /* no document */ }
