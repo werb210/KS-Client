@@ -29,6 +29,7 @@ import { getFundingIntentLabel } from "../constants/wizard";
 import { bucketFor, CATEGORY_BUCKETS } from "./categoryAliases";
 import { components, layout, tokens } from "@/styles";
 import { PgiSection } from "./PgiSection"; // KS_CLIENT_v8_PGI
+import { ExtraQuestions } from "./ExtraQuestions"; // KS_CLIENT_LICENSEE_DOCUMENTS
 import { resolveStepGuard } from "./stepGuard";
 import { describeIncompleteStep, incompleteStepsForSubmit } from "./stepValidation";
 import { clearDraft } from "../client/autosave";
@@ -114,6 +115,7 @@ export const marketingSmsOptinText = (): string =>
 export function Step6_Review(): JSX.Element {
   const TC_CLAUSES = tcClauses(); // KS_CLIENT_v4_BRANDING - built with the licensee name
   const { app, update } = useApplicationStore();
+  const [extraMissing, setExtraMissing] = useState(0); // KS_CLIENT_LICENSEE_DOCUMENTS
 
   // BF_CLIENT_STEP6_BACK_v151
   // Step 5 bounces straight back on the SBA path, so Back has to skip it.
@@ -875,6 +877,10 @@ export function Step6_Review(): JSX.Element {
         </Card>
       )}
 
+      {/* KS_CLIENT_LICENSEE_DOCUMENTS - the brokerage's own questions (Settings > Your documents). */}
+      <ExtraQuestions token={app.applicationToken ?? undefined} answers={((app as any).extraAnswers ?? {}) as Record<string, string>}
+        onChange={(a) => update({ extraAnswers: a } as any)} onMissing={setExtraMissing} />
+
       <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.lg }}>
         {/* BF_CLIENT_WIZARD_STEP6_PGI_v61 - Step 6 reordered to
           PGI -> T&C -> consent checkboxes -> signature -> submit.
@@ -1077,6 +1083,7 @@ export function Step6_Review(): JSX.Element {
               onClick={submit}
               disabled={
                 submitting ||
+                extraMissing > 0 || // KS_CLIENT_LICENSEE_DOCUMENTS - the brokerage's required extra questions
                 !canSubmitApplication({
                   isOnline,
                   hasIdempotencyKey: Boolean(idempotencyKey),
