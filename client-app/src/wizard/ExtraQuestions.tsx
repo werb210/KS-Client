@@ -17,27 +17,45 @@ export function missingRequired(questions: ExtraQuestion[], answers: Answers): n
 
 export function ExtraQuestions({ token, answers, onChange, onMissing }: { token: string | undefined; answers: Answers; onChange: (a: Answers) => void; onMissing?: (n: number) => void }) {
   const [questions, setQuestions] = useState<ExtraQuestion[]>([]);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pending = useRef<Answers | null>(null);
 
   useEffect(() => {
     let live = true;
     apiCall<{ questions?: ExtraQuestion[] }>("/api/client/extra-questions")
-      .then((r) => { if (live) setQuestions(Array.isArray(r?.questions) ? r.questions : []); })
-      .catch(() => { if (live) setQuestions([]); });
+      .then((r) => { if (live) { setQuestions(Array.isArray(r?.questions) ? r.questions : []); setFailed(false); } })
+      .catch(() => { if (live) setFailed(true); }); // review fix: a failed load is not "no questions"
     return () => { live = false; };
-  }, []);
+  }, [attempt]);
 
-  useEffect(() => { onMissing?.(missingRequired(questions, answers)); }, [questions, answers, onMissing]);
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  // Until the questions load, submit waits (a required one may be among them).
+  useEffect(() => { onMissing?.(failed ? 1 : missingRequired(questions, answers)); }, [questions, answers, failed, onMissing]);
+  // Review fix: leaving the step within the save delay still saves the last answer.
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+    if (pending.current && token) void ClientAppAPI.update(token, { metadata: { extra_answers: pending.current } }).catch((): void => undefined);
+  }, [token]);
 
   const set = (key: string, value: string) => {
     const next = { ...answers, [key]: value };
     onChange(next);
     if (!token) return;
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => { void ClientAppAPI.update(token, { metadata: { extra_answers: next } }).catch((): void => undefined); }, 600);
+    pending.current = next;
+    timer.current = setTimeout(() => { pending.current = null; void ClientAppAPI.update(token, { metadata: { extra_answers: next } }).catch((): void => undefined); }, 600);
   };
 
+  if (failed) {
+    return (
+      <Card style={{ marginBottom: tokens.spacing.lg }} data-testid="extra-questions-failed">
+        <div>{tr("We couldn't load a few questions from your advisor.")}{" "}
+          <button type="button" onClick={() => setAttempt((n) => n + 1)}>{tr("Try again")}</button>
+        </div>
+      </Card>
+    );
+  }
   if (!questions.length) return null;
   return (
     <Card style={{ display: "flex", flexDirection: "column", gap: tokens.spacing.md, marginBottom: tokens.spacing.lg }} data-testid="extra-questions">
