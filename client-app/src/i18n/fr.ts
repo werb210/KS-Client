@@ -114,6 +114,7 @@ export const FR: Record<string, string> = {
   "Your advisor will send the term sheet for you to sign here.": "Votre conseiller vous enverra ici la lettre d'offre à signer.",
   "Signed. Your advisor will confirm the next steps with the lender.": "Signé. Votre conseiller confirmera les prochaines étapes avec le prêteur.",
   "Request changes": "Demander des modifications",
+  "A few more questions": "Quelques questions de plus",
   "Before funding": "Avant le financement",
   "Best used for": "Idéal pour",
   "Bi-weekly": "Aux deux semaines",
