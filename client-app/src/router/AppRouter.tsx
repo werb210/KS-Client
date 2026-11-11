@@ -24,7 +24,6 @@ const BookPage           = lazy(() => import("@/pages/publicPages/BookingPage").
 const ManageBookingPage  = lazy(() => import("@/pages/publicPages/BookingPage").then((m) => ({ default: m.ManageBookingPage })));
 const SurveyPage         = lazy(() => import("@/pages/publicPages/SurveyPage"));
 const VerifyIdentityPage = lazy(() => import("@/pages/verify/VerifyIdentityPage")); // KS_CLIENT_v22_KYC
-const QuotePage          = lazy(() => import("@/pages/quote/QuotePage")); // KS_CLIENT_v23_QUOTES
 const OfflineFallback    = lazy(() => import("@/pages/OfflineFallback").then((m) => ({ default: m.OfflineFallback })));
 
 export default function AppRouter() {
@@ -61,7 +60,8 @@ export default function AppRouter() {
         {/* BF_CLIENT_BLOCK_TWO_STAGE_v1 */}
         <Route path="/mini-portal/forms/:applicationId" element={<RequireOTP><Stage2Page /></RequireOTP>} />
         <Route path="/verify/:applicationId" element={<RequireOTP><VerifyIdentityPage /></RequireOTP>} /> {/* KS_CLIENT_v22_KYC */}
-        <Route path="/quote/:quoteId" element={<RequireOTP><QuotePage /></RequireOTP>} /> {/* KS_CLIENT_v23_QUOTES */}
+        {/* KS_CLIENT_NO_QUOTES - quotes were removed; old quote links open the portal, where offers are. */}
+        <Route path="/quote/:quoteId" element={<Navigate to="/portal" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
