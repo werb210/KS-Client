@@ -4,6 +4,7 @@ import { formatMessageTime, safeParseDate } from "@/utils/safeDate";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useApplicationStore } from "@/state/useApplicationStore";
 import { apiCall } from "@/api/client";
+import { chatCtaAction, idVerifyTodo, type IdRequest } from "@/lib/idVerifyTodo";
 import { ENV } from "@/env";
 import { getToken } from "@/auth/token";
 import { type ThreadMessage } from "@/components/messaging/MessageThread";
@@ -292,7 +293,7 @@ export default function MiniPortalPage() {
           body: String(item.body ?? item.content ?? ""),
           createdAt: String(item.createdAt ?? item.created_at ?? new Date().toISOString()),
           ctaLabel: typeof item.cta_label === "string" ? item.cta_label : (typeof item.ctaLabel === "string" ? item.ctaLabel : null),
-          ctaAction: typeof item.cta_action === "string" ? item.cta_action : (typeof item.ctaAction === "string" ? item.ctaAction : null),
+          ctaAction: chatCtaAction(typeof item.cta_action === "string" ? item.cta_action : (typeof item.ctaAction === "string" ? item.ctaAction : null)),
           // BF_CLIENT_v819_CLIENT_MMS - keep dataUrl attachments as they are and carry the server's url field through.
           attachments: Array.isArray(item.attachments)
             ? item.attachments
@@ -472,9 +473,19 @@ export default function MiniPortalPage() {
   const [deleteErr, setDeleteErr] = useState<string | null>(null);
   const [signSession, setSignSession] = useState<SignSession | null>(null); // KS_CLIENT_v17_PARTNER_SIGNING - carries who is signing
   // BF_CLIENT_TODO_ACTIONS_v637 - signing is a to-do while the signing session is ready.
+  // An open ID request is on the to-do list (it used to be only a chat button).
+  const [idRequests, setIdRequests] = useState<IdRequest[]>([]);
+  useEffect(() => {
+    if (!applicationId) { setIdRequests([]); return; }
+    let cancelled = false;
+    apiCall<{ verifications?: IdRequest[] }>(`/api/client/kyc/applications/${encodeURIComponent(applicationId)}`)
+      .then((r) => { if (!cancelled) setIdRequests(Array.isArray(r?.verifications) ? r.verifications : []); })
+      .catch(() => { /* identity checks not available: no to-do */ });
+    return () => { cancelled = true; };
+  }, [applicationId, todoRefresh]);
   const todoExtras = useMemo(
-    () => signingTodo(signSession), // KS_CLIENT_v17_PARTNER_SIGNING
-    [signSession],
+    () => [...signingTodo(signSession), ...idVerifyTodo(idRequests)], // KS_CLIENT_v17_PARTNER_SIGNING
+    [signSession, idRequests],
   );
   const [signLoading, setSignLoading] = useState(false);
   const fetchSigningSession = useCallback(async () => {
