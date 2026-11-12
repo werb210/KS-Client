@@ -1,4 +1,4 @@
-# BF_CLIENT_v813_IOS_UPLOAD - builds the iPhone/iPad app in the cloud and uploads it to App Store Connect, so no
+# BF_CLIENT_v813_IOS_UPLOAD, KS_CLIENT_v6_DEMO_UPLOAD - builds the Keystone Demo iPhone/iPad app in the cloud and uploads it to App Store Connect, so no
 # Mac or Xcode is needed. Run it by hand: GitHub > Actions > "Upload iOS build" > Run workflow. It never runs on
 # its own. Signing uses the company Apple account (team 76VAY7UJKJ) through an App Store Connect API key kept in
 # the repo secrets ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8 (the full text of the .p8 file). Each run gets a new
@@ -45,7 +45,21 @@ jobs:
           xcode-version: latest-stable
       - run: xcodebuild -version
       - run: npm ci
+      # KS_CLIENT_v6_DEMO_UPLOAD - this repo's own upload is the Keystone Demo app (licensees/keystone-demo). Brand the
+      # native project first, then refuse to go on if any other company's bundle id is still in it.
+      - name: Brand the native project as Keystone Demo
+        run: node scripts/brand-native.mjs keystone-demo
+      - name: Refuse any bundle id that is not Keystone Demo
+        run: |
+          ids=$(grep -o 'PRODUCT_BUNDLE_IDENTIFIER = [^;]*' client-app/ios/App/App.xcodeproj/project.pbxproj | sort -u)
+          echo "$ids"
+          if echo "$ids" | grep -v 'com\.keystonecrm\.demo' | grep -q .; then
+            echo "::error::The iOS project still has a bundle id that is not com.keystonecrm.demo. Not building."
+            exit 1
+          fi
       - run: npm run build
+        env:
+          VITE_LICENSEE: keystone-demo
       - name: Verify Capacitor web artifact
         run: test -f client-app/dist/index.html
       - run: npx cap sync ios
@@ -97,7 +111,7 @@ jobs:
         run: |
           {
             echo "### Uploaded to App Store Connect"
-            echo "- App: com.borealfinancial.client"
+            echo "- App: com.keystonecrm.demo (Keystone Demo)"
             echo "- Build number: $BUILD_NUMBER"
             echo "- Notes: ${NOTES:-none}"
             echo "Apple processes the build for 10-30 minutes, then it can be picked on the App Store version page."

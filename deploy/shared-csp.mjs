@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const DEV_SERVER_HOST = "ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net";
+export const DEV_SERVER_HOST = "ks-demo-server.azurewebsites.net";
 
 export function sharedPolicy(csp, domain) {
   return String(csp)

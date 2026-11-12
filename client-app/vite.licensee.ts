@@ -13,7 +13,7 @@ import { loadEnv, type Plugin } from "vite";
 // Plain .mjs helper shared with the Node scripts (scripts/licensee/lib.mjs).
 import { buildEnv, fontFaceCss, googleFontsHref, loadLicensee, swapTheme, validateLicensee } from "../scripts/licensee/lib.mjs";
 
-const DEV_SERVER = "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net";
+const DEV_SERVER = "https://ks-demo-server.azurewebsites.net";
 const DEFAULT_FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap";
 
