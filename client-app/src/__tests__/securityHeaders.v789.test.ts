@@ -36,7 +36,7 @@ describe("staticwebapp.config.json globalHeaders", () => {
 
   it("allows the API, Twilio, Google tags and Clarity", () => {
     const connect = directive("connect-src");
-    expect(connect).toContain("https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net");
+    expect(connect).toContain("https://ks-demo-server.azurewebsites.net");
     expect(connect).toContain("wss://*.twilio.com");
     expect(connect).toContain("https://*.google-analytics.com");
     expect(connect).toContain("https://*.clarity.ms");

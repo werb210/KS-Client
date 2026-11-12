@@ -109,7 +109,7 @@ describe("licensee validator", () => {
   it("builds the web env and Google Fonts link from licensee.json", () => {
     const env = lib.buildEnv(demo());
     expect(env.VITE_LICENSEE).toBe("keystone-demo");
-    expect(env.VITE_API_URL).toBe("https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net");
+    expect(env.VITE_API_URL).toBe("https://ks-demo-server.azurewebsites.net");
     const runtime = JSON.parse(env.VITE_KS_LICENSEE);
     expect(runtime.company_name).toBe("Keystone Demo Brokerage");
     expect(runtime.colors.on_primary).toBe("#FFFFFF");

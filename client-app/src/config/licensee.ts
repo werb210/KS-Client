@@ -6,7 +6,7 @@
 import { LICENSEE_BUILD } from "./licenseeBuild";
 
 const DEV = {
-  server: "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net",
+  server: "https://ks-demo-server.azurewebsites.net",
   client: "https://wonderful-island-0b68ae310.5.azurestaticapps.net",
 };
 

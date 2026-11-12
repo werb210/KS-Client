@@ -10,7 +10,7 @@
   "android": {
     "application_id": "com.keystonecrm.demo"
   },
-  "server_url": "https://ks-server-dev-chb5htbwaue2hygk.canadacentral-01.azurewebsites.net",
+  "server_url": "https://ks-demo-server.azurewebsites.net",
   "client_web_url": "https://wonderful-island-0b68ae310.5.azurestaticapps.net",
   "colors": {
     "primary": "#1E3A5F",
