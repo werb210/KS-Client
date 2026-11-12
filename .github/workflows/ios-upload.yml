@@ -57,6 +57,10 @@ jobs:
             echo "::error::The iOS project still has a bundle id that is not com.keystonecrm.demo. Not building."
             exit 1
           fi
+      - name: Licensee ids (the release checks expect the Keystone Demo ids)
+        run: |
+          echo "IOS_BUNDLE_ID=com.keystonecrm.demo" >> "$GITHUB_ENV"
+          echo "CAP_APP_ID=com.keystonecrm.demo" >> "$GITHUB_ENV"
       - run: npm run build
         env:
           VITE_LICENSEE: keystone-demo
