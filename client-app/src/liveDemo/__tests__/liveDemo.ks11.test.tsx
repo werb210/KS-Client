@@ -52,7 +52,7 @@ describe("the sample server", () => {
     const messages = call(s, "GET", `/api/client/messages${q}`).data as Array<{ direction: string; staff_name: string; body: string }>;
     expect(messages).toHaveLength(1);
     expect(messages[0]).toMatchObject({ direction: "outbound", staff_name: "Alex Morgan" });
-    expect(messages[0]!.body).toMatch(/all 6 of your documents/);
+    expect(messages[0]!.body).toMatch(/all 11 of your documents/);
     expect(call(s, "GET", `/api/client/offers${q}`).data.items).toEqual([]);
     expect(call(s, "GET", `/api/client/applications/${DEMO_APPLICATION_ID}/product-questions`).data.missing).toEqual([]);
     expect(call(s, "GET", `/api/portal/applications/${DEMO_APPLICATION_ID}/qa/open`).data.questions).toEqual([]);
@@ -60,7 +60,7 @@ describe("the sample server", () => {
     expect(call(s, "GET", `/api/client/documents-needed/needed${q}`).data).toMatchObject({ stillNeeded: [], rejected: [] });
     const todo = call(s, "GET", `/api/client/documents-needed/action-center${q}`).data;
     expect(todo.outstanding).toEqual([]);
-    expect(todo.completed).toHaveLength(6);
+    expect(todo.completed).toHaveLength(11);
     expect(call(s, "GET", "/api/client/applications/by-phone?includeDrafts=true").data.applications[0]).toMatchObject({ id: DEMO_APPLICATION_ID, pipeline_state: "In Review", signature_needed: false });
     expect(call(s, "GET", `/api/client/advisor${q}`).data.advisor).toMatchObject({ firstName: "Alex", lastName: "Morgan" });
     expect(call(s, "GET", `/api/client/signing-session${q}`).data.status).not.toBe("ready");
@@ -253,7 +253,7 @@ describe("the tour over the real client app", () => {
     // The real client portal is showing the submitted sample file.
     expect(state.submitted).toBe(true);
     expect(screen.getByTestId("cmp-status-stage").textContent).toMatch(/In Review/);
-    expect(screen.getByText(/all 6 of your documents came through/)).toBeTruthy();
+    expect(screen.getByText(/all 11 of your documents came through/)).toBeTruthy();
     expect(screen.queryByTestId("action-center")).toBeNull();
     // Every call the wizard and portal made was answered by the sample server.
     expect(state.calls).toEqual(expect.arrayContaining([

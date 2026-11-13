@@ -46,7 +46,7 @@ function welcomeMessage(now: number): DemoMessage {
     staff_name: `${SAMPLE_ADVISOR.firstName} ${SAMPLE_ADVISOR.lastName}`,
     body:
       `Hi ${SAMPLE_CONTACT.firstName}, I'm ${SAMPLE_ADVISOR.firstName}, your advisor. Your application for ` +
-      `$${SAMPLE_REQUEST.amount.toLocaleString("en-CA")} in equipment financing is in, and all 6 of your documents ` +
+      `$${SAMPLE_REQUEST.amount.toLocaleString("en-CA")} in equipment financing is in, and all ${SAMPLE_DOCS.length} of your documents ` +
       "came through: the July, August and September bank statements, the FY2025 financial statements, a void cheque " +
       "and your photo ID. I'm reviewing everything now and will be in touch shortly.",
     created_at: new Date(now - 60_000).toISOString(),
