@@ -49,20 +49,26 @@ export const SAMPLE_REQUEST = {
 /** The broker the client sees as their advisor (fictional). */
 export const SAMPLE_ADVISOR = { id: "demo-advisor", firstName: "Alex", lastName: "Morgan" };
 
-/** The six documents of the sample file (same keys as KS-server SAMPLE_DOCS). */
+/** The documents of the sample file (same keys as KS-server SAMPLE_DOCS): six statements, two years, the quote. */
 export const SAMPLE_DOCS = [
+  { key: "bank_2026_04", label: "Bank statement - April 2026", category: "bank_statement", filename: "Bank-Statement-2026-04-SAMPLE.pdf" },
+  { key: "bank_2026_05", label: "Bank statement - May 2026", category: "bank_statement", filename: "Bank-Statement-2026-05-SAMPLE.pdf" },
+  { key: "bank_2026_06", label: "Bank statement - June 2026", category: "bank_statement", filename: "Bank-Statement-2026-06-SAMPLE.pdf" },
   { key: "bank_2026_07", label: "Bank statement - July 2026", category: "bank_statement", filename: "Bank-Statement-2026-07-SAMPLE.pdf" },
   { key: "bank_2026_08", label: "Bank statement - August 2026", category: "bank_statement", filename: "Bank-Statement-2026-08-SAMPLE.pdf" },
   { key: "bank_2026_09", label: "Bank statement - September 2026", category: "bank_statement", filename: "Bank-Statement-2026-09-SAMPLE.pdf" },
   { key: "financials_2025", label: "Financial statements - FY2025", category: "accountant_financials", filename: "Financials-FY2025-SAMPLE.pdf" },
+  { key: "financials_2024", label: "Financial statements - FY2024", category: "accountant_financials", filename: "Financials-FY2024-SAMPLE.pdf" },
+  { key: "equipment_quote", label: "Equipment quote - CNC router", category: "equipment_quote", filename: "Equipment-Quote-SAMPLE.pdf" },
   { key: "void_cheque", label: "Void cheque", category: "void_cheque", filename: "Void-Cheque-SAMPLE.pdf" },
   { key: "photo_id", label: "Photo ID (placeholder)", category: "photo_id", filename: "Photo-ID-PLACEHOLDER-SAMPLE.pdf" },
 ] as const;
 
 /** What the lender panel asks for on an equipment file (Step 5's list). */
 export const SAMPLE_REQUIRED_DOCS = [
-  { id: "req:bank", document_type: "3 months business bank statements", required: true, stage: 1 },
+  { id: "req:bank", document_type: "6 months business bank statements", required: true, stage: 1 },
   { id: "req:financials", document_type: "Accountant prepared financial statements", required: true, stage: 1 },
+  { id: "req:quote", document_type: "Equipment quote or invoice", required: true, stage: 1 },
   { id: "req:void", document_type: "Void cheque", required: true, stage: 1 },
   { id: "req:id", document_type: "Government issued photo ID", required: true, stage: 1 },
 ];

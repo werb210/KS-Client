@@ -172,7 +172,7 @@ describe("the Keystone Preview app, tapped through end to end", () => {
     expect(state.submitted).toBe(true);
     await waitFor(() => expect(screen.getByTestId("cmp-status-stage").textContent).toMatch(/In Review/), { timeout: 15000 });
     fireEvent.click(screen.getByTestId("cmp-tab-chat"));
-    expect(await screen.findByText(/all 6 of your documents came through/)).toBeTruthy();
+    expect(await screen.findByText(/all 11 of your documents came through/)).toBeTruthy();
     fireEvent.click(screen.getByTestId("cmp-tab-more"));
     expect(await screen.findByTestId("cmp-more")).toBeTruthy();
     fireEvent.click(await screen.findByTestId("cmp-more-calculator"));

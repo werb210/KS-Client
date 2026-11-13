@@ -171,7 +171,7 @@ export const TOUR_STEPS: TourStep[] = [
     target: () => byTestId("cmp-chat"),
     show: () => byTestId("cmp-tab-chat")?.click(),
     title: "One conversation with his broker",
-    text: "Messages from the broker show up here and by text. His advisor has already confirmed that all 6 documents came in.",
+    text: "Messages from the broker show up here and by text. His advisor has already confirmed that all 11 documents came in.",
     back: true,
     action: async () => {
       byTestId("cmp-tab-more")?.click();
@@ -184,7 +184,7 @@ export const TOUR_STEPS: TourStep[] = [
     target: () => byTestId("cmp-more-upload") ?? byTestId("cmp-more"),
     show: () => byTestId("cmp-tab-more")?.click(),
     title: "Nothing missing",
-    text: "All 6 documents are received, so Sam's documents are up to date and there is nothing left on his to-do list.",
+    text: "All 11 documents are received, so Sam's documents are up to date and there is nothing left on his to-do list.",
     back: true,
     action: async () => {
       byTestId("cmp-tab-home")?.click();
