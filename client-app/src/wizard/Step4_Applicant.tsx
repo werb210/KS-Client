@@ -130,7 +130,7 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
   const fmtMoney = (v: unknown) => { const n = String(v ?? "").replace(/[^\d]/g, ""); return n ? Number(n).toLocaleString("en-CA") : ""; };
   const yn = (key: string) => (
     <select value={String(data[key] ?? "")} onChange={(e) => setField(key, e.target.value)}>
-      <option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option>
+      <option value="">{tr("Select...")}</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option>
     </select>
   );
   const setName = (field: "firstName" | "lastName", v: string) => {
@@ -190,7 +190,7 @@ function OwnerFields({ data, setField, setMany, deriveFullName = false, isAccord
       {isAccordLOC && (
         <div><label style={L}>{tr("Own or Rent")}</label>
           <select value={data.ownRent || ""} onChange={(e) => setField("ownRent", e.target.value)}>
-            <option value="">—</option><option value="Own">{tr("Own")}</option><option value="Rent">{tr("Rent")}</option>
+            <option value="">{tr("Select...")}</option><option value="Own">{tr("Own")}</option><option value="Rent">{tr("Rent")}</option>
           </select>
         </div>
       )}
@@ -381,8 +381,8 @@ function AccordAdditionalShareholders({ list, onChange }: { list: ShareholderRow
           <div><label style={L}>{tr("Mobile #")}</label><Input value={r.mobile || ""} onChange={(e) => setRow(i, "mobile", e.target.value)} /></div>
           <div><label style={L}>{tr("Email")}</label><Input value={r.email || ""} onChange={(e) => setRow(i, "email", e.target.value)} /></div>
           <div><label style={L}>{tr("Ownership %")}</label><Input type="number" min="0" max="100" value={r.ownership || ""} onChange={(e) => setRow(i, "ownership", e.target.value)} /></div>
-          <div><label style={L}>{tr("Director?")}</label><select value={r.director || ""} onChange={(e) => setRow(i, "director", e.target.value)}><option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
-          <div><label style={L}>{tr("Officer?")}</label><select value={r.officer || ""} onChange={(e) => setRow(i, "officer", e.target.value)}><option value="">—</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
+          <div><label style={L}>{tr("Director?")}</label><select value={r.director || ""} onChange={(e) => setRow(i, "director", e.target.value)}><option value="">{tr("Select...")}</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
+          <div><label style={L}>{tr("Officer?")}</label><select value={r.officer || ""} onChange={(e) => setRow(i, "officer", e.target.value)}><option value="">{tr("Select...")}</option><option value="Yes">{tr("Yes")}</option><option value="No">{tr("No")}</option></select></div>
           <div style={{ gridColumn: "1 / -1" }}><button type="button" onClick={() => remove(i)} style={{ background: "transparent", border: `1px solid ${tokens.colors.border}`, borderRadius: 6, padding: "6px 12px", color: "#b91c1c", cursor: "pointer", fontSize: "var(--ks-text-label)" }}>{tr("Remove")}</button></div>
         </div>
       ))}
