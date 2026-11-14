@@ -9,6 +9,8 @@ export const LIVE_DEMO_TAG = "ks-live-demo";
 
 /** The Keystone portal (KS-Portal) the demo hands over to. */
 export const DEFAULT_PORTAL_ORIGIN = "https://thankful-wave-04964490f.2.azurestaticapps.net";
+/** KS_DEMO_DOMAIN - the same demo portal at its own Keystone address. */
+export const DEMO_PORTAL_DOMAIN = "https://demo.keystonecrm.online";
 
 /** /tour and anything under it. */
 export function isLiveDemoPath(pathname: string | null | undefined): boolean {
@@ -28,7 +30,7 @@ function originOf(raw: unknown): string | null {
 
 /** Origins the demo may hand over to: the Keystone portal, plus a build-time portal address and local development. */
 export function allowedParentOrigins(): string[] {
-  const out = new Set<string>([DEFAULT_PORTAL_ORIGIN]);
+  const out = new Set<string>([DEFAULT_PORTAL_ORIGIN, DEMO_PORTAL_DOMAIN]);
   for (const key of ["VITE_KS_PORTAL_URL", "VITE_PORTAL_URL"]) {
     const o = originOf(env[key]);
     if (o) out.add(o);

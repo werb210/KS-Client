@@ -68,7 +68,7 @@ describe("the live demo path can be framed by the Keystone portal only", () => {
   it("lets only the portal (and the app itself) frame /tour", () => {
     for (const r of tourRoutes) {
       const policy = r.headers?.["Content-Security-Policy"] ?? "";
-      expect(directiveOf(policy, "frame-ancestors")).toEqual(["'self'", PORTAL]);
+      expect(directiveOf(policy, "frame-ancestors")).toEqual(["'self'", PORTAL, "https://demo.keystonecrm.online"]);
       // Same policy as every other page apart from who may frame it.
       expect(policy.replace(/frame-ancestors [^;]+/, "")).toBe(csp.replace(/frame-ancestors [^;]+/, ""));
       expect(policy).not.toContain("unsafe-eval");
