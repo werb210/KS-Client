@@ -6,7 +6,7 @@ import { components, layout, tokens } from "@/styles";
 import { Input } from "../components/ui/Input";
 import { brandName } from "@/config/brand";
 import type { ApplicationData, PgiDetails } from "../types/application";
-import { PGI_LOAN_TYPES, PGI_PARTNER_NAME } from "./pgi";
+import { PGI_BROKER_NAME, PGI_LOAN_TYPES, PGI_PARTNER_NAME } from "./pgi";
 
 import { t as tr } from "@/i18n"; // KS_CLIENT_LANGUAGES_v1
 type Props = { app: ApplicationData; update: (patch: Partial<ApplicationData>) => void };
@@ -60,7 +60,7 @@ export function PgiSection({ app, update }: Props) {
       </div>
       {app.pgiOptIn === "yes" && (
         <div data-testid="step6-pgi-details" style={{ ...layout.stackTight, marginTop: tokens.spacing.md, padding: tokens.spacing.md, borderRadius: tokens.radii.md, border: `1px solid ${tokens.colors.border}`, background: tokens.colors.surface }}>
-          <p style={{ ...components.form.helperText, margin: 0, color: tokens.colors.textPrimary }}>{tr("{brand} arranges PGI through its insurance partner, {PGI_PARTNER_NAME}. These details help the insurer quote faster. They are all optional - you can skip them and finish later on the insurer's form.", { brand: brandName(), PGI_PARTNER_NAME: PGI_PARTNER_NAME })}</p>
+          <p style={{ ...components.form.helperText, margin: 0, color: tokens.colors.textPrimary }}>{tr("{brand} can introduce you to Personal Guarantee Insurance through its referral partner, {PGI_PARTNER_NAME}. The policy is arranged by {PGI_BROKER_NAME}, a licensed insurance broker; neither {brand} nor {PGI_PARTNER_NAME} sells insurance. These details are all optional - you can skip them and finish later on PGI's form.", { brand: brandName(), PGI_PARTNER_NAME: PGI_PARTNER_NAME, PGI_BROKER_NAME: PGI_BROKER_NAME })}</p>
           {field("loan_type", "Type of loan", (
             <select
               id="pgi-loan_type"

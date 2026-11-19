@@ -1,7 +1,10 @@
 // KS_CLIENT_v8_PGI - Personal Guarantee Insurance details the client may give on Step 6 (all optional).
 import type { PgiDetails } from "../types/application";
 
-export const PGI_PARTNER_NAME = "Boreal Insurance";
+// KS_CLIENT_PGI_COMPLIANCE_v1 (2026-11-19) - the referral partner is Boreal Risk Management (never "Boreal Insurance");
+// PGI Canada Ltd. is the licensed broker that arranges the policy.
+export const PGI_PARTNER_NAME = "Boreal Risk Management";
+export const PGI_BROKER_NAME = "PGI Canada Ltd.";
 export const PGI_LOAN_TYPES = ["Commercial Mortgage", "Other Secured Loan"] as const;
 
 /** Only the details that were filled in, trimmed (empty answers are left out of the submission). */
