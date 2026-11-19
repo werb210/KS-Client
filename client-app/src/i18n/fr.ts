@@ -1031,7 +1031,7 @@ export const FR: Record<string, string> = {
   "{assistant} is typing...": "{assistant} écrit...",
   "{assistant} is typing…": "{assistant} écrit…",
   "{brand} Client-to-Staff Messaging Systems": "Systèmes de messagerie entre le client et l'équipe de {brand}",
-  "{brand} arranges PGI through its insurance partner, {PGI_PARTNER_NAME}. These details help the insurer quote faster. They are all optional - you can skip them and finish later on the insurer's form.": "{brand} offre l'AGP par l'intermédiaire de son partenaire d'assurance, {PGI_PARTNER_NAME}. Ces renseignements aident l'assureur à préparer une soumission plus rapidement. Ils sont tous facultatifs : vous pouvez les passer et terminer plus tard sur le formulaire de l'assureur.",
+  "{brand} can introduce you to Personal Guarantee Insurance through its referral partner, {PGI_PARTNER_NAME}. The policy is arranged by {PGI_BROKER_NAME}, a licensed insurance broker; neither {brand} nor {PGI_PARTNER_NAME} sells insurance. These details are all optional - you can skip them and finish later on PGI's form.": "{brand} peut vous présenter l'assurance de garantie personnelle par l'intermédiaire de son partenaire de recommandation, {PGI_PARTNER_NAME}. La police est offerte par {PGI_BROKER_NAME}, un courtier d'assurance autorisé; ni {brand} ni {PGI_PARTNER_NAME} ne vendent d'assurance. Ces renseignements sont tous facultatifs : vous pouvez les passer et terminer plus tard sur le formulaire de PGI.",
   "{brand} is locked": "{brand} est verrouillé",
   "{done} of {total} forms completed": "{done} formulaires remplis sur {total}",
   "{label} couldn't load": "Impossible de charger {label}",

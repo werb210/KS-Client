@@ -22,7 +22,7 @@ describe("PGI on Step 6", () => {
     expect(update).toHaveBeenCalledWith({ pgiOptIn: "yes" });
 
     rerender(<PgiSection app={app({ pgiOptIn: "yes", pgiDetails: { naics_code: "2362" } })} update={update} />);
-    expect(screen.getByTestId("step6-pgi-details").textContent).toContain("Boreal Insurance");
+    expect(screen.getByTestId("step6-pgi-details").textContent).toContain("Boreal Risk Management");
     expect(screen.getByTestId("step6-pgi-details").textContent).toContain("optional");
     fireEvent.change(screen.getByTestId("pgi-loan-type"), { target: { value: "Commercial Mortgage" } });
     expect(update).toHaveBeenLastCalledWith({ pgiDetails: { naics_code: "2362", loan_type: "Commercial Mortgage" } });
