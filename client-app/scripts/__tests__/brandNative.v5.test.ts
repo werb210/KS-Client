@@ -74,7 +74,7 @@ describe("brand-native", () => {
 
     const env = read(dir, bn.ENV_FILE);
     expect(env).toContain("VITE_LICENSEE=keystone-demo");
-    expect(env).toContain("VITE_API_URL=https://ks-demo-server.azurewebsites.net");
+    expect(env).toContain("VITE_API_URL=https://internal-test-ignore.api.keystonecrm.online");
     expect(readFileSync(path.join(dir, "client-app/assets/icon-only.png")).equals(readFileSync(path.join(dir, "licensees/keystone-demo/icon.png")))).toBe(true);
 
     const first = snapshot(dir);
